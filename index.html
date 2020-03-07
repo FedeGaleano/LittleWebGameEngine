@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title> Telegram Game </title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="favicon.ico">
+</head>
+<body>
+    <div id="fullScreenButton"> <img id="fullScreenImage" src="res/goFullScreen.png" alt="goFullScreen.png"> </div>
+
+    <script type="module">
+        import run from './main.js';
+
+        run();
+
+        export default null;
+    </script>
+</body>
+<style>
+    @media (orientation: landscape) {
+        #askToRotatePhone {
+            display: none;
+        }
+    }
+    @media (orientation: portrait) {
+        /* #askToRotatePhone {
+            display: block;
+            margin: auto;
+            width: 50%;
+            
+            position: absolute;
+            top: 50%;
+            transform: translate(50%, -50%);
+        } */
+        #canvas {
+            display: none;
+        }
+    }
+    body {
+        background-color: #1E1E1E;
+    }
+    html {
+        background-color: #1E1E1E;
+    }
+    #fullScreenButton {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        border-radius: 100%;
+        width: 26px;
+        height: 26px;
+        border: 1px white solid;
+        background-color: white;
+        opacity: 0.3;
+    }
+    #fullScreenImage {
+        position: relative;
+        top: 4px;
+        left: 4px;
+        display: block;
+        max-width: 70%;
+        max-height: 70%;
+    }
+</style>
+</html>
