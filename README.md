@@ -44,5 +44,5 @@ export default {
    ```
   
   ### Methods
-  #### renderSprite(image, x, y)
-  Will interpret the image as pixel art and render the content according to the current pixel scale
+  #### renderBitmap(bitmap, x, y)
+  Will interpret the bitmap as pixel art and render its data according to the current pixel scale
