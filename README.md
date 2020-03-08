@@ -32,13 +32,14 @@ export default {
   ## Rendering
   ### Sprite class
   ```javascript
-  sprite = new Sprite(image, numberOfFrames, frameRepetitions, graphics)
-  ...
-  update() {
-    sprite.update()
-  }
-  render() {
-    sprite.render()
+  const sprite = new Sprite(image, numberOfFrames, frameRepetitions, graphics)
+  const mySceneObject = {
+    update() {
+      sprite.update()
+    }
+    render() {
+      sprite.render()
+    }
   }
    ```
   
