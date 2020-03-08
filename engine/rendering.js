@@ -42,7 +42,7 @@ const GameplayGraphics = {
       renderingContext2D.lineTo(xb * scale, yb * scale);
       renderingContext2D.stroke();
     },
-    renderSprite(image, x, y) {
+    renderBitmap(image, x, y) {
       const { renderingContext2D, scale } = GameplayGraphics;
       renderingContext2D.drawImage(
         image,
@@ -100,7 +100,7 @@ const AskForRotationGraphics = {
 function adjustRenderingContext(graphics) {
   graphics.canvas.width = window.innerWidth;
   graphics.canvas.height = window.innerHeight;
-  graphics.canvas.style.backgroundColor = '#1E1E1E';
+  graphics.canvas.style.backgroundColor = '#120011';
   graphics.canvas.style.padding = graphics.canvas.style.margin = 0;
   document.body.style.overflow = 'hidden';
   document.body.style.padding = document.body.style.margin = 0;

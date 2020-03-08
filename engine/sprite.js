@@ -8,6 +8,8 @@ class Sprite {
     this.frameHeight = image.height;
     this.currentFrame = 0;
     this.currentFrameRepetitions = 0;
+    this.width = this.frameWidth;
+    this.height = this.frameHeight;
   }
 
   update() {
@@ -31,10 +33,10 @@ class Sprite {
       x * graphics.scale, y * graphics.scale,
       frameWidth * graphics.scale, image.height * graphics.scale,
     );
-    graphics.renderingContext2D.strokeRect(
-      x * graphics.scale, y * graphics.scale,
-      frameWidth * graphics.scale, image.height * graphics.scale,
-    );
+    // graphics.renderingContext2D.strokeRect(
+    //   x * graphics.scale, y * graphics.scale,
+    //   frameWidth * graphics.scale, image.height * graphics.scale,
+    // );
     this.currentFrameRepetitions++;
   }
 }

@@ -20,7 +20,7 @@ export default {
   render() {
     renderer.clearScreen();
     renderer.renderTileGrid();
-    renderer.renderSprite(
+    renderer.renderBitmap(
       resources.titleImage,
       (screen.width - resources.titleImage.width) / 2,
       (screen.height - resources.titleImage.height) / 2,
