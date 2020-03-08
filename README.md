@@ -30,6 +30,13 @@ export default {
 ```
 
   ## Rendering
+  ### Sprite class
+  ```javascript
+  rotationSprite = new Sprite(
+        resources.rotationImage, 4, [10, 10, 10, 20], AskForRotationGraphics,
+      )
+   ```
+  
   ### Methods
   #### renderSprite(image, x, y)
   Will interpret the image as pixel art and render the content according to the current pixel scale
