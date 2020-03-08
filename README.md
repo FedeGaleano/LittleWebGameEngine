@@ -9,15 +9,13 @@ export default {
   },
   render() {
   },
+  
+  // Input Reaction
   pressed: {
   },
   released: {
   },
   fired: {
-    KeyD() {
-    },
-    Space() {
-    }
   },
 };
 ```
