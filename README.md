@@ -1,6 +1,6 @@
 # LittleWebGameEngine
 
-##Scene class
+## Scene class
 ```javascript
 export default {
   init() {
