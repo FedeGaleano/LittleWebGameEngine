@@ -3,6 +3,7 @@
 ## Scene class
 ```javascript
 export default {
+  // GameLoop-level Methods
   init() {
   },
   update() {
