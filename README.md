@@ -32,3 +32,4 @@ export default {
   ## Rendering
   ### Methods
   #### renderSprite(image, x, y)
+  Will interpret the image as pixel art and render the content according to the current pixel scale
