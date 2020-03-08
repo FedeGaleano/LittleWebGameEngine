@@ -32,9 +32,7 @@ export default {
   ## Rendering
   ### Sprite class
   ```javascript
-  rotationSprite = new Sprite(
-        resources.rotationImage, 4, [10, 10, 10, 20], AskForRotationGraphics,
-      )
+  rotationSprite = new Sprite(image, numberOfFrames, frameRepetitions, graphics)
    ```
   
   ### Methods
