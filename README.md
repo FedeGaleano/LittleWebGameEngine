@@ -14,7 +14,8 @@ export default {
   
   // Input Reaction
   /* each method for the 'pressed', 'released' and 'fired' properties has the name of the
-  'code' property of the event that will be binded to it, like 'KeyD, 'AltLeft', 'Space', etc */
+  'code' property of the event that will be binded to it, like 'KeyD, 'AltLeft', 'Space', etc
+  keycode.info for keycodes. Additionally: 'ScreenTouch' name will serve for touchstart events */
   pressed: {
      Space() {
      }
@@ -22,6 +23,8 @@ export default {
   released: {
   },
   fired: {
+    ScreenTouch() {
+    }
   },
 };
 ```
