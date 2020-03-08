@@ -21,6 +21,8 @@ export default {
      }
   },
   released: {
+    Digit5() {
+    }
   },
   fired: {
     ScreenTouch() {
