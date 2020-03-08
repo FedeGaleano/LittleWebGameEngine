@@ -28,3 +28,7 @@ export default {
   },
 };
 ```
+
+  ## Rendering
+  ### Methods
+  #### renderSprite(image, x, y)
