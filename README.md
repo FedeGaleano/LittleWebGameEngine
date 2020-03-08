@@ -43,6 +43,6 @@ export default {
   }
    ```
   
-  ### GameplayGraphics renderer methods
+  ### GameplayGraphics.renderer methods
   #### renderBitmap(bitmap, x, y)
   Will interpret the bitmap as pixel art and render its data according to the current pixel scale
