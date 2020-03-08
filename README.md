@@ -2,7 +2,8 @@
 
 ## Scene class
 ```javascript
-export default ExampleScene {
+// Example export of a scene object
+export default {
   // GameLoop-level Methods
   init() {
   },
