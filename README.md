@@ -14,6 +14,10 @@ export default {
   
   // Input Reaction
   pressed: {
+    /* each method has the name of the 'code' property of the event
+     that will be binded to it, like 'KeyD, 'AltLeft', 'Space', etc */
+     Space() {
+     }
   },
   released: {
   },
