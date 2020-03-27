@@ -5,6 +5,9 @@ const resourceLoadingData = [
   { path: 'rotate.png', resourceName: 'rotationImage' },
   { path: 'TRY_01.png', resourceName: 'tryImage' },
   { path: 'engine-demo.png', resourceName: 'demo' },
+  { path: 'engine-demo-2-background.png', resourceName: 'background' },
+  { path: 'engine-demo-2-stars.png', resourceName: 'stars' },
+  { path: 'engine-demo-2-tile.png', resourceName: 'tile' },
 ];
 
 const resources = {};

@@ -17,7 +17,7 @@ const GameplayGraphics = {
     // );
     // GameplayGraphics.scale = minScale;
 
-    GameplayGraphics.scale = Math.floor(GameplayGraphics.canvasHeight / 100);
+    GameplayGraphics.scale = Math.floor(GameplayGraphics.canvasHeight / 200);
     GameplayGraphics.scale = Math.min(
       Math.floor(GameplayGraphics.canvasWidth / 100), GameplayGraphics.scale,
     );
@@ -42,14 +42,14 @@ const GameplayGraphics = {
       renderingContext2D.lineTo(xb * scale, yb * scale);
       renderingContext2D.stroke();
     },
-    renderBitmap(image, x, y) {
+    renderBitmap(image, x, y, w, h) {
       const { renderingContext2D, scale } = GameplayGraphics;
       renderingContext2D.drawImage(
         image,
         x * scale,
         y * scale,
-        image.width * scale,
-        image.height * scale,
+        (w || image.width) * scale,
+        (h || image.height) * scale,
       );
     },
     renderFullRectangle(x, y, w, h) {
