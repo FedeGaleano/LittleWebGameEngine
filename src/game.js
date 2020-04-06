@@ -82,6 +82,15 @@ export default {
 
     demoWorld.render(camera);
     character.render(camera);
+
+    GameplayGraphics.renderer.fillStyle = 'white';
+    GameplayGraphics.renderer.renderFullRectangle(character.x + 14 - camera.x, character.y - 30 - camera.y, 100, 30);
+    // GameplayGraphics.renderer.renderBitmap(resources.font, 120 + 2, 5 + 2);
+    // GameplayGraphics.renderer.renderLetter('1', 120 + 2, 5 + 2, resources.font);
+    // GameplayGraphics.renderer.renderString(`count: ${count}`, 120 + 2, 5 + 2, resources.font);
+    GameplayGraphics.renderer.renderString('preparanding'.substring(0, count / 5), character.x + 14 + 2 - camera.x, character.y - 30 - camera.y + 2, resources.font);
+    GameplayGraphics.renderer.renderString('la demo'.substring(0, (count / 5) - 'preparanding'.length),
+      character.x + 14 + 2 - camera.x, character.y - 30 - camera.y + 6 + 2 + 2, resources.font);
   },
   pressed: {
   },

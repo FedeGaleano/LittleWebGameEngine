@@ -21,7 +21,8 @@ const GameplayGraphics = {
     GameplayGraphics.scale = Math.min(
       Math.floor(GameplayGraphics.canvasWidth / 100), GameplayGraphics.scale,
     );
-    GameplayGraphics.scale = 6;
+    GameplayGraphics.scale = Math.round(GameplayGraphics.scale * 1.5);
+    // GameplayGraphics.scale = 6;
 
     // GameplayGraphics.scale = 8;
   },
@@ -56,6 +57,22 @@ const GameplayGraphics = {
     renderFullRectangle(x, y, w, h) {
       const { renderingContext2D, scale } = GameplayGraphics;
       renderingContext2D.fillRect(x * scale, y * scale, w * scale, h * scale);
+    },
+    renderLetter(letter, x, y, font) {
+      const index = 'abcdefghijklmnopqrstuvwxyz123456789'.indexOf(letter);
+      const { renderingContext2D, scale } = GameplayGraphics;
+      renderingContext2D.drawImage(
+        font,
+        index * 6, 0,
+        5, 5,
+        x * scale, y * scale,
+        5 * scale, 5 * scale,
+      );
+    },
+    renderString(string, x, y, font) {
+      for (const index in string) {
+        GameplayGraphics.renderer.renderLetter(string[index], x + index * 6, y, font);
+      }
     },
     clearScreen() {
       const { renderingContext2D, canvasWidth, canvasHeight } = GameplayGraphics;
