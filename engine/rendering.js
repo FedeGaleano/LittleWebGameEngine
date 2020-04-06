@@ -21,6 +21,7 @@ const GameplayGraphics = {
     GameplayGraphics.scale = Math.min(
       Math.floor(GameplayGraphics.canvasWidth / 100), GameplayGraphics.scale,
     );
+    GameplayGraphics.scale = 6;
 
     // GameplayGraphics.scale = 8;
   },
@@ -110,7 +111,13 @@ function adjustRenderingContext(graphics) {
   graphics.canvasHeight = graphics.canvas.height;
 
   graphics.rescale();
-  if (graphics.scale % 2 !== 0) { graphics.renderingContext2D.translate(0.5, 0.5); }
+
+  if (graphics.canvas.width % 2 !== 0) {
+    graphics.renderingContext2D.translate(0.5, 0);
+  }
+  if (graphics.canvas.height % 2 !== 0) {
+    graphics.renderingContext2D.translate(0, 0.5);
+  }
 
   graphics.screen.width = graphics.canvasWidth / graphics.scale;
   graphics.screen.height = graphics.canvasHeight / graphics.scale;

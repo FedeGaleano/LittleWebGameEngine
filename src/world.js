@@ -55,11 +55,23 @@ const exampleTileMap4 = {
   ],
 };
 
+const demoTileMap = {
+  scanline: 7,
+  data: [
+    1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1,
+  ],
+};
+
 const exampleTileMapList = [
   exampleTileMap,
   exampleTileMap2,
   exampleTileMap3,
   exampleTileMap4,
+];
+
+const demoTileMapList = [
+  demoTileMap,
 ];
 
 class Zone {
@@ -99,6 +111,7 @@ const exampleWorld = new World(exampleTileMapList, [0, resources.tile], 200);
 
 export {
   exampleTileMapList,
+  demoTileMapList,
   Zone,
   World,
 };

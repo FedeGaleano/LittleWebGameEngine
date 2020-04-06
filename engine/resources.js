@@ -8,6 +8,7 @@ const resourceLoadingData = [
   { path: 'engine-demo-2-background.png', resourceName: 'background' },
   { path: 'engine-demo-2-stars.png', resourceName: 'stars' },
   { path: 'engine-demo-2-tile.png', resourceName: 'tile' },
+  { path: 'engine-demo-2-character.png', resourceName: 'character' },
 ];
 
 const resources = {};

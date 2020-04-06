@@ -2,7 +2,8 @@ import { GameplayGraphics } from '../engine/rendering.js';
 import Sprite from '../engine/sprite.js';
 import { resources } from '../engine/resources.js';
 import FexDebug from '../engine/debug.js';
-import { World, exampleTileMapList } from './world.js';
+import { World, exampleTileMapList, demoTileMapList } from './world.js';
+import Entity from '../engine/entity.js';
 
 const ArrayNewFunctionalities = {
   removeIf(condition) {
@@ -34,17 +35,29 @@ window.addEventListener('resize', initialState);
 const camera = { x: 0, y: 0 };
 
 let sprite = null;
-let exampleWorld = null;
+let character = null;
+// let exampleWorld = null;
+let demoWorld = null;
+const numberOfTilesInTheFloorX = 7;
+const numberOfTilesInTheFloorY = 1;
 
 export default {
   init() {
     initialState();
-    sprite = new Sprite(resources.demo, 2, [15, 15], GameplayGraphics);
-    exampleWorld = new World(exampleTileMapList, [0, resources.tile]);
+    sprite = new Sprite(resources.character, 1, [1], GameplayGraphics);
+    character = new Entity(sprite, GameplayGraphics.tileSize.w * 3, -sprite.height);
+    // exampleWorld = new World(exampleTileMapList, [0, resources.tile], 10, 50);
+    demoWorld = new World(
+      demoTileMapList,
+      [0, resources.tile], 0, 0,
+    );
   },
   update() {
     ++count;
-    sprite.update();
+    // sprite.update();
+    character.update();
+    camera.x = -(screen.width / 2 - (numberOfTilesInTheFloorX / 2) * GameplayGraphics.tileSize.w);
+    camera.y = -(screen.height / 2 - (numberOfTilesInTheFloorY / 2) * GameplayGraphics.tileSize.h);
   },
   render() {
     renderer.clearScreen();
@@ -58,6 +71,7 @@ export default {
     // Render stars
     const xTimes = Math.ceil(screen.width / resources.stars.width);
     const yTimes = Math.ceil(screen.height / resources.stars.height);
+
     for (let j = 0; j < yTimes; ++j) {
       for (let i = 0; i < xTimes; ++i) {
         GameplayGraphics.renderer.renderBitmap(
@@ -66,17 +80,8 @@ export default {
       }
     }
 
-    // Render Tiles
-    exampleWorld.render({ x: 0, y: 0 });
-
-    // for (let i = 0; i < 1000; ++i) {
-    //   FexDebug.log('lolazo');
-    // }
-
-    // const centeredSpriteCoordinates = [
-    //   (screen.width - sprite.width) / 2, (screen.height - sprite.height) / 2,
-    // ];
-    // sprite.render(...centeredSpriteCoordinates);
+    demoWorld.render(camera);
+    character.render(camera);
   },
   pressed: {
   },
