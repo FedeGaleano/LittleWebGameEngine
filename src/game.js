@@ -38,18 +38,32 @@ const camera = { x: 0, y: 0 };
 
 let sprite = null;
 let character = null;
-let dialog = null;
+let dialogs = null;
+let dialogIndex;
+const dialog = null;
 // let exampleWorld = null;
 let demoWorld = null;
 const numberOfTilesInTheFloorX = 7;
 const numberOfTilesInTheFloorY = 1;
+
+function changeDialog() {
+  dialogIndex = (dialogIndex + 1) % 3;
+  dialogs[dialogIndex].count = 0;
+}
 
 export default {
   init() {
     initialState();
     sprite = new Sprite(resources.character, 1, [1], GameplayGraphics);
     character = new Entity(sprite, GameplayGraphics.tileSize.w * 3, -sprite.height);
-    dialog = new Dialog(character.x + 14, character.y, ['bida', 'lolazo', 'de una', 'xd'], 0.15);
+    const dialogPoint = { x: character.x + 14, y: character.y };
+    const dialogSpeed = 0.15;
+    dialogIndex = 0;
+    dialogs = [
+      new Dialog(dialogPoint.x, dialogPoint.y, ['este es', 'un dialogo'], dialogSpeed),
+      new Dialog(dialogPoint.x, dialogPoint.y, ['este es', 'otro', 'dialogo'], dialogSpeed),
+      new Dialog(dialogPoint.x, dialogPoint.y, ['y bueno', 'aca hay otro mas', 'xd'], dialogSpeed),
+    ];
     // exampleWorld = new World(exampleTileMapList, [0, resources.tile], 10, 50);
     demoWorld = new World(
       demoTileMapList,
@@ -62,7 +76,7 @@ export default {
     character.update();
     camera.x = -(screen.width / 2 - (numberOfTilesInTheFloorX / 2) * GameplayGraphics.tileSize.w);
     camera.y = -(screen.height / 2 - (numberOfTilesInTheFloorY / 2) * GameplayGraphics.tileSize.h);
-    dialog.update();
+    dialogs[dialogIndex].update();
   },
   render() {
     renderer.clearScreen();
@@ -87,21 +101,7 @@ export default {
 
     demoWorld.render(camera);
     character.render(camera);
-
-    // GameplayGraphics.renderer.fillStyle = 'white';
-    // GameplayGraphics.renderer.renderFullRectangle(character.x + 14 - camera.x, character.y - 30 - camera.y, 100, 30);
-
-    // GameplayGraphics.renderer.renderBitmap(resources.wordBubble, character.x + 14 - camera.x, character.y - 30 - camera.y);
-
-    // const point = { x: character.x + 14, y: character.y - 30 };
-    // GameplayGraphics.renderer.renderSubBitmap(resources.wordBubbleParts, point.x - camera.x, point.y - camera.y, 0, 0, 3, 3);
-    // GameplayGraphics.renderer.renderSubBitmap(resources.wordBubbleParts, point.x + 4 - camera.x, point.y - camera.y, 3, 0, 3, 3);
-    // bubble.render(camera);
-    dialog.render(camera);
-
-    // GameplayGraphics.renderer.renderString('hola'.substring(0, count / 5), character.x + 14 + 3 - camera.x, character.y - 30 - camera.y + 3, resources.font);
-    // GameplayGraphics.renderer.renderString('mundo'.substring(0, (count / 5) - 'hola'.length),
-    //   character.x + 14 + 3 - camera.x, character.y - 30 - camera.y + 6 + 3 + 2, resources.font);
+    dialogs[dialogIndex].render(camera);
   },
   pressed: {
   },
@@ -110,6 +110,12 @@ export default {
   fired: {
     KeyD() {
       showGrid = !showGrid;
+    },
+    KeyK() {
+      changeDialog();
+    },
+    ScreenTouch() {
+      changeDialog();
     },
   },
 };
