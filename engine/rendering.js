@@ -54,6 +54,15 @@ const GameplayGraphics = {
         (h || image.height) * scale,
       );
     },
+    renderSubBitmap(image, x, y, sx, sy, sw, sh, w, h) {
+      const { renderingContext2D, scale } = GameplayGraphics;
+      renderingContext2D.drawImage(
+        image, sx, sy, sw, sh,
+        x * scale, y * scale,
+        (w || sw) * scale,
+        (h || sh) * scale,
+      );
+    },
     renderFullRectangle(x, y, w, h) {
       const { renderingContext2D, scale } = GameplayGraphics;
       renderingContext2D.fillRect(x * scale, y * scale, w * scale, h * scale);
@@ -70,7 +79,7 @@ const GameplayGraphics = {
       );
     },
     renderString(string, x, y, font) {
-      for (const index in string) {
+      for (let index = 0; index < string.length; index++) {
         GameplayGraphics.renderer.renderLetter(string[index], x + index * 6, y, font);
       }
     },

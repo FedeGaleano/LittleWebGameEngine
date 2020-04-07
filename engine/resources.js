@@ -10,6 +10,8 @@ const resourceLoadingData = [
   { path: 'engine-demo-2-tile.png', resourceName: 'tile' },
   { path: 'engine-demo-2-character.png', resourceName: 'character' },
   { path: 'engine-demo-font.png', resourceName: 'font' },
+  { path: 'engine-demo-word-bubble.png', resourceName: 'wordBubble' },
+  { path: 'engine-demo-word-bubble-parts.png', resourceName: 'wordBubbleParts' },
 ];
 
 const resources = {};
