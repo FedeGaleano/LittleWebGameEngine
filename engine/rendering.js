@@ -56,32 +56,13 @@ const GameplayGraphics = {
         (h || image.height) * scale,
       );
     },
-    renderSubBitmap(image, x, y, sx, sy, sw, sh, w, h, debug) {
+    renderSubBitmap(image, x, y, sx, sy, sw, sh, w, h) {
       const { renderingContext2D, scale } = GameplayGraphics;
-
-      const params = [
+      renderingContext2D.drawImage(
         image, sx, sy, sw - 0.05, sh - 0.05,
         x * scale, y * scale,
         (w || sw) * scale,
         (h || sh) * scale,
-      ];
-
-      // if (debug) {
-      //   FexDebug.log('renderSubBitmap: ', {
-      //     image,
-      //     sx,
-      //     sy,
-      //     sw,
-      //     sh,
-      //     'x * scale': x * scale,
-      //     'y * scale': y * scale,
-      //     '(w || sw) * scale': (w || sw) * scale,
-      //     '(h || sh) * scale': (h || sh) * scale,
-      //   });
-      // }
-
-      renderingContext2D.drawImage(
-        ...params,
       );
     },
     renderFullRectangle(x, y, w, h) {

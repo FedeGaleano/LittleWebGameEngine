@@ -6,6 +6,7 @@ import { World, exampleTileMapList, demoTileMapList } from './world.js';
 import Entity from '../engine/entity.js';
 import WordBubble from '../engine/wordBubble.js';
 import Dialog from '../engine/dialog.js';
+import Speech from '../engine/speech.js';
 
 const ArrayNewFunctionalities = {
   removeIf(condition) {
@@ -38,18 +39,11 @@ const camera = { x: 0, y: 0 };
 
 let sprite = null;
 let character = null;
-let dialogs = null;
-let dialogIndex;
-const dialog = null;
+let speech = null;
 // let exampleWorld = null;
 let demoWorld = null;
 const numberOfTilesInTheFloorX = 7;
 const numberOfTilesInTheFloorY = 1;
-
-function changeDialog() {
-  dialogIndex = (dialogIndex + 1) % 3;
-  dialogs[dialogIndex].count = 0;
-}
 
 export default {
   init() {
@@ -58,12 +52,12 @@ export default {
     character = new Entity(sprite, GameplayGraphics.tileSize.w * 3, -sprite.height);
     const dialogPoint = { x: character.x + 14, y: character.y };
     const dialogSpeed = 0.15;
-    dialogIndex = 0;
-    dialogs = [
-      new Dialog(dialogPoint.x, dialogPoint.y, ['este es', 'un', 'dialogo'], dialogSpeed),
-      new Dialog(dialogPoint.x, dialogPoint.y, ['este es', 'otro', '(dialogo)'], dialogSpeed),
-      new Dialog(dialogPoint.x, dialogPoint.y, ['y bueno', 'aca hay otro mas', 'xd'], dialogSpeed),
-    ];
+    speech = new Speech(dialogPoint.x, dialogPoint.y, [
+      ['este es', 'un', 'dialogo'],
+      ['este es', 'un segundo', 'dialogo'],
+      ['y por ultimo aqui', 'tenemos otro dialogo', 'mas xd'],
+    ], dialogSpeed);
+
     // exampleWorld = new World(exampleTileMapList, [0, resources.tile], 10, 50);
     demoWorld = new World(
       demoTileMapList,
@@ -75,7 +69,7 @@ export default {
     character.update();
     camera.x = -(screen.width / 2 - (numberOfTilesInTheFloorX / 2) * GameplayGraphics.tileSize.w);
     camera.y = -(screen.height / 2 - (numberOfTilesInTheFloorY / 2) * GameplayGraphics.tileSize.h);
-    dialogs[dialogIndex].update();
+    speech.update();
   },
   render() {
     renderer.clearScreen();
@@ -100,7 +94,7 @@ export default {
 
     demoWorld.render(camera);
     character.render(camera);
-    dialogs[dialogIndex].render(camera);
+    speech.render(camera);
   },
   pressed: {
   },
@@ -111,10 +105,10 @@ export default {
       showGrid = !showGrid;
     },
     KeyK() {
-      changeDialog();
+      speech.next();
     },
     ScreenTouch() {
-      changeDialog();
+      speech.next();
     },
   },
 };
