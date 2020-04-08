@@ -12,6 +12,7 @@ const resourceLoadingData = [
   { path: 'engine-demo-font.png', resourceName: 'font' },
   { path: 'engine-demo-word-bubble.png', resourceName: 'wordBubble' },
   { path: 'engine-demo-word-bubble-parts.png', resourceName: 'wordBubbleParts' },
+  { path: 'fill.png', resourceName: 'fill' },
 ];
 
 const resources = {};

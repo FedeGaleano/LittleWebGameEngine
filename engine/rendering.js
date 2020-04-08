@@ -1,3 +1,5 @@
+import FexDebug from './debug.js';
+
 const GameplayGraphics = {
   canvas: document.createElement('canvas'),
   renderingContext2D: null,
@@ -54,13 +56,32 @@ const GameplayGraphics = {
         (h || image.height) * scale,
       );
     },
-    renderSubBitmap(image, x, y, sx, sy, sw, sh, w, h) {
+    renderSubBitmap(image, x, y, sx, sy, sw, sh, w, h, debug) {
       const { renderingContext2D, scale } = GameplayGraphics;
-      renderingContext2D.drawImage(
-        image, sx, sy, sw, sh,
+
+      const params = [
+        image, sx, sy, sw - 0.05, sh - 0.05,
         x * scale, y * scale,
         (w || sw) * scale,
         (h || sh) * scale,
+      ];
+
+      // if (debug) {
+      //   FexDebug.log('renderSubBitmap: ', {
+      //     image,
+      //     sx,
+      //     sy,
+      //     sw,
+      //     sh,
+      //     'x * scale': x * scale,
+      //     'y * scale': y * scale,
+      //     '(w || sw) * scale': (w || sw) * scale,
+      //     '(h || sh) * scale': (h || sh) * scale,
+      //   });
+      // }
+
+      renderingContext2D.drawImage(
+        ...params,
       );
     },
     renderFullRectangle(x, y, w, h) {
@@ -68,7 +89,7 @@ const GameplayGraphics = {
       renderingContext2D.fillRect(x * scale, y * scale, w * scale, h * scale);
     },
     renderLetter(letter, x, y, font) {
-      const index = 'abcdefghijklmnopqrstuvwxyz123456789'.indexOf(letter);
+      const index = 'abcdefghijklmnopqrstuvwxyz1234567890:,()'.indexOf(letter);
       const { renderingContext2D, scale } = GameplayGraphics;
       renderingContext2D.drawImage(
         font,

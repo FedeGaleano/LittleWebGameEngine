@@ -60,8 +60,8 @@ export default {
     const dialogSpeed = 0.15;
     dialogIndex = 0;
     dialogs = [
-      new Dialog(dialogPoint.x, dialogPoint.y, ['este es', 'un dialogo'], dialogSpeed),
-      new Dialog(dialogPoint.x, dialogPoint.y, ['este es', 'otro', 'dialogo'], dialogSpeed),
+      new Dialog(dialogPoint.x, dialogPoint.y, ['este es', 'un', 'dialogo'], dialogSpeed),
+      new Dialog(dialogPoint.x, dialogPoint.y, ['este es', 'otro', '(dialogo)'], dialogSpeed),
       new Dialog(dialogPoint.x, dialogPoint.y, ['y bueno', 'aca hay otro mas', 'xd'], dialogSpeed),
     ];
     // exampleWorld = new World(exampleTileMapList, [0, resources.tile], 10, 50);
@@ -72,7 +72,6 @@ export default {
   },
   update() {
     ++count;
-    // sprite.update();
     character.update();
     camera.x = -(screen.width / 2 - (numberOfTilesInTheFloorX / 2) * GameplayGraphics.tileSize.w);
     camera.y = -(screen.height / 2 - (numberOfTilesInTheFloorY / 2) * GameplayGraphics.tileSize.h);
