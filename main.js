@@ -118,6 +118,16 @@ function renderCanvasSize(graphics) {
   renderingContext2D.fillStyle = prevColor;
 }
 
+function renderOrientarion(graphics) {
+  const { renderingContext2D, canvasHeight, canvasWidth } = graphics;
+  const prevColor = renderingContext2D.fillStyle;
+  renderingContext2D.fillStyle = 'yellow';
+  const fontSize = 18;
+  renderingContext2D.font = `bold ${fontSize}px arial`;
+  renderingContext2D.fillText(`orientation: ${window.screen.orientation.type}`, 10, canvasHeight - (10 + fontSize * 5 + 4), 260);
+  renderingContext2D.fillStyle = prevColor;
+}
+
 export default function run() {
   let frameCount = 0;
   let fps = 0;
@@ -150,6 +160,7 @@ export default function run() {
       renderFrameRate(fps, AskForRotationGraphics);
       renderScale(AskForRotationGraphics);
       renderCanvasSize(AskForRotationGraphics);
+      renderOrientarion(AskForRotationGraphics);
     } else {
       GameplayGraphics.canvas.style.display = 'inline';
       AskForRotationGraphics.canvas.style.display = 'none';
@@ -161,6 +172,7 @@ export default function run() {
       renderFrameRate(fps, GameplayGraphics);
       renderScale(GameplayGraphics);
       renderCanvasSize(GameplayGraphics);
+      renderOrientarion(GameplayGraphics);
     }
 
     window.requestAnimationFrame(loop);
