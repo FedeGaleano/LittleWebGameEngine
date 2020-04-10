@@ -53,7 +53,6 @@ document.addEventListener('fullscreenchange', reactToFullscreenChange);
 const isPressed = {};
 const isFired = {};
 const isReleased = {};
-const isTouching = false;
 
 const scene = game;
 
@@ -133,6 +132,62 @@ export default function run() {
   let fps = 0;
   let lastTime = 0;
 
+  function askForRotationLoop() {
+    GameplayGraphics.canvas.style.display = 'none';
+    AskForRotationGraphics.canvas.style.display = 'inline';
+
+    if (rotationSprite === null) {
+      rotationSprite = new Sprite(
+        resources.rotationImage, 4, [10, 10, 10, 20], AskForRotationGraphics,
+      );
+    }
+    AskForRotationGraphics.renderer.clearScreen();
+    rotationSprite.update();
+    rotationSprite.render(
+      (screen.width - rotationSprite.frameWidth) / 2,
+      (screen.height - rotationSprite.frameHeight) / 2,
+    );
+
+    renderFrameRate(fps, AskForRotationGraphics);
+    renderScale(AskForRotationGraphics);
+    renderCanvasSize(AskForRotationGraphics);
+    renderOrientarion(AskForRotationGraphics);
+  }
+
+  function gameLoop() {
+    GameplayGraphics.canvas.style.display = 'inline';
+    AskForRotationGraphics.canvas.style.display = 'none';
+
+    handleInput();
+    scene.update();
+    scene.render();
+
+    renderFrameRate(fps, GameplayGraphics);
+    renderScale(GameplayGraphics);
+    renderCanvasSize(GameplayGraphics);
+    renderOrientarion(GameplayGraphics);
+  }
+
+  let loopManager = () => { throw new Error('Loop manager called before first assignment'); };
+
+  function clearInput(input) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const key in input) {
+      // eslint-disable-next-line no-prototype-builtins
+      if (input.hasOwnProperty(key)) {
+        input[key] = false;
+      }
+    }
+  }
+
+  function chooseLoopManager() {
+    clearInput(isFired);
+    clearInput(isPressed);
+    clearInput(isReleased);
+    FexDebug.log(`input clean, current orientation: ${window.screen.orientation.type}`);
+    loopManager = /^portrait/i.test(window.screen.orientation.type) ? askForRotationLoop : gameLoop;
+  }
+
   function loop(now) {
     ++frameCount;
     if (now - lastTime > 1000) {
@@ -141,39 +196,7 @@ export default function run() {
       lastTime += 1000;
     }
 
-    if (/^portrait/i.test(window.screen.orientation.type)) {
-      GameplayGraphics.canvas.style.display = 'none';
-      AskForRotationGraphics.canvas.style.display = 'inline';
-
-      if (rotationSprite === null) {
-        rotationSprite = new Sprite(
-          resources.rotationImage, 4, [10, 10, 10, 20], AskForRotationGraphics,
-        );
-      }
-      AskForRotationGraphics.renderer.clearScreen();
-      rotationSprite.update();
-      rotationSprite.render(
-        (screen.width - rotationSprite.frameWidth) / 2,
-        (screen.height - rotationSprite.frameHeight) / 2,
-      );
-
-      renderFrameRate(fps, AskForRotationGraphics);
-      renderScale(AskForRotationGraphics);
-      renderCanvasSize(AskForRotationGraphics);
-      renderOrientarion(AskForRotationGraphics);
-    } else {
-      GameplayGraphics.canvas.style.display = 'inline';
-      AskForRotationGraphics.canvas.style.display = 'none';
-
-      handleInput();
-      scene.update();
-      scene.render();
-
-      renderFrameRate(fps, GameplayGraphics);
-      renderScale(GameplayGraphics);
-      renderCanvasSize(GameplayGraphics);
-      renderOrientarion(GameplayGraphics);
-    }
+    loopManager();
 
     window.requestAnimationFrame(loop);
   }
@@ -181,6 +204,7 @@ export default function run() {
   function start() {
     loadResources().then(() => {
       tryToExecute(scene.init);
+      chooseLoopManager();
       loop();
     });
   }
@@ -209,6 +233,8 @@ export default function run() {
     isPressed.ScreenTouch = false;
     isReleased.ScreenTouch = true;
   });
+
+  window.addEventListener('orientationchange', chooseLoopManager);
 
   window.onload = start;
 }
