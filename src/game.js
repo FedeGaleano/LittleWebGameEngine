@@ -45,9 +45,12 @@ let demoWorld = null;
 const numberOfTilesInTheFloorX = 7;
 const numberOfTilesInTheFloorY = 1;
 
-export default {
+let pause = false;
+
+const game = {
   init() {
     initialState();
+    game.normalInput();
     sprite = new Sprite(resources.character, 1, [1], GameplayGraphics);
     character = new Entity(sprite, GameplayGraphics.tileSize.w * 3, -sprite.height);
     const dialogPoint = { x: character.x + 14, y: character.y };
@@ -107,20 +110,46 @@ export default {
     demoWorld.render(camera);
     character.render(camera);
     speech.render(camera);
+    if (pause) {
+      GameplayGraphics.renderingContext2D.globalAlpha = 0.75;
+      GameplayGraphics.renderer.fillStyle = 'black';
+      GameplayGraphics.renderer.renderFullRectangle(0, 0, screen.width, screen.height);
+      GameplayGraphics.renderingContext2D.globalAlpha = 1;
+      GameplayGraphics.renderer.renderString('pause', (screen.width / 2), screen.height / 2 - 2.5, resources.font);
+    }
   },
-  pressed: {
+  onFocusLost() {
+    pause = true;
+    game.fired = {
+      KeyP() {
+        game.normalInput();
+        pause = false;
+      },
+      KeyD() {
+
+      },
+      KeyK() {
+
+      },
+      ScreenTouch() {
+        game.normalInput();
+        pause = false;
+      },
+    };
   },
-  released: {
-  },
-  fired: {
-    KeyD() {
-      showGrid = !showGrid;
-    },
-    KeyK() {
-      speech.next();
-    },
-    ScreenTouch() {
-      speech.next();
-    },
+  normalInput() {
+    game.fired = {
+      KeyD() {
+        showGrid = !showGrid;
+      },
+      KeyK() {
+        speech.next();
+      },
+      ScreenTouch() {
+        speech.next();
+      },
+    };
   },
 };
+
+export default game;

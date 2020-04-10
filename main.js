@@ -133,9 +133,6 @@ export default function run() {
   let lastTime = 0;
 
   function askForRotationLoop() {
-    GameplayGraphics.canvas.style.display = 'none';
-    AskForRotationGraphics.canvas.style.display = 'inline';
-
     if (rotationSprite === null) {
       rotationSprite = new Sprite(
         resources.rotationImage, 4, [10, 10, 10, 20], AskForRotationGraphics,
@@ -155,9 +152,6 @@ export default function run() {
   }
 
   function gameLoop() {
-    GameplayGraphics.canvas.style.display = 'inline';
-    AskForRotationGraphics.canvas.style.display = 'none';
-
     handleInput();
     scene.update();
     scene.render();
@@ -188,7 +182,17 @@ export default function run() {
 
   function chooseLoopManager() {
     clearInput();
-    loopManager = /^portrait/i.test(window.screen.orientation.type) ? askForRotationLoop : gameLoop;
+    if (/^portrait/i.test(window.screen.orientation.type)) {
+      GameplayGraphics.canvas.style.display = 'none';
+      AskForRotationGraphics.canvas.style.display = 'inline';
+      loopManager = askForRotationLoop;
+      tryToExecute(scene.onFocusLost);
+    } else {
+      GameplayGraphics.canvas.style.display = 'inline';
+      AskForRotationGraphics.canvas.style.display = 'none';
+      loopManager = gameLoop;
+      tryToExecute(scene.onFocusRecovered);
+    }
   }
 
   function loop(now) {
