@@ -7,11 +7,16 @@ class WordBubble {
     this.y = y;
     this.width = width;
     this.height = height;
+    this.opening = 1;
   }
 
   render(camera) {
     const point = { x: this.x - camera.x, y: this.y - camera.y };
-    const { width, height } = this;
+
+    // const { width, height } = this;
+    const width = this.width * this.opening;
+    const height = this.height * this.opening;
+
     const marginX = 3;
     const marginY = 3;
     const needleHeight = 6;
@@ -54,6 +59,8 @@ class WordBubble {
     const Q = { x: A.x, y: M.y + needleHeight };
 
 
+    GameplayGraphics.renderingContext2D.globalAlpha = this.opening ** 4;
+
     // Top Left Corner
     GameplayGraphics.renderer.renderSubBitmap(
       resources.wordBubbleParts, A.x, A.y, 0, 0, marginX, marginY,
@@ -73,25 +80,27 @@ class WordBubble {
 
     // Top Edge
     GameplayGraphics.renderer.renderSubBitmap(
-      resources.wordBubbleParts, B.x, B.y, 3 * 6, 0, 1, marginY, this.width, 3, true,
+      resources.wordBubbleParts, B.x, B.y, 3 * 6, 0, 1, marginY, width, 3,
     );
     // Bottom Edge
     GameplayGraphics.renderer.renderSubBitmap(
-      resources.wordBubbleParts, J.x, J.y, 3 * 7, 0, 1, marginY, this.width, marginY,
+      resources.wordBubbleParts, J.x, J.y, 3 * 7, 0, 1, marginY, width, marginY,
     );
     // Left Edge
     GameplayGraphics.renderer.renderSubBitmap(
-      resources.wordBubbleParts, E.x, E.y, 3 * 4, 0, marginX, 1, marginX, this.height,
+      resources.wordBubbleParts, E.x, E.y, 3 * 4, 0, marginX, 1, marginX, height,
     );
     // Right Edge
     GameplayGraphics.renderer.renderSubBitmap(
-      resources.wordBubbleParts, G.x, G.y, 3 * 5, 0, marginX, 1, marginX, this.height,
+      resources.wordBubbleParts, G.x, G.y, 3 * 5, 0, marginX, 1, marginX, height,
     );
 
     // Fill
     GameplayGraphics.renderer.renderSubBitmap(
-      resources.wordBubbleParts, F.x, F.y, 3 * 8, 0, 1, 1, this.width, this.height,
+      resources.wordBubbleParts, F.x, F.y, 3 * 8, 0, 1, 1, width, height,
     );
+
+    GameplayGraphics.renderingContext2D.globalAlpha = 1;
   }
 }
 

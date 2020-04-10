@@ -3,7 +3,10 @@ import Dialog from './dialog.js';
 class Speech {
   constructor(bottomLeftCornerX, bottomLeftCornerY, listOfTextLines, textSpeed) {
     this.dialogs = listOfTextLines.map(
-      textLines => new Dialog(bottomLeftCornerX, bottomLeftCornerY, textLines, textSpeed),
+      (textLines, i) => new Dialog(
+        bottomLeftCornerX, bottomLeftCornerY, textLines, textSpeed,
+        ({ open: i === 0, close: i === listOfTextLines.length - 1 }),
+      ),
     );
     this.currentDialog = -1;
     this.updateBehaviour = () => {};

@@ -28,7 +28,7 @@ class Sprite {
     graphics.renderingContext2D.drawImage(
       image,
       // SubRectangle
-      frameWidth * currentFrame, 0, frameWidth, image.height,
+      frameWidth * currentFrame, 0, frameWidth - 0.05, image.height - 0.05,
       // Destiny Canvas
       x * graphics.scale, y * graphics.scale,
       frameWidth * graphics.scale, image.height * graphics.scale,

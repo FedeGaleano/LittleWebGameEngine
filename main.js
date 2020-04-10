@@ -3,6 +3,7 @@ import game from './src/game.js';
 import { loadResources, resources } from './engine/resources.js';
 import { GameplayGraphics, AskForRotationGraphics } from './engine/rendering.js';
 import Sprite from './engine/sprite.js';
+import FexDebug from './engine/debug.js';
 
 const { screen } = AskForRotationGraphics;
 const fullScreenButton = document.getElementById('fullScreenButton');
@@ -130,29 +131,38 @@ export default function run() {
       lastTime += 1000;
     }
 
-    if (rotationSprite === null) {
-      rotationSprite = new Sprite(
-        resources.rotationImage, 4, [10, 10, 10, 20], AskForRotationGraphics,
+    if (/^portrait/i.test(window.screen.orientation.type)) {
+      GameplayGraphics.canvas.style.display = 'none';
+      AskForRotationGraphics.canvas.style.display = 'inline';
+
+      if (rotationSprite === null) {
+        rotationSprite = new Sprite(
+          resources.rotationImage, 4, [10, 10, 10, 20], AskForRotationGraphics,
+        );
+      }
+      AskForRotationGraphics.renderer.clearScreen();
+      rotationSprite.update();
+      rotationSprite.render(
+        (screen.width - rotationSprite.frameWidth) / 2,
+        (screen.height - rotationSprite.frameHeight) / 2,
       );
+
+      renderFrameRate(fps, AskForRotationGraphics);
+      renderScale(AskForRotationGraphics);
+      renderCanvasSize(AskForRotationGraphics);
+    } else {
+      GameplayGraphics.canvas.style.display = 'inline';
+      AskForRotationGraphics.canvas.style.display = 'none';
+
+      handleInput();
+      scene.update();
+      scene.render();
+
+      renderFrameRate(fps, GameplayGraphics);
+      renderScale(GameplayGraphics);
+      renderCanvasSize(GameplayGraphics);
     }
 
-    handleInput();
-    scene.update();
-    scene.render();
-
-    AskForRotationGraphics.renderer.clearScreen();
-    rotationSprite.update();
-    rotationSprite.render(
-      (screen.width - rotationSprite.frameWidth) / 2,
-      (screen.height - rotationSprite.frameHeight) / 2,
-    );
-
-    renderFrameRate(fps, GameplayGraphics);
-    renderScale(GameplayGraphics);
-    renderCanvasSize(GameplayGraphics);
-    renderFrameRate(fps, AskForRotationGraphics);
-    renderScale(AskForRotationGraphics);
-    renderCanvasSize(AskForRotationGraphics);
     window.requestAnimationFrame(loop);
   }
 

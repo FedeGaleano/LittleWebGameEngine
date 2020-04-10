@@ -3,7 +3,7 @@ import { GameplayGraphics } from './rendering.js';
 import { resources } from './resources.js';
 
 class Dialog {
-  constructor(bottomLeftCornerX, bottomLeftCornerY, textLines, textSpeed) {
+  constructor(bottomLeftCornerX, bottomLeftCornerY, textLines, textSpeed, options) {
     this.bottomLeftCornerX = bottomLeftCornerX;
     this.bottomLeftCornerY = bottomLeftCornerY;
     this.x = bottomLeftCornerX;
@@ -25,16 +25,45 @@ class Dialog {
       }
     }
     this.accumulatedLengths = accumulatedLengths;
+    this.options = options;
+
+    if (options.open) {
+      this.opening = 0;
+      this.updateBehaviour = () => this.openingUpdate();
+      this.renderBehaviour = camera => this.openingRender(camera);
+    } else {
+      this.opening = 1;
+      this.renderBehaviour = camera => this.normalRender(camera);
+      this.updateBehaviour = () => this.normalUpdate();
+    }
   }
 
   update() {
+    this.updateBehaviour();
+  }
+
+  render(camera) {
+    this.renderBehaviour(camera);
+  }
+
+  normalUpdate() {
     if (this.cursor < this.dialogLength) {
       this.count++;
       this.cursor = Math.floor(this.count * this.textSpeed);
     }
   }
 
-  render(camera) {
+  openingUpdate() {
+    this.opening = Math.min(this.opening + 0.1, 1);
+    this.wordBubble.opening = this.opening;
+    this.wordBubble.y = this.bottomLeftCornerY - 3 - (8 * this.textLines.length) * this.opening - 5;
+    if (this.opening >= 1) {
+      this.updateBehaviour = () => this.normalUpdate();
+      this.renderBehaviour = camera => this.normalRender(camera);
+    }
+  }
+
+  normalRender(camera) {
     const { accumulatedLengths } = this;
     this.wordBubble.render(camera);
 
@@ -46,6 +75,10 @@ class Dialog {
     }
   }
 
+  openingRender(camera) {
+    this.wordBubble.render(camera);
+  }
+
   forceCompleteText() {
     this.cursor = this.dialogLength;
   }
@@ -53,6 +86,11 @@ class Dialog {
   reset() {
     this.count = 0;
     this.cursor = 0;
+    if (this.options.open) {
+      this.opening = 0;
+      this.updateBehaviour = () => this.openingUpdate();
+      this.renderBehaviour = camera => this.openingRender(camera);
+    }
   }
 
   get complete() {

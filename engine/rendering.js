@@ -23,7 +23,7 @@ const GameplayGraphics = {
     GameplayGraphics.scale = Math.min(
       Math.floor(GameplayGraphics.canvasWidth / 100), GameplayGraphics.scale,
     );
-    GameplayGraphics.scale = Math.round(GameplayGraphics.scale * 1.5);
+    GameplayGraphics.scale = Math.round(GameplayGraphics.scale * 1.25);
     // GameplayGraphics.scale = 6;
 
     // GameplayGraphics.scale = 8;
@@ -58,6 +58,7 @@ const GameplayGraphics = {
     },
     renderSubBitmap(image, x, y, sx, sy, sw, sh, w, h) {
       const { renderingContext2D, scale } = GameplayGraphics;
+
       renderingContext2D.drawImage(
         image, sx, sy, sw - 0.05, sh - 0.05,
         x * scale, y * scale,

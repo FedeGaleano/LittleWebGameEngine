@@ -53,9 +53,21 @@ export default {
     const dialogPoint = { x: character.x + 14, y: character.y };
     const dialogSpeed = 0.15;
     speech = new Speech(dialogPoint.x, dialogPoint.y, [
-      ['este es', 'un', 'dialogo'],
-      ['este es', 'un segundo', 'dialogo'],
-      ['y por ultimo aqui', 'tenemos otro dialogo', 'mas xd'],
+      [
+        'este es',
+        'un',
+        'dialogo',
+      ],
+      [
+        'este es',
+        'un segundo',
+        'dialogo',
+      ],
+      [
+        'y por ultimo aqui',
+        'tenemos otro dialogo',
+        'mas xd',
+      ],
     ], dialogSpeed);
 
     // exampleWorld = new World(exampleTileMapList, [0, resources.tile], 10, 50);
