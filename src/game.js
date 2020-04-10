@@ -80,11 +80,13 @@ const game = {
     );
   },
   update() {
-    ++count;
-    character.update();
-    camera.x = -(screen.width / 2 - (numberOfTilesInTheFloorX / 2) * GameplayGraphics.tileSize.w);
-    camera.y = -(screen.height / 2 - (numberOfTilesInTheFloorY / 2) * GameplayGraphics.tileSize.h);
-    speech.update();
+    if (!pause) {
+      ++count;
+      character.update();
+      camera.x = -(screen.width / 2 - (numberOfTilesInTheFloorX / 2) * GameplayGraphics.tileSize.w);
+      camera.y = -(screen.height / 2 - (numberOfTilesInTheFloorY / 2) * GameplayGraphics.tileSize.h);
+      speech.update();
+    }
   },
   render() {
     renderer.clearScreen();
