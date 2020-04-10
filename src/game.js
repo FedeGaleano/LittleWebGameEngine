@@ -141,6 +141,9 @@ const game = {
   },
   normalInput() {
     game.fired = {
+      KeyP() {
+        game.onFocusLost();
+      },
       KeyD() {
         showGrid = !showGrid;
       },

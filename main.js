@@ -203,6 +203,9 @@ export default function run() {
       lastTime += 1000;
     }
 
+    if (!document.hasFocus()) {
+      tryToExecute(scene.onFocusLost);
+    }
     loopManager();
 
     window.requestAnimationFrame(loop);

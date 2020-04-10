@@ -23,8 +23,8 @@ const GameplayGraphics = {
     GameplayGraphics.scale = Math.min(
       Math.floor(GameplayGraphics.canvasWidth / 100), GameplayGraphics.scale,
     );
-    GameplayGraphics.scale = Math.round(GameplayGraphics.scale * 1.25);
-    // GameplayGraphics.scale = 6;
+    GameplayGraphics.scale = Math.max(Math.round(GameplayGraphics.scale * 1.25), 2);
+    // GameplayGraphics.scale = 3;
 
     // GameplayGraphics.scale = 8;
   },
