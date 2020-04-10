@@ -170,7 +170,7 @@ export default function run() {
 
   let loopManager = () => { throw new Error('Loop manager called before first assignment'); };
 
-  function clearInput(input) {
+  function clearInputStatus(input) {
     // eslint-disable-next-line no-restricted-syntax
     for (const key in input) {
       // eslint-disable-next-line no-prototype-builtins
@@ -180,11 +180,14 @@ export default function run() {
     }
   }
 
+  function clearInput() {
+    clearInputStatus(isFired);
+    clearInputStatus(isPressed);
+    clearInputStatus(isReleased);
+  }
+
   function chooseLoopManager() {
-    clearInput(isFired);
-    clearInput(isPressed);
-    clearInput(isReleased);
-    FexDebug.log(`input clean, current orientation: ${window.screen.orientation.type}`);
+    clearInput();
     loopManager = /^portrait/i.test(window.screen.orientation.type) ? askForRotationLoop : gameLoop;
   }
 
