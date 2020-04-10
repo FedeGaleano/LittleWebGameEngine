@@ -117,7 +117,7 @@ const game = {
       GameplayGraphics.renderer.fillStyle = 'black';
       GameplayGraphics.renderer.renderFullRectangle(0, 0, screen.width, screen.height);
       GameplayGraphics.renderingContext2D.globalAlpha = 1;
-      GameplayGraphics.renderer.renderString('pause', (screen.width / 2), screen.height / 2 - 2.5, resources.font);
+      GameplayGraphics.renderer.renderString('pause', (screen.width / 2) - ('pause'.length / 2) * 6, screen.height / 2 - 2.5, resources.font);
     }
   },
   onFocusLost() {
