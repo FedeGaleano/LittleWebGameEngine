@@ -82,6 +82,7 @@ const game = {
   update() {
     if (!pause) {
       ++count;
+      FexDebug.logOnScreen('count', count);
       character.update();
       speech.update();
     }
@@ -153,6 +154,10 @@ const game = {
       },
       ScreenTouch() {
         speech.next();
+      },
+      KeyC() {
+        FexDebug.logOnScreen('camera.x', camera.x);
+        FexDebug.logOnScreen('camera.y', camera.y);
       },
     };
   },

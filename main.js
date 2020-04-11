@@ -86,58 +86,6 @@ function tryToExecute(func) {
   (func || (() => {}))();
 }
 
-function renderFrameRate(frameRate, graphics) {
-  const { renderingContext2D, canvasHeight } = graphics;
-  const txt = `FPS: ${frameRate}`;
-
-  const fontSize = 18;
-  renderingContext2D.font = `bold ${fontSize}px arial`;
-  const width = renderingContext2D.measureText(txt).width + 4;
-  const height = 18;
-
-  const prevColor = renderingContext2D.fillStyle;
-
-  renderingContext2D.fillStyle = 'black';
-  renderingContext2D.globalAlpha = 0.75;
-  renderingContext2D.fillRect(10 - 2, canvasHeight - (10 + fontSize) - 2 - 18, width, height + 4);
-
-  renderingContext2D.fillStyle = 'yellow';
-  renderingContext2D.globalAlpha = 1;
-  renderingContext2D.fillText(txt, 10, canvasHeight - (10 + fontSize), 160);
-  renderingContext2D.fillStyle = prevColor;
-}
-
-function renderScale(graphics) {
-  const { renderingContext2D, canvasHeight, scale } = graphics;
-  const prevColor = renderingContext2D.fillStyle;
-  renderingContext2D.fillStyle = 'yellow';
-  const fontSize = 18;
-  renderingContext2D.font = `bold ${fontSize}px arial`;
-  renderingContext2D.fillText(`Scale: ${scale}`, 10, canvasHeight - (10 + fontSize * 2 + 4), 160);
-  renderingContext2D.fillStyle = prevColor;
-}
-
-function renderCanvasSize(graphics) {
-  const { renderingContext2D, canvasHeight, canvasWidth } = graphics;
-  const prevColor = renderingContext2D.fillStyle;
-  renderingContext2D.fillStyle = 'yellow';
-  const fontSize = 18;
-  renderingContext2D.font = `bold ${fontSize}px arial`;
-  renderingContext2D.fillText(`w: ${canvasWidth}`, 10, canvasHeight - (10 + fontSize * 3 + 4), 160);
-  renderingContext2D.fillText(`h: ${canvasHeight}`, 10, canvasHeight - (10 + fontSize * 4 + 4), 160);
-  renderingContext2D.fillStyle = prevColor;
-}
-
-function renderOrientarion(graphics) {
-  const { renderingContext2D, canvasHeight, canvasWidth } = graphics;
-  const prevColor = renderingContext2D.fillStyle;
-  renderingContext2D.fillStyle = 'yellow';
-  const fontSize = 18;
-  renderingContext2D.font = `bold ${fontSize}px arial`;
-  renderingContext2D.fillText(`orientation: ${window.screen.orientation.type}`, 10, canvasHeight - (10 + fontSize * 5 + 4), 260);
-  renderingContext2D.fillStyle = prevColor;
-}
-
 export default function run() {
   let frameCount = 0;
   let fps = 0;
@@ -155,11 +103,6 @@ export default function run() {
       (screen.width - rotationSprite.frameWidth) / 2,
       (screen.height - rotationSprite.frameHeight) / 2,
     );
-
-    renderFrameRate(fps, AskForRotationGraphics);
-    renderScale(AskForRotationGraphics);
-    renderCanvasSize(AskForRotationGraphics);
-    renderOrientarion(AskForRotationGraphics);
   }
 
   function gameLoop() {
@@ -167,12 +110,8 @@ export default function run() {
     scene.update();
     scene.render();
 
-    FexDebug.logOnScreen('Debug Info', GameplayGraphics, 6);
-    FexDebug.logOnScreen(`scale: ${GameplayGraphics.scale}`, GameplayGraphics, 5);
-    FexDebug.logOnScreen(`w: ${GameplayGraphics.canvas.width}`, GameplayGraphics, 4);
-    FexDebug.logOnScreen(`h: ${GameplayGraphics.canvas.height}`, GameplayGraphics, 3);
-    FexDebug.logOnScreen(`orient: ${window.screen.orientation.type}`, GameplayGraphics, 2);
-    FexDebug.logOnScreen(`FPS: ${fps}`, GameplayGraphics, 1);
+    FexDebug.setGeneralInfo({ fps });
+    FexDebug.render(GameplayGraphics);
   }
 
   let loopManager = () => { throw new Error('Loop manager called before first assignment'); };
