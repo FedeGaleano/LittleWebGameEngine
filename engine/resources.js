@@ -18,7 +18,7 @@ const resourceLoadingData = [
 const resources = {};
 
 function loadResources() {
-  FexDebug.log('loading resources');
+  FexDebug.logOnConsole('loading resources');
   return Promise.all(
     resourceLoadingData.map(({ path, resourceName }) => {
       const img = new Image();

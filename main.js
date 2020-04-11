@@ -88,11 +88,22 @@ function tryToExecute(func) {
 
 function renderFrameRate(frameRate, graphics) {
   const { renderingContext2D, canvasHeight } = graphics;
-  const prevColor = renderingContext2D.fillStyle;
-  renderingContext2D.fillStyle = 'yellow';
+  const txt = `FPS: ${frameRate}`;
+
   const fontSize = 18;
   renderingContext2D.font = `bold ${fontSize}px arial`;
-  renderingContext2D.fillText(`FPS: ${frameRate}`, 10, canvasHeight - (10 + fontSize), 160);
+  const width = renderingContext2D.measureText(txt).width + 4;
+  const height = 18;
+
+  const prevColor = renderingContext2D.fillStyle;
+
+  renderingContext2D.fillStyle = 'black';
+  renderingContext2D.globalAlpha = 0.75;
+  renderingContext2D.fillRect(10 - 2, canvasHeight - (10 + fontSize) - 2 - 18, width, height + 4);
+
+  renderingContext2D.fillStyle = 'yellow';
+  renderingContext2D.globalAlpha = 1;
+  renderingContext2D.fillText(txt, 10, canvasHeight - (10 + fontSize), 160);
   renderingContext2D.fillStyle = prevColor;
 }
 
@@ -156,10 +167,12 @@ export default function run() {
     scene.update();
     scene.render();
 
-    renderFrameRate(fps, GameplayGraphics);
-    renderScale(GameplayGraphics);
-    renderCanvasSize(GameplayGraphics);
-    renderOrientarion(GameplayGraphics);
+    FexDebug.logOnScreen('Debug Info', GameplayGraphics, 6);
+    FexDebug.logOnScreen(`scale: ${GameplayGraphics.scale}`, GameplayGraphics, 5);
+    FexDebug.logOnScreen(`w: ${GameplayGraphics.canvas.width}`, GameplayGraphics, 4);
+    FexDebug.logOnScreen(`h: ${GameplayGraphics.canvas.height}`, GameplayGraphics, 3);
+    FexDebug.logOnScreen(`orient: ${window.screen.orientation.type}`, GameplayGraphics, 2);
+    FexDebug.logOnScreen(`FPS: ${fps}`, GameplayGraphics, 1);
   }
 
   let loopManager = () => { throw new Error('Loop manager called before first assignment'); };
@@ -216,7 +229,10 @@ export default function run() {
       tryToExecute(scene.init);
       chooseLoopManager();
       loop();
-    });
+    })
+      .then(() => {
+        FexDebug.logOnConsole('font: ', GameplayGraphics.renderingContext2D.font);
+      });
   }
 
   document.addEventListener('keydown', ({ code }) => {

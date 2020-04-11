@@ -83,16 +83,14 @@ const game = {
     if (!pause) {
       ++count;
       character.update();
-      camera.x = -(screen.width / 2 - (numberOfTilesInTheFloorX / 2) * GameplayGraphics.tileSize.w);
-      camera.y = -(screen.height / 2 - (numberOfTilesInTheFloorY / 2) * GameplayGraphics.tileSize.h);
       speech.update();
     }
+
+    camera.x = -(screen.width / 2 - (numberOfTilesInTheFloorX / 2) * GameplayGraphics.tileSize.w);
+    camera.y = -(screen.height / 2 - (numberOfTilesInTheFloorY / 2) * GameplayGraphics.tileSize.h);
   },
   render() {
     renderer.clearScreen();
-    if (showGrid) {
-      renderer.renderTileGrid();
-    }
 
     // Render background
     GameplayGraphics.renderer.renderBitmap(resources.background, 0, 0, screen.width, screen.height);
@@ -112,6 +110,9 @@ const game = {
     demoWorld.render(camera);
     character.render(camera);
     speech.render(camera);
+    if (showGrid) {
+      renderer.renderTileGrid();
+    }
     if (pause) {
       GameplayGraphics.renderingContext2D.globalAlpha = 0.75;
       GameplayGraphics.renderer.fillStyle = 'black';

@@ -5,7 +5,7 @@ class Speech {
     this.dialogs = listOfTextLines.map(
       (textLines, i) => new Dialog(
         bottomLeftCornerX, bottomLeftCornerY, textLines, textSpeed,
-        ({ open: i === 0, close: i === listOfTextLines.length - 1 }),
+        ({ open: /* i === 0 */true, close: i === listOfTextLines.length - 1 }),
       ),
     );
     this.currentDialog = -1;
