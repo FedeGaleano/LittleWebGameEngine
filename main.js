@@ -5,6 +5,8 @@ import { GameplayGraphics, AskForRotationGraphics } from './engine/rendering.js'
 import Sprite from './engine/sprite.js';
 import FexDebug from './engine/debug.js';
 
+let debug = true;
+
 const { screen } = AskForRotationGraphics;
 const fullScreenButton = document.getElementById('fullScreenButton');
 const fullScreenImage = document.getElementById('fullScreenImage');
@@ -110,8 +112,10 @@ export default function run() {
     scene.update();
     scene.render();
 
-    FexDebug.setGeneralInfo({ fps });
-    FexDebug.render(GameplayGraphics);
+    if (debug) {
+      FexDebug.setGeneralInfo({ fps });
+      FexDebug.render(GameplayGraphics);
+    }
   }
 
   let loopManager = () => { throw new Error('Loop manager called before first assignment'); };
@@ -187,6 +191,7 @@ export default function run() {
   document.addEventListener('keydown', ({ code }) => {
     if (code === 'KeyF') toggleFullscreen();
     if (code === 'Escape') exitFullScreen();
+    if (code === 'KeyL') { debug = !debug; }
   });
 
   document.addEventListener('touchstart', () => {
