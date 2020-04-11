@@ -7,6 +7,7 @@ import FexDebug from './engine/debug.js';
 
 let debug = true;
 
+let currentGraphics = null;
 const { screen } = AskForRotationGraphics;
 const fullScreenButton = document.getElementById('fullScreenButton');
 const fullScreenImage = document.getElementById('fullScreenImage');
@@ -111,11 +112,6 @@ export default function run() {
     handleInput();
     scene.update();
     scene.render();
-
-    if (debug) {
-      FexDebug.setGeneralInfo({ fps });
-      FexDebug.render(GameplayGraphics);
-    }
   }
 
   let loopManager = () => { throw new Error('Loop manager called before first assignment'); };
@@ -141,11 +137,13 @@ export default function run() {
     if (/^portrait/i.test(window.screen.orientation.type)) {
       GameplayGraphics.canvas.style.display = 'none';
       AskForRotationGraphics.canvas.style.display = 'inline';
+      currentGraphics = AskForRotationGraphics;
       loopManager = askForRotationLoop;
       tryToExecute(scene.onFocusLost);
     } else {
       GameplayGraphics.canvas.style.display = 'inline';
       AskForRotationGraphics.canvas.style.display = 'none';
+      currentGraphics = GameplayGraphics;
       loopManager = gameLoop;
       tryToExecute(scene.onFocusRecovered);
     }
@@ -164,6 +162,11 @@ export default function run() {
     }
     loopManager();
 
+    if (debug) {
+      FexDebug.setGeneralInfo({ fps });
+      FexDebug.render(currentGraphics);
+    }
+
     window.requestAnimationFrame(loop);
   }
 
@@ -172,10 +175,7 @@ export default function run() {
       tryToExecute(scene.init);
       chooseLoopManager();
       loop();
-    })
-      .then(() => {
-        FexDebug.logOnConsole('font: ', GameplayGraphics.renderingContext2D.font);
-      });
+    });
   }
 
   document.addEventListener('keydown', ({ code }) => {
