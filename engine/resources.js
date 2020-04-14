@@ -13,6 +13,7 @@ const resourceLoadingData = [
   { path: 'engine-demo-word-bubble.png', resourceName: 'wordBubble' },
   { path: 'engine-demo-word-bubble-parts.png', resourceName: 'wordBubbleParts' },
   { path: 'fill.png', resourceName: 'fill' },
+  { path: 'fex-logo.png', resourceName: 'fexLogo' },
 ];
 
 const resources = {};

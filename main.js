@@ -1,9 +1,11 @@
 import menu from './menu.js';
 import game from './src/game.js';
+import introduction from './src/introduction.js';
 import { loadResources, resources } from './engine/resources.js';
 import { GameplayGraphics, AskForRotationGraphics } from './engine/rendering.js';
 import Sprite from './engine/sprite.js';
 import FexDebug from './engine/debug.js';
+import Intro from './engine/intro.js';
 
 let debug = true;
 
@@ -57,7 +59,37 @@ const isPressed = {};
 const isFired = {};
 const isReleased = {};
 
-const scene = game;
+const intro = new Intro();
+let scene = intro;
+let previousSceneLastFrame = null;
+let theImage = null;
+let transitionAlpha = 1;
+const transitionSpeed = 0.01;
+
+function changeScene(newScene, effect) {
+  const { width, height } = currentGraphics.canvas;
+  previousSceneLastFrame = currentGraphics.renderingContext2D.getImageData(0, 0, width, height);
+  transitionAlpha = 1;
+  return window.createImageBitmap(previousSceneLastFrame).then((x) => {
+    theImage = x;
+    scene = newScene;
+  });
+}
+
+intro.onFinish(() => {
+  changeScene(game, 'fade').then(() => game.init());
+});
+
+function renderScene() {
+  scene.render();
+  if (theImage && transitionAlpha > 0) {
+    transitionAlpha -= transitionSpeed;
+    currentGraphics.renderingContext2D.globalAlpha = Math.max(0, transitionAlpha);
+    // currentGraphics.renderingContext2D.globalAlpha = transitionAlpha;
+    currentGraphics.renderingContext2D.drawImage(theImage, 0, 0);
+    currentGraphics.renderingContext2D.globalAlpha = 1;
+  }
+}
 
 function handleInput() {
   // eslint-disable-next-line no-restricted-syntax
@@ -111,7 +143,7 @@ export default function run() {
   function gameLoop() {
     handleInput();
     scene.update();
-    scene.render();
+    renderScene();
   }
 
   let loopManager = () => { throw new Error('Loop manager called before first assignment'); };
@@ -172,7 +204,7 @@ export default function run() {
 
   function start() {
     loadResources().then(() => {
-      tryToExecute(scene.init);
+      tryToExecute(() => scene.init());
       chooseLoopManager();
       loop();
     });
@@ -205,6 +237,8 @@ export default function run() {
   });
 
   window.addEventListener('orientationchange', chooseLoopManager);
+
+  window.addEventListener('resize', scene.init);
 
   window.onload = start;
 }

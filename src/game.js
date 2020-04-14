@@ -29,12 +29,11 @@ const { renderer, screen } = GameplayGraphics;
 let count;
 
 function initialState() {
-  renderer.fillStyle = 'orange';
+  renderer.fillStyle = 'green';
   renderer.strokeStyle = '#00FFFF';
   count = 0;
 }
 
-window.addEventListener('resize', initialState);
 const camera = { x: 0, y: 0 };
 
 let sprite = null;
