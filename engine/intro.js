@@ -5,7 +5,6 @@ import FexDebug from './debug.js';
 
 class Intro extends Scene {
   constructor() {
-    FexDebug.logOnConsole('contructor');
     super();
 
     this.fade = 0;
@@ -33,9 +32,9 @@ class Intro extends Scene {
     const prevOpacity = GameplayGraphics.renderingContext2D.globalAlpha;
     GameplayGraphics.renderer.renderFullRectangle(0, 0, screen.width, screen.height);
 
-    GameplayGraphics.renderingContext2D.globalAlpha = Math.max(0, this.fade);
+    GameplayGraphics.renderer.alpha = this.fade;
     GameplayGraphics.renderer.renderBitmapCentered(resources.fexLogo, resources.fexLogo.width * 2, resources.fexLogo.height * 2);
-    GameplayGraphics.renderingContext2D.globalAlpha = prevOpacity;
+    GameplayGraphics.renderer.alpha = prevOpacity;
   }
 }
 

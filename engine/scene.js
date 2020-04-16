@@ -4,6 +4,15 @@
 class Scene {
   constructor() {
     this.onFinishCallBack = () => {};
+    this.pressed = {};
+    this.fired = {};
+    this.released = {};
+    this.init = this.init.bind(this);
+    this.update = this.update.bind(this);
+    this.render = this.render.bind(this);
+    this.onFinish = this.onFinish.bind(this);
+    this.onFocusLost = this.onFocusLost.bind(this);
+    this.onFocusRecovered = this.onFocusRecovered.bind(this);
   }
 
   init() {
@@ -20,6 +29,14 @@ class Scene {
 
   onFinish(callback) {
     this.onFinishCallBack = callback;
+  }
+
+  onFocusLost() {
+
+  }
+
+  onFocusRecovered() {
+
   }
 }
 

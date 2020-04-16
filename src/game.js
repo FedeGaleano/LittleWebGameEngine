@@ -1,4 +1,4 @@
-import { GameplayGraphics } from '../engine/rendering.js';
+import { GameplayGraphics, GameplayRenderer } from '../engine/rendering.js';
 import Sprite from '../engine/sprite.js';
 import { resources } from '../engine/resources.js';
 import FexDebug from '../engine/debug.js';
@@ -7,6 +7,7 @@ import Entity from '../engine/entity.js';
 import WordBubble from '../engine/wordBubble.js';
 import Dialog from '../engine/dialog.js';
 import Speech from '../engine/speech.js';
+import Scene from '../engine/scene.js';
 
 const ArrayNewFunctionalities = {
   removeIf(condition) {
@@ -26,35 +27,41 @@ let showGrid = false;
 
 const { renderer, screen } = GameplayGraphics;
 
-let count;
-
-function initialState() {
-  renderer.fillStyle = 'green';
-  renderer.strokeStyle = '#00FFFF';
-  count = 0;
-}
-
 const camera = { x: 0, y: 0 };
 
-let sprite = null;
-let character = null;
-let speech = null;
-// let exampleWorld = null;
-let demoWorld = null;
+
 const numberOfTilesInTheFloorX = 7;
 const numberOfTilesInTheFloorY = 1;
 
+let curtain = 0;
+const curtainHeightFactor = 0.15;
+let curtainSpeed = 0;
+
 let pause = false;
 
-const game = {
+class Game extends Scene {
+  constructor() {
+    super();
+    this.unpause = this.unpause.bind(this);
+    this.normalInput = this.normalInput.bind(this);
+
+    this.count = 0;
+    this.sprite = null;
+    this.character = null;
+    this.speech = null;
+    this.demoWorld = null;
+  }
+
   init() {
-    initialState();
-    game.normalInput();
-    sprite = new Sprite(resources.character, 1, [1], GameplayGraphics);
-    character = new Entity(sprite, GameplayGraphics.tileSize.w * 3, -sprite.height);
-    const dialogPoint = { x: character.x + 14, y: character.y };
+    renderer.fillStyle = 'green';
+    renderer.strokeStyle = '#00FFFF';
+    this.count = 0;
+    this.normalInput();
+    this.sprite = new Sprite(resources.character, 1, [1], GameplayGraphics);
+    this.character = new Entity(this.sprite, GameplayGraphics.tileSize.w * 3, -this.sprite.height);
+    const dialogPoint = { x: this.character.x + 14, y: this.character.y };
     const dialogSpeed = 0.15;
-    speech = new Speech(dialogPoint.x, dialogPoint.y, [
+    this.speech = new Speech(dialogPoint.x, dialogPoint.y, [
       [
         'este es',
         'un',
@@ -73,22 +80,25 @@ const game = {
     ], dialogSpeed);
 
     // exampleWorld = new World(exampleTileMapList, [0, resources.tile], 10, 50);
-    demoWorld = new World(
+    this.demoWorld = new World(
       demoTileMapList,
       [0, resources.tile], 0, 0,
     );
-  },
+  }
+
   update() {
     if (!pause) {
-      ++count;
-      FexDebug.logOnScreen('count', count);
-      character.update();
-      speech.update();
+      ++this.count;
+      curtain = Math.max(0, Math.min(1, curtain + curtainSpeed));
+      FexDebug.logOnScreen('count', this.count);
+      this.character.update();
+      this.speech.update();
     }
 
     camera.x = -(screen.width / 2 - (numberOfTilesInTheFloorX / 2) * GameplayGraphics.tileSize.w);
     camera.y = -(screen.height / 2 - (numberOfTilesInTheFloorY / 2) * GameplayGraphics.tileSize.h);
-  },
+  }
+
   render() {
     renderer.clearScreen();
 
@@ -107,9 +117,16 @@ const game = {
       }
     }
 
-    demoWorld.render(camera);
-    character.render(camera);
-    speech.render(camera);
+    this.demoWorld.render(camera);
+    this.character.render(camera);
+    this.speech.render(camera);
+
+    // Curtain
+    const curtainHeight = screen.height * curtainHeightFactor * curtain;
+    GameplayRenderer.fillStyle = 'black';
+    GameplayRenderer.renderFullRectangle(0, 0, screen.width, curtainHeight);
+    GameplayRenderer.renderFullRectangle(0, screen.height - curtainHeight, screen.width, curtainHeight);
+
     if (showGrid) {
       renderer.renderTileGrid();
     }
@@ -120,46 +137,38 @@ const game = {
       GameplayGraphics.renderingContext2D.globalAlpha = 1;
       GameplayGraphics.renderer.renderString('pause', (screen.width / 2) - ('pause'.length / 2) * 6, screen.height / 2 - 2.5, resources.font);
     }
-  },
+  }
+
   onFocusLost() {
     pause = true;
-    game.fired = {
-      KeyP() {
-        game.normalInput();
-        pause = false;
-      },
-      KeyD() {
+    this.fired = {};
+    this.fired.KeyP = this.fired.ScreenTouch = () => this.unpause();
+  }
 
-      },
-      KeyK() {
+  unpause() {
+    this.normalInput();
+    pause = false;
+  }
 
-      },
-      ScreenTouch() {
-        game.normalInput();
-        pause = false;
-      },
-    };
-  },
   normalInput() {
-    game.fired = {
-      KeyP() {
-        game.onFocusLost();
-      },
-      KeyD() {
-        showGrid = !showGrid;
-      },
-      KeyK() {
-        speech.next();
-      },
-      ScreenTouch() {
-        speech.next();
-      },
-      KeyC() {
-        FexDebug.logOnScreen('camera.x', camera.x);
-        FexDebug.logOnScreen('camera.y', camera.y);
-      },
+    this.pressed = {};
+    this.released = {};
+    this.fired = {};
+    this.fired.KeyP = this.onFocusLost;
+    this.fired.KeyD = () => {
+      showGrid = !showGrid;
     };
-  },
-};
+    this.fired.KeyK = this.fired.ScreenTouch = () => {
+      this.speech.next();
+    };
+    this.fired.KeyC = () => {
+      if (curtainSpeed === 0) {
+        curtainSpeed = 0.05;
+      } else {
+        curtainSpeed *= -1;
+      }
+    };
+  }
+}
 
-export default game;
+export default Game;

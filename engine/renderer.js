@@ -97,6 +97,11 @@ class Renderer {
     return renderingContext2D.strokeStyle;
   }
 
+  get alpha() {
+    const { renderingContext2D } = this.graphics;
+    return renderingContext2D.globalAlpha;
+  }
+
   set fillStyle(value) {
     const { renderingContext2D } = this.graphics;
     renderingContext2D.fillStyle = value;
@@ -105,6 +110,11 @@ class Renderer {
   set strokeStyle(value) {
     const { renderingContext2D } = this.graphics;
     renderingContext2D.strokeStyle = value;
+  }
+
+  set alpha(value) {
+    const { renderingContext2D } = this.graphics;
+    renderingContext2D.globalAlpha = Math.max(0, value);
   }
 }
 

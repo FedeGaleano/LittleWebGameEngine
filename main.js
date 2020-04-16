@@ -1,11 +1,11 @@
-import menu from './menu.js';
-import game from './src/game.js';
+import Game from './src/game.js';
 import introduction from './src/introduction.js';
 import { loadResources, resources } from './engine/resources.js';
 import { GameplayGraphics, AskForRotationGraphics } from './engine/rendering.js';
 import Sprite from './engine/sprite.js';
 import FexDebug from './engine/debug.js';
 import Intro from './engine/intro.js';
+import Menu from './src/menu.js';
 
 let debug = true;
 
@@ -60,11 +60,13 @@ const isFired = {};
 const isReleased = {};
 
 const intro = new Intro();
-let scene = intro;
+const menu = new Menu();
+const game = new Game();
+let scene = menu;
 let previousSceneLastFrame = null;
 let theImage = null;
 let transitionAlpha = 1;
-const transitionSpeed = 0.01;
+const transitionSpeed = 0.1;
 
 function changeScene(newScene, effect) {
   const { width, height } = currentGraphics.canvas;
@@ -72,53 +74,56 @@ function changeScene(newScene, effect) {
   transitionAlpha = 1;
   return window.createImageBitmap(previousSceneLastFrame).then((x) => {
     theImage = x;
+    newScene.init();
     scene = newScene;
   });
 }
 
 intro.onFinish(() => {
-  changeScene(game, 'fade').then(() => game.init());
+  changeScene(menu, 'fade');
+});
+menu.onFinish(() => {
+  changeScene(game, 'fade');
 });
 
 function renderScene() {
   scene.render();
   if (theImage && transitionAlpha > 0) {
     transitionAlpha -= transitionSpeed;
-    currentGraphics.renderingContext2D.globalAlpha = Math.max(0, transitionAlpha);
-    // currentGraphics.renderingContext2D.globalAlpha = transitionAlpha;
+    currentGraphics.renderer.alpha = transitionAlpha;
     currentGraphics.renderingContext2D.drawImage(theImage, 0, 0);
-    currentGraphics.renderingContext2D.globalAlpha = 1;
-  }
-}
-
-function handleInput() {
-  // eslint-disable-next-line no-restricted-syntax
-  for (const key in scene.pressed) {
-    // eslint-disable-next-line no-prototype-builtins
-    if (scene.pressed.hasOwnProperty(key) && isPressed[key]) {
-      scene.pressed[key]();
-    }
-  }
-  // eslint-disable-next-line no-restricted-syntax
-  for (const key in scene.fired) {
-    // eslint-disable-next-line no-prototype-builtins
-    if (scene.fired.hasOwnProperty(key) && isFired[key]) {
-      scene.fired[key]();
-      isFired[key] = false;
-    }
-  }
-  // eslint-disable-next-line no-restricted-syntax
-  for (const key in scene.released) {
-    // eslint-disable-next-line no-prototype-builtins
-    if (scene.released.hasOwnProperty(key) && isReleased[key]) {
-      scene.released[key]();
-      isReleased[key] = false;
-    }
+    currentGraphics.renderer.alpha = 1;
   }
 }
 
 function tryToExecute(func) {
   (func || (() => {}))();
+}
+
+function handleInput() {
+  function iterateOverState(state, logic) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const key in state) {
+    // eslint-disable-next-line no-prototype-builtins
+      if (state.hasOwnProperty(key) && state[key]) {
+        logic(key);
+      }
+    }
+  }
+
+  iterateOverState(isPressed, (key) => {
+    tryToExecute(scene.pressed[key]);
+  });
+
+  iterateOverState(isFired, (key) => {
+    tryToExecute(scene.fired[key]);
+    isFired[key] = false;
+  });
+
+  iterateOverState(isReleased, (key) => {
+    tryToExecute(scene.released[key]);
+    isReleased[key] = false;
+  });
 }
 
 export default function run() {
@@ -204,7 +209,7 @@ export default function run() {
 
   function start() {
     loadResources().then(() => {
-      tryToExecute(() => scene.init());
+      tryToExecute(scene.init);
       chooseLoopManager();
       loop();
     });
