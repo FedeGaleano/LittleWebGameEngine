@@ -8,13 +8,7 @@ class Menu extends Scene {
   constructor() {
     super();
     this.fired.Enter = () => this.onFinishCallBack();
-    this.fired.Click = (x, y) => {
-      FexDebug.logOnScreen('clickazo', `(${x}, ${y})`);
-    };
-    this.fired.ScreenTouch = (x, y) => {
-      FexDebug.logOnScreen('touchazo', `(${x}, ${y})`);
-      this.onFinishCallBack();
-    };
+    this.fired.ScreenTouch = () => this.onFinishCallBack();
   }
 
   init() {

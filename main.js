@@ -259,8 +259,8 @@ export default function run() {
   });
 
   document.addEventListener('touchstart', (event) => {
-    cursor.x = event.touches.clientX;
-    cursor.y = event.touches.clientY;
+    cursor.x = event.touches[0].clientX;
+    cursor.y = event.touches[0].clientY;
     if (!isPressed.ScreenTouch) isFired.ScreenTouch = true;
     isPressed.ScreenTouch = true;
   });

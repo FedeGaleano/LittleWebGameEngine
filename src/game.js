@@ -45,6 +45,10 @@ class Game extends Scene {
     this.unpause = this.unpause.bind(this);
     this.normalInput = this.normalInput.bind(this);
 
+    this.fired.Click = (x, y) => {
+      FexDebug.logOnScreen('clickazo', `(${x}, ${y})`);
+    };
+
     this.count = 0;
     this.sprite = null;
     this.character = null;
@@ -158,9 +162,15 @@ class Game extends Scene {
     this.fired.KeyD = () => {
       showGrid = !showGrid;
     };
-    this.fired.KeyK = this.fired.ScreenTouch = () => {
+    this.fired.KeyK = () => {
       this.speech.next();
     };
+
+    this.fired.ScreenTouch = (x, y) => {
+      FexDebug.logOnScreen('touchazo', `(${x}, ${y})`);
+      this.speech.next();
+    };
+
     this.fired.KeyC = () => {
       if (curtainSpeed === 0) {
         curtainSpeed = 0.05;
