@@ -58,24 +58,7 @@ document.addEventListener('fullscreenchange', reactToFullscreenChange);
 const isPressed = {};
 const isFired = {};
 const isReleased = {};
-const cursor = {
-  thisx: null,
-  thisy: null,
-  get x() {
-    return cursor.thisx;
-  },
-  get y() {
-    return cursor.thisy;
-  },
-  set x(val) {
-    FexDebug.logOnConsole('set cursor x: ', val);
-    cursor.thisx = val;
-  },
-  set y(val) {
-    FexDebug.logOnConsole('set cursor y: ', val);
-    cursor.thisy = val;
-  },
-};
+const cursor = { x: null, y: null };
 
 const intro = new Intro();
 const menu = new Menu();
