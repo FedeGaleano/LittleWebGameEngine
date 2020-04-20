@@ -58,7 +58,24 @@ document.addEventListener('fullscreenchange', reactToFullscreenChange);
 const isPressed = {};
 const isFired = {};
 const isReleased = {};
-const cursor = { x: null, y: null };
+const cursor = {
+  thisx: null,
+  thisy: null,
+  get x() {
+    return cursor.thisx;
+  },
+  get y() {
+    return cursor.thisy;
+  },
+  set x(val) {
+    FexDebug.logOnConsole('set cursor x: ', val);
+    cursor.thisx = val;
+  },
+  set y(val) {
+    FexDebug.logOnConsole('set cursor y: ', val);
+    cursor.thisy = val;
+  },
+};
 
 const intro = new Intro();
 const menu = new Menu();
@@ -259,8 +276,8 @@ export default function run() {
   });
 
   document.addEventListener('touchstart', (event) => {
-    cursor.x = event.touches[0].clientX;
-    cursor.y = event.touches[0].clientY;
+    cursor.x = Math.round(event.touches[0].clientX);
+    cursor.y = Math.round(event.touches[0].clientY);
     if (!isPressed.ScreenTouch) isFired.ScreenTouch = true;
     isPressed.ScreenTouch = true;
   });
@@ -271,13 +288,13 @@ export default function run() {
   });
 
   document.addEventListener('mousemove', (event) => {
-    cursor.x = event.clientX;
-    cursor.y = event.clientY;
+    cursor.x = Math.round(event.clientX);
+    cursor.y = Math.round(event.clientY);
   });
 
   document.addEventListener('mousedown', (event) => {
-    cursor.x = event.clientX;
-    cursor.y = event.clientY;
+    cursor.x = Math.round(event.clientX);
+    cursor.y = Math.round(event.clientY);
 
     if (!isPressed.Click) isFired.Click = true;
     isPressed.Click = true;
