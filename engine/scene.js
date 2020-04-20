@@ -13,6 +13,8 @@ class Scene {
     this.onFinish = this.onFinish.bind(this);
     this.onFocusLost = this.onFocusLost.bind(this);
     this.onFocusRecovered = this.onFocusRecovered.bind(this);
+    this.clicked = this.clicked.bind(this);
+    this.mouseOver = this.mouseOver.bind(this);
   }
 
   init() {
@@ -36,6 +38,14 @@ class Scene {
   }
 
   onFocusRecovered() {
+
+  }
+
+  clicked(x, y) {
+
+  }
+
+  mouseOver(x, y) {
 
   }
 }

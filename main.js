@@ -58,22 +58,36 @@ document.addEventListener('fullscreenchange', reactToFullscreenChange);
 const isPressed = {};
 const isFired = {};
 const isReleased = {};
+const cursor = { x: null, y: null };
 
 const intro = new Intro();
 const menu = new Menu();
 const game = new Game();
-let scene = menu;
+let scene = intro;
 let previousSceneLastFrame = null;
-let theImage = null;
+let outComingFrame = null;
 let transitionAlpha = 1;
-const transitionSpeed = 0.1;
+let transitionSpeed = -0.1;
+let transitionEffect = null;
 
 function changeScene(newScene, effect) {
-  const { width, height } = currentGraphics.canvas;
-  previousSceneLastFrame = currentGraphics.renderingContext2D.getImageData(0, 0, width, height);
-  transitionAlpha = 1;
-  return window.createImageBitmap(previousSceneLastFrame).then((x) => {
-    theImage = x;
+  let asyncAction = Promise.resolve();
+  if (effect === 'fade') {
+    const { width, height } = currentGraphics.canvas;
+    previousSceneLastFrame = currentGraphics.renderingContext2D.getImageData(0, 0, width, height);
+    transitionAlpha = 1;
+    transitionSpeed = -0.1;
+    asyncAction = window.createImageBitmap(previousSceneLastFrame);
+  } else if (effect === 'outin') {
+    const { width, height } = currentGraphics.canvas;
+    previousSceneLastFrame = currentGraphics.renderingContext2D.getImageData(0, 0, width, height);
+    transitionAlpha = 1;
+    transitionSpeed = -0.1;
+    asyncAction = window.createImageBitmap(previousSceneLastFrame);
+  }
+  return asyncAction.then((takenFrame) => {
+    transitionEffect = effect;
+    outComingFrame = takenFrame;
     newScene.init();
     scene = newScene;
   });
@@ -83,21 +97,28 @@ intro.onFinish(() => {
   changeScene(menu, 'fade');
 });
 menu.onFinish(() => {
-  changeScene(game, 'fade');
+  changeScene(game, 'inout');
 });
 
 function renderScene() {
-  scene.render();
-  if (theImage && transitionAlpha > 0) {
-    transitionAlpha -= transitionSpeed;
+  if (transitionEffect === 'inout' && transitionAlpha > 0) {
+    transitionAlpha += transitionSpeed;
     currentGraphics.renderer.alpha = transitionAlpha;
-    currentGraphics.renderingContext2D.drawImage(theImage, 0, 0);
+    currentGraphics.renderingContext2D.drawImage(outComingFrame, 0, 0);
+    currentGraphics.renderer.alpha = 1;
+    return;
+  }
+  scene.render();
+  if (transitionEffect === 'fade' && transitionAlpha > 0) {
+    transitionAlpha += transitionSpeed;
+    currentGraphics.renderer.alpha = transitionAlpha;
+    currentGraphics.renderingContext2D.drawImage(outComingFrame, 0, 0);
     currentGraphics.renderer.alpha = 1;
   }
 }
 
-function tryToExecute(func) {
-  (func || (() => {}))();
+function tryToExecute(func, ...args) {
+  (func || (() => {}))(...args);
 }
 
 function handleInput() {
@@ -111,19 +132,24 @@ function handleInput() {
     }
   }
 
+  const x = Math.floor(cursor.x / currentGraphics.scale);
+  const y = Math.floor(cursor.y / currentGraphics.scale);
+
   iterateOverState(isPressed, (key) => {
-    tryToExecute(scene.pressed[key]);
+    tryToExecute(scene.pressed[key], x, y);
   });
 
   iterateOverState(isFired, (key) => {
-    tryToExecute(scene.fired[key]);
+    tryToExecute(scene.fired[key], x, y);
     isFired[key] = false;
   });
 
   iterateOverState(isReleased, (key) => {
-    tryToExecute(scene.released[key]);
+    tryToExecute(scene.released[key], x, y);
     isReleased[key] = false;
   });
+
+  scene.mouseOver(x, y);
 }
 
 export default function run() {
@@ -200,6 +226,7 @@ export default function run() {
     loopManager();
 
     if (debug) {
+      FexDebug.logOnScreen('cursor absolute', `(${cursor.x}, ${cursor.y})`);
       FexDebug.setGeneralInfo({ fps });
       FexDebug.render(currentGraphics);
     }
@@ -231,7 +258,9 @@ export default function run() {
     if (code === 'KeyL') { debug = !debug; }
   });
 
-  document.addEventListener('touchstart', () => {
+  document.addEventListener('touchstart', (event) => {
+    cursor.x = event.touches.clientX;
+    cursor.y = event.touches.clientY;
     if (!isPressed.ScreenTouch) isFired.ScreenTouch = true;
     isPressed.ScreenTouch = true;
   });
@@ -239,6 +268,24 @@ export default function run() {
   document.addEventListener('touchend', () => {
     isPressed.ScreenTouch = false;
     isReleased.ScreenTouch = true;
+  });
+
+  document.addEventListener('mousemove', (event) => {
+    cursor.x = event.clientX;
+    cursor.y = event.clientY;
+  });
+
+  document.addEventListener('mousedown', (event) => {
+    cursor.x = event.clientX;
+    cursor.y = event.clientY;
+
+    if (!isPressed.Click) isFired.Click = true;
+    isPressed.Click = true;
+  });
+
+  document.addEventListener('mouseup', () => {
+    isPressed.Click = false;
+    isReleased.Click = true;
   });
 
   window.addEventListener('orientationchange', chooseLoopManager);

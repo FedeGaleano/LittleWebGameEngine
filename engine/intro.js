@@ -9,6 +9,8 @@ class Intro extends Scene {
 
     this.fade = 0;
     this.fadeSpeed = 0.005;
+
+    this.fired.Enter = () => this.onFinishCallBack();
   }
 
   init() {

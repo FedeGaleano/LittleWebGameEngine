@@ -14,6 +14,7 @@ const resourceLoadingData = [
   { path: 'engine-demo-word-bubble-parts.png', resourceName: 'wordBubbleParts' },
   { path: 'fill.png', resourceName: 'fill' },
   { path: 'fex-logo.png', resourceName: 'fexLogo' },
+  { path: 'engine-demo-2-playButton.png', resourceName: 'playButton' },
 ];
 
 const resources = {};
