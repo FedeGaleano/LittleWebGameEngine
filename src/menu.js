@@ -7,8 +7,13 @@ import FexDebug from '../engine/debug.js';
 class Menu extends Scene {
   constructor() {
     super();
-    this.fired.Enter = () => this.finish();
-    this.fired.ScreenTouch = () => this.finish();
+    this.audio = new Audio('res/select.wav');
+    const finishScene = () => {
+      this.audio.play();
+      this.finish();
+    };
+    this.fired.Enter = finishScene;
+    this.fired.ScreenTouch = finishScene;
     this.starPanels = [];
     this.xTimes = 0;
     this.starsVelocity = 0.2;
