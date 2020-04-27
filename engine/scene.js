@@ -3,7 +3,7 @@
 
 class Scene {
   constructor() {
-    this.onFinishCallBack = () => {};
+    this.finish = () => {};
     this.pressed = {};
     this.fired = {};
     this.released = {};
@@ -30,7 +30,7 @@ class Scene {
   }
 
   onFinish(callback) {
-    this.onFinishCallBack = callback;
+    this.finish = callback;
   }
 
   onFocusLost() {

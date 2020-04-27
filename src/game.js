@@ -45,10 +45,6 @@ class Game extends Scene {
     this.unpause = this.unpause.bind(this);
     this.normalInput = this.normalInput.bind(this);
 
-    this.fired.Click = (x, y) => {
-      FexDebug.logOnScreen('clickazo', `(${x}, ${y})`);
-    };
-
     this.count = 0;
     this.sprite = null;
     this.character = null;
@@ -67,19 +63,33 @@ class Game extends Scene {
     const dialogSpeed = 0.15;
     this.speech = new Speech(dialogPoint.x, dialogPoint.y, [
       [
-        'este es',
-        'un',
-        'dialogo',
+        'hola, soy fexi,',
+        'la mascota del fex engine',
       ],
       [
-        'este es',
-        'un segundo',
-        'dialogo',
+        'seguramente fex',
+        'ya te explico',
+        'que esto no es',
+        'un video juego',
       ],
       [
-        'y por ultimo aqui',
-        'tenemos otro dialogo',
-        'mas xd',
+        'pero aun asi',
+        'sigues esperando eso',
+        'porque el hype',
+        'no te deja escuchar',
+      ],
+      [
+        'asi que mi tarea aqui es...',
+      ],
+      [
+        'repetirte que esto',
+        'no es un video juego',
+      ],
+      [
+        ':)',
+      ],
+      [
+        '<3',
       ],
     ], dialogSpeed);
 
@@ -169,6 +179,10 @@ class Game extends Scene {
     this.fired.ScreenTouch = (x, y) => {
       FexDebug.logOnScreen('touchazo', `(${x}, ${y})`);
       this.speech.next();
+    };
+
+    this.fired.Click = (x, y) => {
+      FexDebug.logOnScreen('clickazo', `(${x}, ${y})`);
     };
 
     this.fired.KeyC = () => {

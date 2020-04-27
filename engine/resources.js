@@ -15,6 +15,7 @@ const resourceLoadingData = [
   { path: 'fill.png', resourceName: 'fill' },
   { path: 'fex-logo.png', resourceName: 'fexLogo' },
   { path: 'engine-demo-2-playButton.png', resourceName: 'playButton' },
+  { path: 'engine-demo-2-title.png', resourceName: 'title' },
 ];
 
 const resources = {};

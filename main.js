@@ -70,19 +70,26 @@ let transitionAlpha = 1;
 let transitionSpeed = -0.1;
 let transitionEffect = null;
 
+const Effects = {
+  none: 0,
+  fade: 1,
+  outin: 2,
+};
+
 function changeScene(newScene, effect) {
+  scene.onFinish(() => {});
   let asyncAction = Promise.resolve();
-  if (effect === 'fade') {
+  if (effect === Effects.fade) {
     const { width, height } = currentGraphics.canvas;
     previousSceneLastFrame = currentGraphics.renderingContext2D.getImageData(0, 0, width, height);
     transitionAlpha = 1;
     transitionSpeed = -0.1;
     asyncAction = window.createImageBitmap(previousSceneLastFrame);
-  } else if (effect === 'outin') {
+  } else if (effect === Effects.outin) {
     const { width, height } = currentGraphics.canvas;
     previousSceneLastFrame = currentGraphics.renderingContext2D.getImageData(0, 0, width, height);
-    transitionAlpha = 1;
-    transitionSpeed = -0.1;
+    transitionAlpha = 0.01;
+    transitionSpeed = 0.1;
     asyncAction = window.createImageBitmap(previousSceneLastFrame);
   }
   return asyncAction.then((takenFrame) => {
@@ -94,22 +101,32 @@ function changeScene(newScene, effect) {
 }
 
 intro.onFinish(() => {
-  changeScene(menu, 'fade');
+  changeScene(menu, Effects.fade);
 });
 menu.onFinish(() => {
-  changeScene(game, 'inout');
+  changeScene(game, Effects.outin);
 });
 
 function renderScene() {
-  if (transitionEffect === 'inout' && transitionAlpha > 0) {
+  if (transitionEffect === Effects.outin && transitionAlpha < 1) {
     transitionAlpha += transitionSpeed;
-    currentGraphics.renderer.alpha = transitionAlpha;
     currentGraphics.renderingContext2D.drawImage(outComingFrame, 0, 0);
+    currentGraphics.renderer.fillStyle = 'black';
+    currentGraphics.renderer.alpha = transitionAlpha;
+    currentGraphics.renderer.renderFullRectangle(0, 0, currentGraphics.screen.width, currentGraphics.screen.height);
     currentGraphics.renderer.alpha = 1;
     return;
   }
   scene.render();
-  if (transitionEffect === 'fade' && transitionAlpha > 0) {
+  if (transitionEffect === Effects.outin && transitionAlpha >= 1 && transitionAlpha < 2) {
+    transitionAlpha += transitionSpeed;
+    currentGraphics.renderer.fillStyle = 'black';
+    currentGraphics.renderer.alpha = 1 - (transitionAlpha - 1);
+    currentGraphics.renderer.renderFullRectangle(0, 0, currentGraphics.screen.width, currentGraphics.screen.height);
+    currentGraphics.renderer.alpha = 1;
+    return;
+  }
+  if (transitionEffect === Effects.fade && transitionAlpha > 0) {
     transitionAlpha += transitionSpeed;
     currentGraphics.renderer.alpha = transitionAlpha;
     currentGraphics.renderingContext2D.drawImage(outComingFrame, 0, 0);
