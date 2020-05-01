@@ -1,3 +1,5 @@
+import Font from './font.js';
+
 class Renderer {
   constructor(graphics) {
     this.graphics = graphics;
@@ -65,20 +67,23 @@ class Renderer {
   }
 
   renderLetter(letter, x, y, font) {
-    const index = 'abcdefghijklmnopqrstuvwxyz1234567890:,()'.indexOf(letter);
+    const index = Font.getLetterIndex(letter);
     const { renderingContext2D, scale } = this.graphics;
     renderingContext2D.drawImage(
-      font,
+      font.bitmap,
       index * 6, 0,
-      5, 5,
+      5, 8,
       x * scale, y * scale,
-      5 * scale, 5 * scale,
+      5 * scale, 8 * scale,
     );
   }
 
   renderString(string, x, y, font) {
-    for (let index = 0; index < string.length; index++) {
-      this.renderLetter(string[index], x + index * 6, y, font);
+    for (let index = 0,
+      cursor = 0; index < string.length;
+      cursor += font.kerningData[Font.getLetterIndex(string[index++])] + 1
+    ) {
+      this.renderLetter(string[index], x + cursor, y, font);
     }
   }
 

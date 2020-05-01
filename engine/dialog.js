@@ -1,9 +1,9 @@
 import WordBubble from './wordBubble.js';
 import { GameplayGraphics } from './rendering.js';
-import { resources } from './resources.js';
+import { resources, fonts } from './resources.js';
 
 class Dialog {
-  constructor(bottomLeftCornerX, bottomLeftCornerY, textLines, textSpeed, options) {
+  constructor(bottomLeftCornerX, bottomLeftCornerY, textLines, font, textSpeed, options) {
     this.bottomLeftCornerX = bottomLeftCornerX;
     this.bottomLeftCornerY = bottomLeftCornerY;
     this.x = bottomLeftCornerX;
@@ -11,9 +11,14 @@ class Dialog {
     this.textLines = textLines;
     const lengths = this.textLines.map(({ length }) => length);
     this.dialogLength = lengths.reduce((a, b) => a + b);
+
+    const kerningSumsSorted = textLines.map(font.measureText).sort((a, b) => b - a);
+    const maxKerningSum = kerningSumsSorted[0];
+
     const lengthsSorted = textLines.map(({ length }) => length).sort((a, b) => b - a);
     const maxLength = lengthsSorted[0];
-    this.wordBubble = new WordBubble(this.x, this.y, maxLength * 6 - 1, textLines.length * 8);
+    const OLDMAX = maxLength * 6 - 1;
+    this.wordBubble = new WordBubble(this.x, this.y, maxKerningSum, textLines.length * 8);
     this.textSpeed = textSpeed;
     this.count = 0;
     this.cursor = 0;
@@ -70,7 +75,7 @@ class Dialog {
     for (let line = 0; line < this.textLines.length; line++) {
       GameplayGraphics.renderer.renderString(
         this.textLines[line].substring(0, this.cursor - (line === 0 ? 0 : accumulatedLengths[line - 1])),
-        this.x + 3 - camera.x, this.y + 3 + line * 8 - camera.y, resources.font,
+        this.x + 3 - camera.x, this.y + 3 + line * 8 - camera.y, fonts.normal,
       );
     }
   }

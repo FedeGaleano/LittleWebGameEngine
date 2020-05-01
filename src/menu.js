@@ -7,7 +7,7 @@ import FexDebug from '../engine/debug.js';
 class Menu extends Scene {
   constructor() {
     super();
-    this.audio = new Audio('res/select.wav');
+    this.audio = new Audio('res/select2.wav');
     const finishScene = () => {
       this.audio.play();
       this.finish();

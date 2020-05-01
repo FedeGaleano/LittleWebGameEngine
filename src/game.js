@@ -1,6 +1,6 @@
 import { GameplayGraphics, GameplayRenderer } from '../engine/rendering.js';
 import Sprite from '../engine/sprite.js';
-import { resources } from '../engine/resources.js';
+import { resources, fonts } from '../engine/resources.js';
 import FexDebug from '../engine/debug.js';
 import { World, exampleTileMapList, demoTileMapList } from './world.js';
 import Entity from '../engine/entity.js';
@@ -39,6 +39,8 @@ let curtainSpeed = 0;
 
 let pause = false;
 
+const characterSpeed = 1;
+
 class Game extends Scene {
   constructor() {
     super();
@@ -46,7 +48,8 @@ class Game extends Scene {
     this.normalInput = this.normalInput.bind(this);
 
     this.count = 0;
-    this.sprite = null;
+    this.spriteSlimeIdle = null;
+    this.spriteSlimeRunning = null;
     this.character = null;
     this.speech = null;
     this.demoWorld = null;
@@ -57,39 +60,53 @@ class Game extends Scene {
     renderer.strokeStyle = '#00FFFF';
     this.count = 0;
     this.normalInput();
-    this.sprite = new Sprite(resources.character, 1, [1], GameplayGraphics);
-    this.character = new Entity(this.sprite, GameplayGraphics.tileSize.w * 3, -this.sprite.height);
+    this.spriteSlimeIdle = new Sprite(resources.character, 4, [6, 12, 6, 12], GameplayGraphics);
+    this.spriteSlimeRunning = new Sprite(resources.characterRunning, 4, [6, 6, 9, 6], GameplayGraphics);
+    this.spriteSlimeRunningInverse = new Sprite(resources.characterRunningInverse, 4, [6, 6, 9, 6], GameplayGraphics);
+    this.character = new Entity(
+      {
+        idle: this.spriteSlimeIdle,
+        run: this.spriteSlimeRunning,
+        runInverse: this.spriteSlimeRunningInverse,
+      }, { startingSpriteKey: 'idle', flip: false, flop: false },
+      GameplayGraphics.tileSize.w * 3, -this.spriteSlimeIdle.height,
+    );
     const dialogPoint = { x: this.character.x + 14, y: this.character.y };
     const dialogSpeed = 0.15;
     this.speech = new Speech(dialogPoint.x, dialogPoint.y, [
+      // [
+      //   'Hola, soy Fexi, la mascota',
+      //   'del motor Fex Engine',
+      // ],
+      // [
+      //   'seguramente Fex',
+      //   'ya te explico',
+      //   'que esto no es',
+      //   'un videojuego',
+      // ],
+      // [
+      //   'pero aun asi',
+      //   'sigues esperando eso',
+      //   'porque el hype',
+      //   'no te deja escuchar',
+      // ],
+      // [
+      //   'asi que mi tarea aqui es...',
+      // ],
+      // [
+      //   'repetirte que esto',
+      //   'NO es un videojuego',
+      // ],
+      // [
+      //   ':)',
+      // ],
+      // [
+      //   '<3',
+      // ],
       [
-        'hola, soy fexi,',
-        'la mascota del fex engine',
-      ],
-      [
-        'seguramente fex',
-        'ya te explico',
-        'que esto no es',
-        'un video juego',
-      ],
-      [
-        'pero aun asi',
-        'sigues esperando eso',
-        'porque el hype',
-        'no te deja escuchar',
-      ],
-      [
-        'asi que mi tarea aqui es...',
-      ],
-      [
-        'repetirte que esto',
-        'no es un video juego',
-      ],
-      [
-        ':)',
-      ],
-      [
-        '<3',
+        'Esas son las Tierras Caidas.',
+        'Un aura de oscuridad emana',
+        'de ese frio lugar...',
       ],
     ], dialogSpeed);
 
@@ -149,7 +166,7 @@ class Game extends Scene {
       GameplayGraphics.renderer.fillStyle = 'black';
       GameplayGraphics.renderer.renderFullRectangle(0, 0, screen.width, screen.height);
       GameplayGraphics.renderingContext2D.globalAlpha = 1;
-      GameplayGraphics.renderer.renderString('pause', (screen.width / 2) - ('pause'.length / 2) * 6, screen.height / 2 - 2.5, resources.font);
+      GameplayGraphics.renderer.renderString('PAUSE', (screen.width / 2) - ('pause'.length / 2) * 6, screen.height / 2 - 2.5, fonts.normal);
     }
   }
 
@@ -157,6 +174,10 @@ class Game extends Scene {
     pause = true;
     this.fired = {};
     this.fired.KeyP = this.fired.ScreenTouch = () => this.unpause();
+
+    this.released.ArrowRight = () => {
+      this.character.changeSpriteTo('idle');
+    };
   }
 
   unpause() {
@@ -191,6 +212,20 @@ class Game extends Scene {
       } else {
         curtainSpeed *= -1;
       }
+    };
+    this.pressed.ArrowRight = () => {
+      this.character.changeSpriteTo('run');
+      this.character.x += characterSpeed;
+    };
+    this.released.ArrowRight = () => {
+      this.character.changeSpriteTo('idle');
+    };
+    this.pressed.ArrowLeft = () => {
+      this.character.changeSpriteTo('runInverse');
+      this.character.x -= characterSpeed;
+    };
+    this.released.ArrowLeft = () => {
+      this.character.changeSpriteTo('idle');
     };
   }
 }

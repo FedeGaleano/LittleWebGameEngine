@@ -1,4 +1,5 @@
 import FexDebug from './debug.js';
+import Font from './font.js';
 
 const resourceLoadingData = [
   { path: 'fede-engine-title.png', resourceName: 'titleImage' },
@@ -8,7 +9,9 @@ const resourceLoadingData = [
   { path: 'engine-demo-2-background.png', resourceName: 'background' },
   { path: 'engine-demo-2-stars.png', resourceName: 'stars' },
   { path: 'engine-demo-2-tile.png', resourceName: 'tile' },
-  { path: 'engine-demo-2-character.png', resourceName: 'character' },
+  { path: 'slime.png', resourceName: 'character' },
+  { path: 'slime-run.png', resourceName: 'characterRunning' },
+  { path: 'slime-run-inverse.png', resourceName: 'characterRunningInverse' },
   { path: 'engine-demo-font.png', resourceName: 'font' },
   { path: 'engine-demo-word-bubble.png', resourceName: 'wordBubble' },
   { path: 'engine-demo-word-bubble-parts.png', resourceName: 'wordBubbleParts' },
@@ -19,6 +22,7 @@ const resourceLoadingData = [
 ];
 
 const resources = {};
+const fonts = {};
 
 function loadResources() {
   FexDebug.logOnConsole('loading resources');
@@ -33,7 +37,11 @@ function loadResources() {
         };
       });
     }),
-  );
+  )
+    .then(() => {
+      fonts.normal = new Font(resources.font);
+      FexDebug.logOnConsole('kerning data: ', fonts.normal.kerningData);
+    });
 }
 
-export { loadResources, resources };
+export { loadResources, resources, fonts };

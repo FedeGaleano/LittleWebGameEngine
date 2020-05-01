@@ -72,20 +72,20 @@ let transitionEffect = null;
 
 const Effects = {
   none: 0,
-  fade: 1,
-  outin: 2,
+  blend: 1,
+  fadeInOut: 2,
 };
 
 function changeScene(newScene, effect) {
   scene.onFinish(() => {});
   let asyncAction = Promise.resolve();
-  if (effect === Effects.fade) {
+  if (effect === Effects.blend) {
     const { width, height } = currentGraphics.canvas;
     previousSceneLastFrame = currentGraphics.renderingContext2D.getImageData(0, 0, width, height);
     transitionAlpha = 1;
     transitionSpeed = -0.1;
     asyncAction = window.createImageBitmap(previousSceneLastFrame);
-  } else if (effect === Effects.outin) {
+  } else if (effect === Effects.fadeInOut) {
     const { width, height } = currentGraphics.canvas;
     previousSceneLastFrame = currentGraphics.renderingContext2D.getImageData(0, 0, width, height);
     transitionAlpha = 0.01;
@@ -101,14 +101,14 @@ function changeScene(newScene, effect) {
 }
 
 intro.onFinish(() => {
-  changeScene(menu, Effects.fade);
+  changeScene(menu, Effects.blend);
 });
 menu.onFinish(() => {
-  changeScene(game, Effects.outin);
+  changeScene(game, Effects.fadeInOut);
 });
 
 function renderScene() {
-  if (transitionEffect === Effects.outin && transitionAlpha < 1) {
+  if (transitionEffect === Effects.fadeInOut && transitionAlpha < 1) {
     transitionAlpha += transitionSpeed;
     currentGraphics.renderingContext2D.drawImage(outComingFrame, 0, 0);
     currentGraphics.renderer.fillStyle = 'black';
@@ -118,7 +118,7 @@ function renderScene() {
     return;
   }
   scene.render();
-  if (transitionEffect === Effects.outin && transitionAlpha >= 1 && transitionAlpha < 2) {
+  if (transitionEffect === Effects.fadeInOut && transitionAlpha >= 1 && transitionAlpha < 2) {
     transitionAlpha += transitionSpeed;
     currentGraphics.renderer.fillStyle = 'black';
     currentGraphics.renderer.alpha = 1 - (transitionAlpha - 1);
@@ -126,7 +126,7 @@ function renderScene() {
     currentGraphics.renderer.alpha = 1;
     return;
   }
-  if (transitionEffect === Effects.fade && transitionAlpha > 0) {
+  if (transitionEffect === Effects.blend && transitionAlpha > 0) {
     transitionAlpha += transitionSpeed;
     currentGraphics.renderer.alpha = transitionAlpha;
     currentGraphics.renderingContext2D.drawImage(outComingFrame, 0, 0);

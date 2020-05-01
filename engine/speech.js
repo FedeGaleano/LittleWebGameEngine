@@ -1,16 +1,19 @@
 import Dialog from './dialog.js';
+import { fonts } from './resources.js';
 
 class Speech {
   constructor(bottomLeftCornerX, bottomLeftCornerY, listOfTextLines, textSpeed) {
     this.dialogs = listOfTextLines.map(
       (textLines, i) => new Dialog(
-        bottomLeftCornerX, bottomLeftCornerY, textLines, textSpeed,
+        bottomLeftCornerX, bottomLeftCornerY, textLines, fonts.normal, textSpeed,
         ({ open: /* i === 0 */true, close: i === listOfTextLines.length - 1 }),
       ),
     );
     this.currentDialog = -1;
     this.updateBehaviour = () => {};
     this.renderBehaviour = () => {};
+
+    this.audio = new Audio('res/select2.wav');
   }
 
   update() {
@@ -34,6 +37,7 @@ class Speech {
       this.currentDialog++;
       this.updateBehaviour = () => this.normalUpdate();
       this.renderBehaviour = camera => this.normalRender(camera);
+      this.audio.play();
       return;
     }
 
@@ -42,7 +46,9 @@ class Speech {
       if (++this.currentDialog >= this.dialogs.length) {
         this.updateBehaviour = this.renderBehaviour = () => {};
         this.currentDialog = -1;
+        return;
       }
+      this.audio.play();
     } else {
       this.dialogs[this.currentDialog].forceCompleteText();
     }

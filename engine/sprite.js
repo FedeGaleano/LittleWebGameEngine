@@ -1,5 +1,7 @@
 class Sprite {
-  constructor(image, numberOfFrames, frameRepetitions, graphics) {
+  constructor(image, numberOfFrames, frameRepetitions, graphics, flip = false, flop = false) {
+    this.flip = flip;
+    this.flop = flop;
     this.image = image;
     this.numberOfFrames = numberOfFrames;
     this.frameRepetitions = frameRepetitions;
@@ -21,10 +23,11 @@ class Sprite {
 
   render(x, y) {
     const {
-      image, currentFrame, frameWidth, graphics,
+      image, currentFrame, frameWidth, graphics, flip, flop,
     } = this;
-    // const asd = ;
-    // console.log(`frameWidth ${frameWidth}`);
+
+    if (flip || flop) graphics.renderingContext2D.scale(flip ? -1 : 1, flop ? -1 : 1);
+
     graphics.renderingContext2D.drawImage(
       image,
       // SubRectangle
@@ -33,10 +36,9 @@ class Sprite {
       x * graphics.scale, y * graphics.scale,
       frameWidth * graphics.scale, image.height * graphics.scale,
     );
-    // graphics.renderingContext2D.strokeRect(
-    //   x * graphics.scale, y * graphics.scale,
-    //   frameWidth * graphics.scale, image.height * graphics.scale,
-    // );
+
+    // graphics.renderingContext2D.restore();
+
     this.currentFrameRepetitions++;
   }
 }
