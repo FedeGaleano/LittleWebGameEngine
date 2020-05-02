@@ -97,16 +97,14 @@ class Game extends Scene {
       //   'repetirte que esto',
       //   'NO es un videojuego',
       // ],
-      // [
-      //   ':)',
-      // ],
-      // [
-      //   '<3',
-      // ],
       [
-        'Esas son las Tierras Caidas.',
-        'Un aura de oscuridad emana',
-        'de ese frio lugar...',
+        'Hola XD',
+      ],
+      [
+        ':)',
+      ],
+      [
+        '<3',
       ],
     ], dialogSpeed);
 
@@ -121,8 +119,9 @@ class Game extends Scene {
     if (!pause) {
       ++this.count;
       curtain = Math.max(0, Math.min(1, curtain + curtainSpeed));
-      FexDebug.logOnScreen('count', this.count);
+      // FexDebug.logOnScreen('count', this.count);
       this.character.update();
+      this.speech.setBottomLeftCorner(this.character.x + 14, this.character.y);
       this.speech.update();
     }
 

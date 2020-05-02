@@ -105,6 +105,13 @@ class Dialog {
   // eslint-disable-next-line no-empty-function
   // eslint-disable-next-line class-methods-use-this
   set complete(_) { }
+
+  setBottomLeftCorner(x, y) {
+    this.x = x;
+    this.y = y - 3 - 8 * this.textLines.length - 5;
+    this.wordBubble.x = this.x;
+    this.wordBubble.y = this.y;
+  }
 }
 
 export default Dialog;

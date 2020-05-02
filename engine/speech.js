@@ -53,6 +53,12 @@ class Speech {
       this.dialogs[this.currentDialog].forceCompleteText();
     }
   }
+
+  setBottomLeftCorner(x, y) {
+    this.dialogs.forEach((d) => {
+      d.setBottomLeftCorner(x, y);
+    });
+  }
 }
 
 export default Speech;
