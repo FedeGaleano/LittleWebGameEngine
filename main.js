@@ -7,12 +7,13 @@ import FexDebug from './engine/debug.js';
 import Intro from './engine/intro.js';
 import Menu from './src/menu.js';
 
-let debug = !true;
+let debug = false;
 
 let currentGraphics = null;
 const { screen } = AskForRotationGraphics;
 const fullScreenButton = document.getElementById('fullScreenButton');
 const fullScreenImage = document.getElementById('fullScreenImage');
+const debugButton = document.getElementById('debugButton');
 
 let rotationSprite = null;
 
@@ -53,6 +54,7 @@ function toggleFullscreen() {
 }
 
 fullScreenButton.onclick = goFullScreen;
+debugButton.onclick = () => { debug = !debug; };
 document.addEventListener('fullscreenchange', reactToFullscreenChange);
 
 const isPressed = {};
