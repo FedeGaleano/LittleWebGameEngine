@@ -26,7 +26,7 @@ class Sprite {
       image, currentFrame, frameWidth, graphics, flip, flop,
     } = this;
 
-    if (flip || flop) graphics.renderingContext2D.scale(flip ? -1 : 1, flop ? -1 : 1);
+    // if (flip || flop) graphics.renderingContext2D.scale(flip ? -1 : 1, flop ? -1 : 1);
 
     graphics.renderingContext2D.drawImage(
       image,
