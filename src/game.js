@@ -113,6 +113,8 @@ class Game extends Scene {
       demoTileMapList,
       [0, resources.tile], 0, 0,
     );
+
+    this.uiButtonSize = resources.uiButtonLeft.width;
   }
 
   update() {
@@ -130,6 +132,8 @@ class Game extends Scene {
   }
 
   render() {
+    const { screen } = GameplayGraphics;
+
     renderer.clearScreen();
 
     // Render background
@@ -156,6 +160,10 @@ class Game extends Scene {
     GameplayRenderer.fillStyle = 'black';
     GameplayRenderer.renderFullRectangle(0, 0, screen.width, curtainHeight);
     GameplayRenderer.renderFullRectangle(0, screen.height - curtainHeight, screen.width, curtainHeight);
+
+    GameplayRenderer.renderBitmap(resources.uiButtonLeft, 10, screen.height - 10 - this.uiButtonSize);
+    GameplayRenderer.renderBitmap(resources.uiButtonRight, 10 + this.uiButtonSize + 10, screen.height - 10 - this.uiButtonSize);
+    GameplayRenderer.renderBitmap(resources.uiButtonAction, screen.width - 10 - this.uiButtonSize, screen.height - 10 - this.uiButtonSize);
 
     if (showGrid) {
       renderer.renderTileGrid();
