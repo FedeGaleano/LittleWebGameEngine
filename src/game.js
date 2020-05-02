@@ -208,15 +208,16 @@ class Game extends Scene {
 
     this.fired.ScreenTouch = (x, y) => {
       FexDebug.logOnScreen('touchazo', `(${x}, ${y})`);
-
+      if (this.isInUIRegion(x, y, screen.width - 10 - this.uiButtonSize, screen.height - 10 - this.uiButtonSize)) { // ui button action
+        this.speech.next();
+      }
+    };
+    this.pressed.ScreenTouch = (x, y) => {
       if (this.isInUIRegion(x, y, 10, screen.height - 10 - this.uiButtonSize)) { // ui button left
-
+        this.moveLeft();
       }
       if (this.isInUIRegion(x, y, 10 + this.uiButtonSize + 10, screen.height - 10 - this.uiButtonSize)) { // ui button right
-
-      }
-      if (this.isInUIRegion(screen.width - 10 - this.uiButtonSize, screen.height - 10 - this.uiButtonSize)) { // ui button action
-        this.speech.next();
+        this.moveRight();
       }
     };
 
