@@ -7,7 +7,7 @@ import FexDebug from './engine/debug.js';
 import Intro from './engine/intro.js';
 import Menu from './src/menu.js';
 
-let debug = true;
+let debug = !true;
 
 let currentGraphics = null;
 const { screen } = AskForRotationGraphics;
