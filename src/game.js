@@ -46,6 +46,8 @@ class Game extends Scene {
     super();
     this.unpause = this.unpause.bind(this);
     this.normalInput = this.normalInput.bind(this);
+    this.moveRight = this.moveRight.bind(this);
+    this.moveLeft = this.moveLeft.bind(this);
 
     this.count = 0;
     this.spriteSlimeIdle = null;
@@ -206,7 +208,16 @@ class Game extends Scene {
 
     this.fired.ScreenTouch = (x, y) => {
       FexDebug.logOnScreen('touchazo', `(${x}, ${y})`);
-      this.speech.next();
+
+      if (this.isInUIRegion(x, y, 10, screen.height - 10 - this.uiButtonSize)) { // ui button left
+
+      }
+      if (this.isInUIRegion(x, y, 10 + this.uiButtonSize + 10, screen.height - 10 - this.uiButtonSize)) { // ui button right
+
+      }
+      if (this.isInUIRegion(screen.width - 10 - this.uiButtonSize, screen.height - 10 - this.uiButtonSize)) { // ui button action
+        this.speech.next();
+      }
     };
 
     this.fired.Click = (x, y) => {
@@ -220,20 +231,31 @@ class Game extends Scene {
         curtainSpeed *= -1;
       }
     };
-    this.pressed.ArrowRight = () => {
-      this.character.changeSpriteTo('run');
-      this.character.x += characterSpeed;
-    };
+    this.pressed.ArrowRight = this.moveRight;
+    this.pressed.ArrowLeft = this.moveLeft;
     this.released.ArrowRight = () => {
       this.character.changeSpriteTo('idle');
-    };
-    this.pressed.ArrowLeft = () => {
-      this.character.changeSpriteTo('runInverse');
-      this.character.x -= characterSpeed;
     };
     this.released.ArrowLeft = () => {
       this.character.changeSpriteTo('idle');
     };
+    this.released.ScreenTouch = () => {
+      this.character.changeSpriteTo('idle');
+    };
+  }
+
+  isInUIRegion(x, y, x0, y0) {
+    return x > x0 && x < x0 + this.uiButtonSize && y > y0 && y < y0 + this.uiButtonSize;
+  }
+
+  moveRight() {
+    this.character.changeSpriteTo('run');
+    this.character.x += characterSpeed;
+  }
+
+  moveLeft() {
+    this.character.changeSpriteTo('runInverse');
+    this.character.x -= characterSpeed;
   }
 }
 
