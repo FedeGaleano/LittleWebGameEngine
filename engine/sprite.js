@@ -14,11 +14,13 @@ class Sprite {
     this.height = this.frameHeight;
   }
 
-  update() {
+  update(elapsedTime) {
     if (this.frameRepetitions[this.currentFrame] <= this.currentFrameRepetitions) {
       this.currentFrame = (this.currentFrame + 1) % this.numberOfFrames;
       this.currentFrameRepetitions = 0;
     }
+
+    this.currentFrameRepetitions++;
   }
 
   render(x, y) {
@@ -38,8 +40,6 @@ class Sprite {
     );
 
     // graphics.renderingContext2D.restore();
-
-    this.currentFrameRepetitions++;
   }
 }
 

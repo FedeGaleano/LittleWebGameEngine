@@ -39,7 +39,7 @@ let curtainSpeed = 0;
 
 let pause = false;
 
-const characterSpeed = 1;
+const characterSpeed = 0.1;
 
 class Game extends Scene {
   constructor() {
@@ -49,7 +49,6 @@ class Game extends Scene {
     this.moveRight = this.moveRight.bind(this);
     this.moveLeft = this.moveLeft.bind(this);
 
-    this.count = 0;
     this.spriteSlimeIdle = null;
     this.spriteSlimeRunning = null;
     this.character = null;
@@ -60,7 +59,6 @@ class Game extends Scene {
   init() {
     renderer.fillStyle = 'green';
     renderer.strokeStyle = '#00FFFF';
-    this.count = 0;
     this.normalInput();
     this.spriteSlimeIdle = new Sprite(resources.character, 4, [6, 12, 6, 12], GameplayGraphics);
     this.spriteSlimeRunning = new Sprite(resources.characterRunning, 4, [6, 6, 9, 6], GameplayGraphics);
@@ -119,14 +117,13 @@ class Game extends Scene {
     this.uiButtonSize = resources.uiButtonLeft.width;
   }
 
-  update() {
+  update(elapsedTime) {
+    this.elapsedTime = elapsedTime;
     if (!pause) {
-      ++this.count;
-      curtain = Math.max(0, Math.min(1, curtain + curtainSpeed));
-      // FexDebug.logOnScreen('count', this.count);
-      this.character.update();
+      curtain = Math.max(0, Math.min(1, curtain + curtainSpeed * elapsedTime));
+      this.character.update(elapsedTime);
       this.speech.setBottomLeftCorner(this.character.x + 14, this.character.y);
-      this.speech.update();
+      this.speech.update(elapsedTime);
     }
 
     camera.x = -(screen.width / 2 - (numberOfTilesInTheFloorX / 2) * GameplayGraphics.tileSize.w);
@@ -227,7 +224,7 @@ class Game extends Scene {
 
     this.fired.KeyC = () => {
       if (curtainSpeed === 0) {
-        curtainSpeed = 0.05;
+        curtainSpeed = 0.003;
       } else {
         curtainSpeed *= -1;
       }
@@ -251,12 +248,12 @@ class Game extends Scene {
 
   moveRight() {
     this.character.changeSpriteTo('run');
-    this.character.x += characterSpeed;
+    this.character.x += characterSpeed * this.elapsedTime;
   }
 
   moveLeft() {
     this.character.changeSpriteTo('runInverse');
-    this.character.x -= characterSpeed;
+    this.character.x -= characterSpeed * this.elapsedTime;
   }
 }
 

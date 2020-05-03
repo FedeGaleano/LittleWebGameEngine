@@ -175,6 +175,7 @@ export default function run() {
   let frameCount = 0;
   let fps = 0;
   let lastTime = 0;
+  let deltaTime = 0;
 
   function askForRotationLoop() {
     if (rotationSprite === null) {
@@ -190,9 +191,9 @@ export default function run() {
     );
   }
 
-  function gameLoop() {
+  function gameLoop(elapsedTime) {
+    scene.update(elapsedTime);
     handleInput();
-    scene.update();
     renderScene();
   }
 
@@ -231,18 +232,22 @@ export default function run() {
     }
   }
 
-  function loop(now) {
+  function loop(now = 0) {
     ++frameCount;
-    if (now - lastTime > 1000) {
+    const elapsedTime = now - lastTime;
+    deltaTime += elapsedTime;
+    lastTime = now;
+
+    if (deltaTime > 1000) {
       fps = frameCount;
       frameCount = 0;
-      lastTime += 1000;
+      deltaTime -= 1000;
     }
 
     if (!document.hasFocus()) {
       tryToExecute(scene.onFocusLost);
     }
-    loopManager();
+    loopManager(elapsedTime);
 
     if (debug) {
       FexDebug.logOnScreen('cursor absolute', `(${cursor.x}, ${cursor.y})`);

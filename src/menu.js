@@ -16,7 +16,7 @@ class Menu extends Scene {
     this.fired.ScreenTouch = finishScene;
     this.starPanels = [];
     this.xTimes = 0;
-    this.starsVelocity = 0.2;
+    this.starsVelocity = 0.025;
   }
 
   init() {
@@ -28,10 +28,10 @@ class Menu extends Scene {
     }
   }
 
-  update() {
+  update(elapsedTime) {
     const { screen } = GameplayGraphics;
     for (let index = 0; index < this.starPanels.length; ++index) {
-      this.starPanels[index] += this.starsVelocity;
+      this.starPanels[index] += this.starsVelocity * elapsedTime;
     }
 
     this.starPanels.removeIf(x => x > screen.width + 10);
