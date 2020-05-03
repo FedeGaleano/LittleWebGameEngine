@@ -1,26 +1,26 @@
 class Sprite {
-  constructor(image, numberOfFrames, frameRepetitions, graphics, flip = false, flop = false) {
+  constructor(image, numberOfFrames, framesDurations, graphics, flip = false, flop = false) {
     this.flip = flip;
     this.flop = flop;
     this.image = image;
     this.numberOfFrames = numberOfFrames;
-    this.frameRepetitions = frameRepetitions;
+    this.framesDurations = framesDurations;
     this.graphics = graphics;
     this.frameWidth = image.width / numberOfFrames;
     this.frameHeight = image.height;
     this.currentFrame = 0;
-    this.currentFrameRepetitions = 0;
+    this.currentFrameDuration = 0;
     this.width = this.frameWidth;
     this.height = this.frameHeight;
   }
 
   update(elapsedTime) {
-    if (this.frameRepetitions[this.currentFrame] <= this.currentFrameRepetitions) {
+    if (this.framesDurations[this.currentFrame] <= this.currentFrameDuration) {
       this.currentFrame = (this.currentFrame + 1) % this.numberOfFrames;
-      this.currentFrameRepetitions = 0;
+      this.currentFrameDuration = 0;
     }
 
-    this.currentFrameRepetitions += elapsedTime;
+    this.currentFrameDuration += elapsedTime;
   }
 
   render(x, y) {
