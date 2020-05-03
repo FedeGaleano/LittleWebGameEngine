@@ -209,12 +209,12 @@ class Game extends Scene {
         this.speech.next();
       }
     };
-    this.pressed.ScreenTouch = (x, y) => {
+    this.pressed.ScreenTouch = (x, y, elapsedTime) => {
       if (this.isInUIRegion(x, y, 10, screen.height - 10 - this.uiButtonSize)) { // ui button left
-        this.moveLeft();
+        this.moveLeft(elapsedTime);
       }
       if (this.isInUIRegion(x, y, 10 + this.uiButtonSize + 10, screen.height - 10 - this.uiButtonSize)) { // ui button right
-        this.moveRight();
+        this.moveRight(elapsedTime);
       }
     };
 
