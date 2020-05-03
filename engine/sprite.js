@@ -20,7 +20,7 @@ class Sprite {
       this.currentFrameRepetitions = 0;
     }
 
-    this.currentFrameRepetitions++;
+    this.currentFrameRepetitions += elapsedTime;
   }
 
   render(x, y) {

@@ -177,14 +177,14 @@ export default function run() {
   let lastTime = 0;
   let deltaTime = 0;
 
-  function askForRotationLoop() {
+  function askForRotationLoop(elapsedTime) {
     if (rotationSprite === null) {
       rotationSprite = new Sprite(
-        resources.rotationImage, 4, [10, 10, 10, 20], AskForRotationGraphics,
+        resources.rotationImage, 4, [200, 200, 200, 400], AskForRotationGraphics,
       );
     }
     AskForRotationGraphics.renderer.clearScreen();
-    rotationSprite.update();
+    rotationSprite.update(elapsedTime);
     rotationSprite.render(
       (screen.width - rotationSprite.frameWidth) / 2,
       (screen.height - rotationSprite.frameHeight) / 2,

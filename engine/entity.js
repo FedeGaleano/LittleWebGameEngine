@@ -8,8 +8,8 @@ class Entity {
     this.y = y;
   }
 
-  update() {
-    this.sprite.update();
+  update(elapsedTime) {
+    this.sprite.update(elapsedTime);
   }
 
   render(camera) {

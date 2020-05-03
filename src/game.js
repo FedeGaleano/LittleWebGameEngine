@@ -60,9 +60,9 @@ class Game extends Scene {
     renderer.fillStyle = 'green';
     renderer.strokeStyle = '#00FFFF';
     this.normalInput();
-    this.spriteSlimeIdle = new Sprite(resources.character, 4, [6, 12, 6, 12], GameplayGraphics);
-    this.spriteSlimeRunning = new Sprite(resources.characterRunning, 4, [6, 6, 9, 6], GameplayGraphics);
-    this.spriteSlimeRunningInverse = new Sprite(resources.characterRunningInverse, 4, [6, 6, 9, 6], GameplayGraphics);
+    this.spriteSlimeIdle = new Sprite(resources.character, 4, [100, 200, 100, 200], GameplayGraphics);
+    this.spriteSlimeRunning = new Sprite(resources.characterRunning, 4, [100, 100, 150, 100], GameplayGraphics);
+    this.spriteSlimeRunningInverse = new Sprite(resources.characterRunningInverse, 4, [100, 100, 150, 100], GameplayGraphics);
     this.character = new Entity(
       {
         idle: this.spriteSlimeIdle,
