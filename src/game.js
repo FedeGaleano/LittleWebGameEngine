@@ -176,14 +176,14 @@ class Game extends Scene {
     }
   }
 
+  postUpdate() {
+    this.character.changeSpriteTo('idle');
+  }
+
   onFocusLost() {
     pause = true;
     this.fired = {};
     this.fired.KeyP = this.fired.ScreenTouch = () => this.unpause();
-
-    this.released.ArrowRight = () => {
-      this.character.changeSpriteTo('idle');
-    };
   }
 
   unpause() {
@@ -229,31 +229,22 @@ class Game extends Scene {
         curtainSpeed *= -1;
       }
     };
-    this.pressed.ArrowRight = this.moveRight;
-    this.pressed.ArrowLeft = this.moveLeft;
-    this.released.ArrowRight = () => {
-      this.character.changeSpriteTo('idle');
-    };
-    this.released.ArrowLeft = () => {
-      this.character.changeSpriteTo('idle');
-    };
-    this.released.ScreenTouch = () => {
-      this.character.changeSpriteTo('idle');
-    };
+    this.pressed.ArrowRight = (x, y, elapsedTime) => this.moveRight(elapsedTime);
+    this.pressed.ArrowLeft = (x, y, elapsedTime) => this.moveLeft(elapsedTime);
   }
 
   isInUIRegion(x, y, x0, y0) {
     return x > x0 && x < x0 + this.uiButtonSize && y > y0 && y < y0 + this.uiButtonSize;
   }
 
-  moveRight() {
+  moveRight(elapsedTime) {
     this.character.changeSpriteTo('run');
-    this.character.x += characterSpeed * this.elapsedTime;
+    this.character.x += characterSpeed * elapsedTime;
   }
 
-  moveLeft() {
+  moveLeft(elapsedTime) {
     this.character.changeSpriteTo('runInverse');
-    this.character.x -= characterSpeed * this.elapsedTime;
+    this.character.x -= characterSpeed * elapsedTime;
   }
 }
 

@@ -140,7 +140,7 @@ function tryToExecute(func, ...args) {
   (func || (() => {}))(...args);
 }
 
-function handleInput() {
+function handleInput(elapsedTime) {
   function iterateOverState(state, logic) {
     // eslint-disable-next-line no-restricted-syntax
     for (const key in state) {
@@ -155,20 +155,20 @@ function handleInput() {
   const y = Math.floor(cursor.y / currentGraphics.scale);
 
   iterateOverState(isPressed, (key) => {
-    tryToExecute(scene.pressed[key], x, y);
+    tryToExecute(scene.pressed[key], x, y, elapsedTime);
   });
 
   iterateOverState(isFired, (key) => {
-    tryToExecute(scene.fired[key], x, y);
+    tryToExecute(scene.fired[key], x, y, elapsedTime);
     isFired[key] = false;
   });
 
   iterateOverState(isReleased, (key) => {
-    tryToExecute(scene.released[key], x, y);
+    tryToExecute(scene.released[key], x, y, elapsedTime);
     isReleased[key] = false;
   });
 
-  scene.mouseOver(x, y);
+  scene.mouseOver(x, y, elapsedTime);
 }
 
 export default function run() {
@@ -192,9 +192,10 @@ export default function run() {
   }
 
   function gameLoop(elapsedTime) {
+    handleInput(elapsedTime);
     scene.update(elapsedTime);
-    handleInput();
     renderScene();
+    scene.postUpdate(elapsedTime);
   }
 
   let loopManager = () => { throw new Error('Loop manager called before first assignment'); };

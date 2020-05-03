@@ -10,6 +10,7 @@ class Scene {
     this.init = this.init.bind(this);
     this.update = this.update.bind(this);
     this.render = this.render.bind(this);
+    this.postUpdate = this.postUpdate.bind(this);
     this.onFinish = this.onFinish.bind(this);
     this.onFocusLost = this.onFocusLost.bind(this);
     this.onFocusRecovered = this.onFocusRecovered.bind(this);
@@ -27,6 +28,10 @@ class Scene {
 
   render(camera) {
     throw new Error('Scene::render() method not implemented');
+  }
+
+  postUpdate() {
+
   }
 
   onFinish(callback) {
