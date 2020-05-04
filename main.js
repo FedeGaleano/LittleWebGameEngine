@@ -245,12 +245,11 @@ export default function run() {
       deltaTime -= 1000;
     }
 
-    if (!document.hasFocus() && focus) {
-      focus = false;
-      tryToExecute(scene.onFocusLost);
-    } else {
-      focus = document.hasFocus();
-    }
+    const documentHasFocus = document.hasFocus();
+
+    if (focus && !documentHasFocus) scene.onFocusLost();
+
+    focus = documentHasFocus;
 
     loopManager(elapsedTime);
 
