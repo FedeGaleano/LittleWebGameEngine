@@ -10,6 +10,7 @@ class Speech {
       ),
     );
     this.currentDialog = -1;
+    this.complete = false;
     this.updateBehaviour = () => {};
     this.renderBehaviour = () => {};
 
@@ -34,6 +35,7 @@ class Speech {
 
   next() {
     if (this.currentDialog < 0) {
+      this.complete = false;
       this.currentDialog++;
       this.updateBehaviour = () => this.normalUpdate();
       this.renderBehaviour = camera => this.normalRender(camera);
@@ -46,6 +48,7 @@ class Speech {
       if (++this.currentDialog >= this.dialogs.length) {
         this.updateBehaviour = this.renderBehaviour = () => {};
         this.currentDialog = -1;
+        this.complete = true;
         return;
       }
       this.audio.play();
