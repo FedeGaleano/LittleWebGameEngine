@@ -8,6 +8,7 @@ import Intro from './engine/intro.js';
 import Menu from './src/menu.js';
 
 let debug = false;
+let focus = true;
 
 let currentGraphics = null;
 const { screen } = AskForRotationGraphics;
@@ -211,6 +212,7 @@ export default function run() {
   }
 
   function clearInput() {
+    FexDebug.logOnConsole('clearInput called!');
     clearInputStatus(isFired);
     clearInputStatus(isPressed);
     clearInputStatus(isReleased);
@@ -223,13 +225,11 @@ export default function run() {
       AskForRotationGraphics.canvas.style.display = 'inline';
       currentGraphics = AskForRotationGraphics;
       loopManager = askForRotationLoop;
-      tryToExecute(scene.onFocusLost);
     } else {
       GameplayGraphics.canvas.style.display = 'inline';
       AskForRotationGraphics.canvas.style.display = 'none';
       currentGraphics = GameplayGraphics;
       loopManager = gameLoop;
-      tryToExecute(scene.onFocusRecovered);
     }
   }
 
@@ -245,9 +245,13 @@ export default function run() {
       deltaTime -= 1000;
     }
 
-    if (!document.hasFocus()) {
+    if (!document.hasFocus() && focus) {
+      focus = false;
       tryToExecute(scene.onFocusLost);
+    } else {
+      focus = document.hasFocus();
     }
+
     loopManager(elapsedTime);
 
     if (debug) {
@@ -313,7 +317,10 @@ export default function run() {
     isReleased.Click = true;
   });
 
-  window.addEventListener('orientationchange', chooseLoopManager);
+  window.addEventListener('orientationchange', () => {
+    scene.onFocusLost();
+    chooseLoopManager();
+  });
 
   window.addEventListener('resize', scene.init);
 

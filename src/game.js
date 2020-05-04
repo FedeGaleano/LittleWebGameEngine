@@ -54,9 +54,6 @@ class Game extends Scene {
     this.initialCutSceneUpdate = this.initialCutSceneUpdate.bind(this);
     this.normalUpdate = this.normalUpdate.bind(this);
 
-    this.updateLogic = this.idleUpdate;
-    this.renderLogic = () => {};
-
     this.spriteSlimeIdle = null;
     this.spriteSlimeRunning = null;
     this.character = null;
@@ -67,7 +64,7 @@ class Game extends Scene {
   init() {
     renderer.fillStyle = 'green';
     renderer.strokeStyle = '#00FFFF';
-    this.idleInput();
+
     this.spriteSlimeIdle = new Sprite(resources.character, 4, [100, 200, 100, 200], GameplayGraphics);
     this.spriteSlimeRunning = new Sprite(resources.characterRunning, 4, [100, 100, 150, 100], GameplayGraphics);
     this.spriteSlimeRunningInverse = new Sprite(resources.characterRunningInverse, 4, [100, 100, 150, 100], GameplayGraphics);
@@ -120,6 +117,20 @@ class Game extends Scene {
     );
 
     this.uiButtonSize = resources.uiButtonLeft.width;
+
+
+    // to start idle
+    // this.updateLogic = this.idleUpdate;
+    // this.renderLogic = () => {};
+    // this.idleInput();
+
+    // to start with cutScene
+    this.updateLogic = this.initialCutSceneUpdate;
+    this.renderLogic = () => {};
+    this.cutSceneInput();
+    curtain = -500;
+    curtainSpeed = 0.003;
+    this.speech.next();
   }
 
   update(elapsedTime) {
@@ -181,8 +192,11 @@ class Game extends Scene {
 
   onFocusLost() {
     pause = true;
+
     const previousInput = { fired: this.fired, pressed: this.pressed, released: this.released };
     this.fired = {};
+    this.pressed = {};
+    this.released = {};
     this.fired.KeyP = this.fired.ScreenTouch = () => this.unpause(previousInput);
   }
 
