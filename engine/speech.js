@@ -1,3 +1,4 @@
+/* eslint-disable no-empty-function */
 import Dialog from './dialog.js';
 import { fonts } from './resources.js';
 
@@ -62,6 +63,14 @@ class Speech {
       d.setBottomLeftCorner(x, y);
     });
   }
+
+  get closed() {
+    return this.currentDialog === -1;
+  }
+
+  // eslint-disable-next-line no-empty-function
+  // eslint-disable-next-line class-methods-use-this
+  set closed(_) { }
 }
 
 export default Speech;

@@ -130,15 +130,12 @@ class Game extends Scene {
     this.cutSceneInput();
     curtain = -500;
     curtainSpeed = 0.003;
-    this.speech.next();
+    camera.x = -screen.width;
+    this.speechClosed = true;
   }
 
   update(elapsedTime) {
     this.updateLogic(elapsedTime);
-
-
-    camera.x = -(screen.width / 2 - (numberOfTilesInTheFloorX / 2) * GameplayGraphics.tileSize.w);
-    camera.y = -(screen.height * 0.6 - (numberOfTilesInTheFloorY / 2) * GameplayGraphics.tileSize.h);
   }
 
   render() {
@@ -207,6 +204,9 @@ class Game extends Scene {
       this.speech.setBottomLeftCorner(this.character.x + 14, this.character.y);
       this.speech.update(elapsedTime);
     }
+
+    camera.x = -(screen.width / 2 - (numberOfTilesInTheFloorX / 2) * GameplayGraphics.tileSize.w);
+    camera.y = -(screen.height * 0.6 - (numberOfTilesInTheFloorY / 2) * GameplayGraphics.tileSize.h);
   }
 
   idleUpdate(elapsedTime) {
@@ -215,16 +215,32 @@ class Game extends Scene {
 
   initialCutSceneUpdate(elapsedTime) {
     curtain = Math.max(0, Math.min(1, curtain + curtainSpeed * elapsedTime));
-    this.speech.update(elapsedTime);
-    if (this.speech.complete) {
-      curtainSpeed *= -1;
-      this.updateLogic = this.normalUpdate;
-      this.normalInput();
-      this.renderLogic = () => {
-        GameplayRenderer.renderBitmap(resources.uiButtonLeft, 10, screen.height - 10 - this.uiButtonSize);
-        GameplayRenderer.renderBitmap(resources.uiButtonRight, 10 + this.uiButtonSize + 10, screen.height - 10 - this.uiButtonSize);
-        GameplayRenderer.renderBitmap(resources.uiButtonAction, screen.width - 10 - this.uiButtonSize, screen.height - 10 - this.uiButtonSize);
-      };
+
+    const cameraCutSceneSpeed = 0.05;
+    const finalCameraX = -(screen.width / 2 - (numberOfTilesInTheFloorX / 2) * GameplayGraphics.tileSize.w);
+    camera.x = Math.min(camera.x + elapsedTime * cameraCutSceneSpeed, finalCameraX);
+
+    camera.y = -(screen.height * 0.6 - (numberOfTilesInTheFloorY / 2) * GameplayGraphics.tileSize.h);
+
+    if (camera.x === finalCameraX) {
+      if (this.speechClosed) {
+        this.speech.next();
+        this.speechClosed = false;
+      }
+
+      this.speech.update(elapsedTime);
+
+
+      if (this.speech.complete) {
+        curtainSpeed *= -1;
+        this.updateLogic = this.normalUpdate;
+        this.normalInput();
+        this.renderLogic = () => {
+          GameplayRenderer.renderBitmap(resources.uiButtonLeft, 10, screen.height - 10 - this.uiButtonSize);
+          GameplayRenderer.renderBitmap(resources.uiButtonRight, 10 + this.uiButtonSize + 10, screen.height - 10 - this.uiButtonSize);
+          GameplayRenderer.renderBitmap(resources.uiButtonAction, screen.width - 10 - this.uiButtonSize, screen.height - 10 - this.uiButtonSize);
+        };
+      }
     }
   }
 
