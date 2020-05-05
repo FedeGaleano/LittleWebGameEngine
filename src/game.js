@@ -41,6 +41,19 @@ let pause = false;
 
 const characterSpeed = 0.1;
 
+const cameraFollowBox = {
+  x: 0,
+  y: -80,
+  width: 50,
+  height: 80,
+  render(customCamera) {
+    const {
+      x, y, width, height,
+    } = cameraFollowBox;
+    GameplayRenderer.renderEmptyRectangle(x - customCamera.x, y - customCamera.y, width, height, 'green');
+  },
+};
+
 class Game extends Scene {
   constructor() {
     super();
@@ -76,6 +89,10 @@ class Game extends Scene {
       }, { startingSpriteKey: 'idle', flip: false, flop: false },
       GameplayGraphics.tileSize.w * 3, -this.spriteSlimeIdle.height,
     );
+
+    cameraFollowBox.x = this.character.x - (cameraFollowBox.width - this.character.width) / 2;
+    camera.x = cameraFollowBox.x - (screen.width - cameraFollowBox.width) / 2;
+
     const dialogPoint = { x: this.character.x + 14, y: this.character.y };
     const dialogSpeed = 0.15;
     this.speech = new Speech(dialogPoint.x, dialogPoint.y, [
@@ -161,6 +178,7 @@ class Game extends Scene {
     this.demoWorld.render(camera);
     this.character.render(camera);
     this.speech.render(camera);
+    // cameraFollowBox.render(camera);
 
     // Curtain
     const curtainHeight = screen.height * curtainHeightFactor * curtain;
@@ -203,9 +221,17 @@ class Game extends Scene {
       this.character.update(elapsedTime);
       this.speech.setBottomLeftCorner(this.character.x + 14, this.character.y);
       this.speech.update(elapsedTime);
+      const cameraFollowBoxLeftBound = Math.min(cameraFollowBox.x, this.character.x);
+      const cameraFollowBoxRightBound = Math.max(cameraFollowBox.x + cameraFollowBox.width, this.character.x + this.character.width);
+
+      if (cameraFollowBox.x !== cameraFollowBoxLeftBound) {
+        cameraFollowBox.x = cameraFollowBoxLeftBound;
+      } else if (cameraFollowBox.x !== cameraFollowBoxRightBound - cameraFollowBox.width) {
+        cameraFollowBox.x = cameraFollowBoxRightBound - cameraFollowBox.width;
+      }
     }
 
-    camera.x = -(screen.width / 2 - (numberOfTilesInTheFloorX / 2) * GameplayGraphics.tileSize.w);
+    camera.x = Math.max(this.finalCameraX - 100, cameraFollowBox.x - (screen.width - cameraFollowBox.width) / 2);
     camera.y = -(screen.height * 0.6 - (numberOfTilesInTheFloorY / 2) * GameplayGraphics.tileSize.h);
   }
 
@@ -223,8 +249,12 @@ class Game extends Scene {
     camera.y = -(screen.height * 0.6 - (numberOfTilesInTheFloorY / 2) * GameplayGraphics.tileSize.h);
 
     if (camera.x === finalCameraX) {
+      this.finalCameraX = finalCameraX;
       if (this.speechClosed) {
         this.speech.next();
+        this.fired.Enter = this.fired.ScreenTouch = () => {
+          this.speech.next();
+        };
         this.speechClosed = false;
       }
 
@@ -268,9 +298,6 @@ class Game extends Scene {
     this.pressed = {};
     this.released = {};
     this.fired = {};
-    this.fired.Enter = this.fired.ScreenTouch = () => {
-      this.speech.next();
-    };
     this.fired.KeyP = this.onFocusLost;
   }
 

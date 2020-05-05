@@ -61,9 +61,20 @@ class Renderer {
     );
   }
 
-  renderFullRectangle(x, y, w, h) {
+  renderFullRectangle(x, y, w, h, color) {
     const { renderingContext2D, scale } = this.graphics;
+    const prevColor = renderingContext2D.fillStyle;
+    renderingContext2D.fillStyle = color || prevColor;
     renderingContext2D.fillRect(x * scale, y * scale, w * scale, h * scale);
+    renderingContext2D.fillStyle = prevColor;
+  }
+
+  renderEmptyRectangle(x, y, w, h, color) {
+    const { renderingContext2D, scale } = this.graphics;
+    const prevColor = renderingContext2D.strokeStyle;
+    renderingContext2D.strokeStyle = color || prevColor;
+    renderingContext2D.strokeRect(x * scale, y * scale, w * scale, h * scale);
+    renderingContext2D.strokeStyle = prevColor;
   }
 
   renderLetter(letter, x, y, font) {
