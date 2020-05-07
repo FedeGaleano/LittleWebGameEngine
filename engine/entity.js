@@ -7,9 +7,13 @@ class Entity {
     this.sprite.flop = flop;
     this.x = x;
     this.y = y;
+    this.velocity = { x: 0, y: 0 };
+    this.normalMovement = () => [this.x, this.y];
+    this.automaticMovement = this.normalMovement;
   }
 
   update(elapsedTime) {
+    [this.x, this.y] = this.automaticMovement(this.x, this.y, this.velocity, elapsedTime);
     this.sprite.update(elapsedTime);
   }
 
@@ -21,6 +25,16 @@ class Entity {
     this.sprite = this.spriteMap[key];
     this.sprite.flip = flip;
     this.sprite.flop = flop;
+  }
+
+  setAutomaticMovement(updateXYFunction) {
+    this.automaticMovement = updateXYFunction;
+  }
+
+  resetAutomaticMovement() {
+    this.automaticMovement = this.normalMovement;
+    this.velocity.x = 0;
+    this.velocity.y = 0;
   }
 
   get width() {

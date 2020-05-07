@@ -8,6 +8,7 @@ import WordBubble from '../engine/wordBubble.js';
 import Dialog from '../engine/dialog.js';
 import Speech from '../engine/speech.js';
 import Scene from '../engine/scene.js';
+import Physics from '../engine/physics/Physics.js';
 
 const ArrayNewFunctionalities = {
   removeIf(condition) {
@@ -63,6 +64,7 @@ class Game extends Scene {
     this.cutSceneInput = this.cutSceneInput.bind(this);
     this.moveRight = this.moveRight.bind(this);
     this.moveLeft = this.moveLeft.bind(this);
+    this.jump = this.jump.bind(this);
     this.idleUpdate = this.idleUpdate.bind(this);
     this.initialCutSceneUpdate = this.initialCutSceneUpdate.bind(this);
     this.normalUpdate = this.normalUpdate.bind(this);
@@ -81,13 +83,15 @@ class Game extends Scene {
     this.spriteSlimeIdle = new Sprite(resources.character, 4, [100, 200, 100, 200], GameplayGraphics);
     this.spriteSlimeRunning = new Sprite(resources.characterRunning, 4, [100, 100, 150, 100], GameplayGraphics);
     this.spriteSlimeRunningInverse = new Sprite(resources.characterRunningInverse, 4, [100, 100, 150, 100], GameplayGraphics);
+    this.xFloor = GameplayGraphics.tileSize.w * 3;
+    this.yFloor = -this.spriteSlimeIdle.height;
     this.character = new Entity(
       {
         idle: this.spriteSlimeIdle,
         run: this.spriteSlimeRunning,
         runInverse: this.spriteSlimeRunningInverse,
       }, { startingSpriteKey: 'idle', flip: false, flop: false },
-      GameplayGraphics.tileSize.w * 3, -this.spriteSlimeIdle.height,
+      this.xFloor, this.yFloor,
     );
 
     cameraFollowBox.x = this.character.x - (cameraFollowBox.width - this.character.width) / 2;
@@ -219,6 +223,13 @@ class Game extends Scene {
     if (!pause) {
       curtain = Math.max(0, Math.min(1, curtain + curtainSpeed * elapsedTime));
       this.character.update(elapsedTime);
+
+
+      if (this.character.y > this.yFloor) {
+        this.character.y = this.yFloor;
+        this.character.resetAutomaticMovement();
+      }
+
       this.speech.setBottomLeftCorner(this.character.x + 14, this.character.y);
       this.speech.update(elapsedTime);
       const cameraFollowBoxLeftBound = Math.min(cameraFollowBox.x, this.character.x);
@@ -316,7 +327,7 @@ class Game extends Scene {
     this.fired.ScreenTouch = (x, y) => {
       FexDebug.logOnScreen('touchazo', `(${x}, ${y})`);
       if (this.isInUIRegion(x, y, screen.width - 10 - this.uiButtonSize, screen.height - 10 - this.uiButtonSize)) { // ui button action
-        this.speech.next();
+        this.jump();
       }
     };
     this.pressed.ScreenTouch = (x, y, elapsedTime) => {
@@ -341,6 +352,7 @@ class Game extends Scene {
     };
     this.pressed.ArrowRight = (x, y, elapsedTime) => this.moveRight(elapsedTime);
     this.pressed.ArrowLeft = (x, y, elapsedTime) => this.moveLeft(elapsedTime);
+    this.fired.Space = (x, y, elapsedTime) => this.jump(elapsedTime);
   }
 
   isInUIRegion(x, y, x0, y0) {
@@ -355,6 +367,10 @@ class Game extends Scene {
   moveLeft(elapsedTime) {
     this.character.changeSpriteTo('runInverse');
     this.character.x -= characterSpeed * elapsedTime;
+  }
+
+  jump() {
+    this.character.setAutomaticMovement(Physics.buildJumpMovement(5, 0.01));
   }
 }
 
