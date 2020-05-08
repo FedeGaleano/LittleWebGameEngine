@@ -1,9 +1,8 @@
 class Physics {
   static buildJumpMovement(initialVelocityY, acceleration) {
-    return function processJump(x, y, velocity, elapsedTime) {
+    return function processJump(position, velocity, elapsedTime) {
       velocity.y = (velocity.y || initialVelocityY) - acceleration * elapsedTime;
-      const newY = y - velocity.y;
-      return [x, newY];
+      position.y -= velocity.y;
     };
   }
 }

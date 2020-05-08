@@ -94,10 +94,10 @@ class Game extends Scene {
       this.xFloor, this.yFloor,
     );
 
-    cameraFollowBox.x = this.character.x - (cameraFollowBox.width - this.character.width) / 2;
+    cameraFollowBox.x = this.character.position.x - (cameraFollowBox.width - this.character.width) / 2;
     camera.x = cameraFollowBox.x - (screen.width - cameraFollowBox.width) / 2;
 
-    const dialogPoint = { x: this.character.x + 14, y: this.character.y };
+    const dialogPoint = { x: this.character.position.x + 14, y: this.character.position.y };
     const dialogSpeed = 0.15;
     this.speech = new Speech(dialogPoint.x, dialogPoint.y, [
       [
@@ -212,6 +212,7 @@ class Game extends Scene {
   }
 
   onFocusLost() {
+    if (pause) return;
     pause = true;
 
     const previousInput = { fired: this.fired, pressed: this.pressed, released: this.released };
@@ -228,15 +229,15 @@ class Game extends Scene {
       this.character.update(elapsedTime);
 
 
-      if (this.character.y > this.yFloor) {
-        this.character.y = this.yFloor;
+      if (this.character.position.y > this.yFloor) {
+        this.character.position.y = this.yFloor;
         this.character.resetAutomaticMovement();
       }
 
-      this.speech.setBottomLeftCorner(this.character.x + 14, this.character.y);
+      this.speech.setBottomLeftCorner(this.character.position.x + 14, this.character.position.y);
       this.speech.update(elapsedTime);
-      const cameraFollowBoxLeftBound = Math.min(cameraFollowBox.x, this.character.x);
-      const cameraFollowBoxRightBound = Math.max(cameraFollowBox.x + cameraFollowBox.width, this.character.x + this.character.width);
+      const cameraFollowBoxLeftBound = Math.min(cameraFollowBox.x, this.character.position.x);
+      const cameraFollowBoxRightBound = Math.max(cameraFollowBox.x + cameraFollowBox.width, this.character.position.x + this.character.width);
 
       if (cameraFollowBox.x !== cameraFollowBoxLeftBound) {
         cameraFollowBox.x = cameraFollowBoxLeftBound;
@@ -364,12 +365,12 @@ class Game extends Scene {
 
   moveRight(elapsedTime) {
     this.character.changeSpriteTo('run');
-    this.character.x += characterSpeed * elapsedTime;
+    this.character.position.x += characterSpeed * elapsedTime;
   }
 
   moveLeft(elapsedTime) {
     this.character.changeSpriteTo('runInverse');
-    this.character.x -= characterSpeed * elapsedTime;
+    this.character.position.x -= characterSpeed * elapsedTime;
   }
 
   jump() {

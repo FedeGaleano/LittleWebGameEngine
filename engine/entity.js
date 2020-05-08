@@ -5,23 +5,22 @@ class Entity {
     this.sprite = spriteMap[startingSpriteKey];
     this.sprite.flip = flip;
     this.sprite.flop = flop;
-    this.x = x;
-    this.y = y;
+    this.position = { x, y };
     this.count = 0;
     this.velocity = { x: 0, y: 0 };
-    this.normalMovement = () => [this.x, this.y];
+    this.normalMovement = () => {};
     this.automaticMovement = this.normalMovement;
   }
 
   update(elapsedTime) {
-    [this.x, this.y] = this.automaticMovement(this.x, this.y, this.velocity, this.count * 2.5);
+    this.automaticMovement(this.position, this.velocity, this.count * 2.5);
     // [this.x, this.y] = this.automaticMovement(this.x, this.y, this.velocity, elapsedTime);
     this.sprite.update(elapsedTime);
     ++this.count;
   }
 
   render(camera) {
-    this.sprite.render(this.x - camera.x, this.y - camera.y);
+    this.sprite.render(this.position.x - camera.x, this.position.y - camera.y);
   }
 
   changeSpriteTo(key, flip = false, flop = false) {
