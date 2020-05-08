@@ -7,14 +7,17 @@ class Entity {
     this.sprite.flop = flop;
     this.x = x;
     this.y = y;
+    this.count = 0;
     this.velocity = { x: 0, y: 0 };
     this.normalMovement = () => [this.x, this.y];
     this.automaticMovement = this.normalMovement;
   }
 
   update(elapsedTime) {
-    [this.x, this.y] = this.automaticMovement(this.x, this.y, this.velocity, elapsedTime);
+    [this.x, this.y] = this.automaticMovement(this.x, this.y, this.velocity, this.count * 2.5);
+    // [this.x, this.y] = this.automaticMovement(this.x, this.y, this.velocity, elapsedTime);
     this.sprite.update(elapsedTime);
+    ++this.count;
   }
 
   render(camera) {
@@ -29,6 +32,7 @@ class Entity {
 
   setAutomaticMovement(updateXYFunction) {
     this.automaticMovement = updateXYFunction;
+    this.count = 0;
   }
 
   resetAutomaticMovement() {

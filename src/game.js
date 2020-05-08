@@ -156,7 +156,9 @@ class Game extends Scene {
   }
 
   update(elapsedTime) {
-    this.updateLogic(elapsedTime);
+    if (!pause) {
+      this.updateLogic(elapsedTime);
+    }
   }
 
   render() {
@@ -220,6 +222,7 @@ class Game extends Scene {
   }
 
   normalUpdate(elapsedTime) {
+    // FexDebug.chargeHeavily();
     if (!pause) {
       curtain = Math.max(0, Math.min(1, curtain + curtainSpeed * elapsedTime));
       this.character.update(elapsedTime);

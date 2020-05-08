@@ -62,6 +62,13 @@ ___________________
   logOnScreen(key, message) {
     debugInfo[key] = message;
   },
+  chargeHeavily(count = 1000) {
+    console.log('\n');
+    for (let i = 0; i < count; ++i) {
+      console.log(i);
+    }
+    console.log('\n');
+  },
 };
 
 export default FexDebug;
