@@ -55,6 +55,8 @@ const cameraFollowBox = {
   },
 };
 
+const jumpMovement = Physics.buildJumpMovement(5, 0.01);
+
 class Game extends Scene {
   constructor() {
     super();
@@ -374,7 +376,7 @@ class Game extends Scene {
   }
 
   jump() {
-    this.character.setAutomaticMovement(Physics.buildJumpMovement(5, 0.01));
+    this.character.setAutomaticMovement(jumpMovement);
   }
 }
 
