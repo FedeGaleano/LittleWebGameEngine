@@ -1,12 +1,16 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-unused-vars */
 
+import InputBuffer from './InputBuffer.js';
+import TouchScreenArea from './TouchScreenArea.js';
+
 class Scene {
   constructor() {
     this.finish = () => {};
-    this.pressed = {};
-    this.fired = {};
-    this.released = {};
+    this.pressed = Scene.emptyInputState();
+    this.fired = Scene.emptyInputState();
+    this.released = Scene.emptyInputState();
+    this.volatileTouchScreenAreas = [];
     this.init = this.init.bind(this);
     this.update = this.update.bind(this);
     this.render = this.render.bind(this);
@@ -52,6 +56,21 @@ class Scene {
 
   mouseOver(x, y) {
 
+  }
+
+  registerVolatileTouchScreenArea(touchScreenArea) {
+    this.volatileTouchScreenAreas.push(touchScreenArea.name);
+    InputBuffer.registerTouchScreenArea(touchScreenArea);
+  }
+
+  deleteAllVolatileTouchScreenAreas() {
+    this.volatileTouchScreenAreas.forEach((areaName) => {
+      InputBuffer.deleteTouchScreenArea(areaName);
+    });
+  }
+
+  static emptyInputState() {
+    return { touchScreen: {} };
   }
 }
 

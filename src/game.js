@@ -9,6 +9,7 @@ import Dialog from '../engine/dialog.js';
 import Speech from '../engine/speech.js';
 import Scene from '../engine/scene.js';
 import Physics from '../engine/physics/Physics.js';
+import TouchScreenArea from '../engine/TouchScreenArea.js';
 
 const ArrayNewFunctionalities = {
   removeIf(condition) {
@@ -73,7 +74,14 @@ class Game extends Scene {
 
     this.spriteSlimeIdle = null;
     this.spriteSlimeRunning = null;
+    this.leftButtonSprite = null;
+    this.rightButtonSprite = null;
+    this.jumpButtonSprite = null;
+
     this.character = null;
+    this.leftButton = null;
+    this.rightButton = null;
+    this.jumpButton = null;
     this.speech = null;
     this.demoWorld = null;
   }
@@ -82,9 +90,53 @@ class Game extends Scene {
     renderer.fillStyle = 'green';
     renderer.strokeStyle = '#00FFFF';
 
+    this.uiButtonSize = resources.uiButtonLeft.width;
+
     this.spriteSlimeIdle = new Sprite(resources.character, 4, [100, 200, 100, 200], GameplayGraphics);
     this.spriteSlimeRunning = new Sprite(resources.characterRunning, 4, [100, 100, 150, 100], GameplayGraphics);
     this.spriteSlimeRunningInverse = new Sprite(resources.characterRunningInverse, 4, [100, 100, 150, 100], GameplayGraphics);
+
+    this.leftButtonSprite = new Sprite(resources.uiButtonLeft, 1, [1], GameplayGraphics);
+    this.leftButton = new Entity(
+      { normal: this.leftButtonSprite },
+      { startingSpriteKey: 'normal' },
+      10, screen.height - 10 - this.uiButtonSize,
+    );
+
+    this.rightButtonSprite = new Sprite(resources.uiButtonRight, 1, [1], GameplayGraphics);
+    this.rightButton = new Entity(
+      { normal: this.rightButtonSprite },
+      { startingSpriteKey: 'normal' },
+      10 + this.uiButtonSize + 10, screen.height - 10 - this.uiButtonSize,
+    );
+
+    this.jumpButtonSprite = new Sprite(resources.uiButtonAction, 1, [1], GameplayGraphics);
+    this.jumpButton = new Entity(
+      { normal: this.jumpButtonSprite },
+      { startingSpriteKey: 'normal' },
+      screen.width - 10 - this.uiButtonSize, screen.height - 10 - this.uiButtonSize,
+    );
+
+    this.leftButtonTouchScreenArea = new TouchScreenArea(
+      this.leftButton.position.x, this.leftButton.position.y, this.leftButton.width, this.leftButton.height, GameplayGraphics, 'left',
+    );
+    this.rightButtonTouchScreenArea = new TouchScreenArea(
+      this.rightButton.position.x, this.rightButton.position.y, this.rightButton.width, this.rightButton.height, GameplayGraphics, 'right',
+    );
+    this.jumpButtonTouchScreenArea = new TouchScreenArea(
+      this.jumpButton.position.x, this.jumpButton.position.y, this.jumpButton.width, this.jumpButton.height, GameplayGraphics, 'jump',
+    );
+
+    this.anyTouchScreenArea = new TouchScreenArea(
+      0, 0, GameplayGraphics.screen.width, GameplayGraphics.screen.height, GameplayGraphics, 'any',
+    );
+
+
+    this.registerVolatileTouchScreenArea(this.anyTouchScreenArea);
+    this.registerVolatileTouchScreenArea(this.leftButtonTouchScreenArea);
+    this.registerVolatileTouchScreenArea(this.rightButtonTouchScreenArea);
+    this.registerVolatileTouchScreenArea(this.jumpButtonTouchScreenArea);
+
     this.xFloor = GameplayGraphics.tileSize.w * 3;
     this.yFloor = -this.spriteSlimeIdle.height;
     this.character = new Entity(
@@ -92,7 +144,7 @@ class Game extends Scene {
         idle: this.spriteSlimeIdle,
         run: this.spriteSlimeRunning,
         runInverse: this.spriteSlimeRunningInverse,
-      }, { startingSpriteKey: 'idle', flip: false, flop: false },
+      }, { startingSpriteKey: 'idle' },
       this.xFloor, this.yFloor,
     );
 
@@ -138,8 +190,6 @@ class Game extends Scene {
       demoTileMapList,
       [0, resources.tile], 0, 0,
     );
-
-    this.uiButtonSize = resources.uiButtonLeft.width;
 
 
     // to start idle
@@ -218,10 +268,18 @@ class Game extends Scene {
     pause = true;
 
     const previousInput = { fired: this.fired, pressed: this.pressed, released: this.released };
-    this.fired = {};
-    this.pressed = {};
-    this.released = {};
-    this.fired.KeyP = this.fired.ScreenTouch = () => this.unpause(previousInput);
+    this.deleteAllVolatileTouchScreenAreas();
+    this.fired = Scene.emptyInputState();
+    this.pressed = Scene.emptyInputState();
+    this.released = Scene.emptyInputState();
+
+    this.fired.KeyP = this.fired.touchScreen.any = () => this.unpause(previousInput);
+  }
+
+  renderUI() {
+    this.leftButton.render();
+    this.rightButton.render();
+    this.jumpButton.render();
   }
 
   normalUpdate(elapsedTime) {
@@ -269,7 +327,7 @@ class Game extends Scene {
       this.finalCameraX = finalCameraX;
       if (this.speechClosed) {
         this.speech.next();
-        this.fired.Enter = this.fired.ScreenTouch = () => {
+        this.fired.Enter = this.fired.touchScreen.any = () => {
           this.speech.next();
         };
         this.speechClosed = false;
@@ -282,11 +340,7 @@ class Game extends Scene {
         curtainSpeed *= -1;
         this.updateLogic = this.normalUpdate;
         this.normalInput();
-        this.renderLogic = () => {
-          GameplayRenderer.renderBitmap(resources.uiButtonLeft, 10, screen.height - 10 - this.uiButtonSize);
-          GameplayRenderer.renderBitmap(resources.uiButtonRight, 10 + this.uiButtonSize + 10, screen.height - 10 - this.uiButtonSize);
-          GameplayRenderer.renderBitmap(resources.uiButtonAction, screen.width - 10 - this.uiButtonSize, screen.height - 10 - this.uiButtonSize);
-        };
+        this.renderLogic = this.renderUI;
       }
     }
   }
@@ -299,11 +353,11 @@ class Game extends Scene {
   }
 
   idleInput() {
-    this.pressed = {};
-    this.released = {};
-    this.fired = {};
+    this.pressed = Scene.emptyInputState();
+    this.released = Scene.emptyInputState();
+    this.fired = Scene.emptyInputState();
 
-    this.fired.Enter = this.fired.ScreenTouch = () => {
+    this.fired.Enter = this.fired.touchScreen.any = () => {
       curtainSpeed = 0.003;
       this.speech.next();
       this.updateLogic = this.initialCutSceneUpdate;
@@ -312,16 +366,16 @@ class Game extends Scene {
   }
 
   cutSceneInput() {
-    this.pressed = {};
-    this.released = {};
-    this.fired = {};
+    this.pressed = Scene.emptyInputState();
+    this.released = Scene.emptyInputState();
+    this.fired = Scene.emptyInputState();
     this.fired.KeyP = this.onFocusLost;
   }
 
   normalInput() {
-    this.pressed = {};
-    this.released = {};
-    this.fired = {};
+    this.pressed = Scene.emptyInputState();
+    this.released = Scene.emptyInputState();
+    this.fired = Scene.emptyInputState();
     this.fired.KeyP = this.onFocusLost;
     this.fired.KeyD = () => {
       showGrid = !showGrid;
@@ -330,20 +384,13 @@ class Game extends Scene {
       this.speech.next();
     };
 
-    this.fired.ScreenTouch = (x, y) => {
-      FexDebug.logOnScreen('touchazo', `(${x}, ${y})`);
-      if (this.isInUIRegion(x, y, screen.width - 10 - this.uiButtonSize, screen.height - 10 - this.uiButtonSize)) { // ui button action
-        this.jump();
-      }
+    this.pressed.touchScreen.left = (x, y, elapsedTime) => {
+      this.moveLeft(elapsedTime);
     };
-    this.pressed.ScreenTouch = (x, y, elapsedTime) => {
-      if (this.isInUIRegion(x, y, 10, screen.height - 10 - this.uiButtonSize)) { // ui button left
-        this.moveLeft(elapsedTime);
-      }
-      if (this.isInUIRegion(x, y, 10 + this.uiButtonSize + 10, screen.height - 10 - this.uiButtonSize)) { // ui button right
-        this.moveRight(elapsedTime);
-      }
+    this.pressed.touchScreen.right = (x, y, elapsedTime) => {
+      this.moveRight(elapsedTime);
     };
+    this.fired.touchScreen.jump = this.jump;
 
     this.fired.Click = (x, y) => {
       FexDebug.logOnScreen('clickazo', `(${x}, ${y})`);

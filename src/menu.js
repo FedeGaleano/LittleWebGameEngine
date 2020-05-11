@@ -3,6 +3,8 @@ import Scene from '../engine/scene.js';
 import { GameplayRenderer, GameplayGraphics } from '../engine/rendering.js';
 import { resources } from '../engine/resources.js';
 import FexDebug from '../engine/debug.js';
+import InputBuffer from '../engine/InputBuffer.js';
+import TouchScreenArea from '../engine/TouchScreenArea.js';
 
 class Menu extends Scene {
   constructor() {
@@ -13,7 +15,7 @@ class Menu extends Scene {
       this.finish();
     };
     this.fired.Enter = finishScene;
-    this.fired.ScreenTouch = finishScene;
+    this.fired.touchScreen.play = finishScene;
     this.starPanels = [];
     this.xTimes = 0;
     this.starsVelocity = 0.025;
@@ -26,6 +28,17 @@ class Menu extends Scene {
     for (let index = 0; index < this.xTimes; ++index) {
       this.starPanels.push(screen.width - resources.stars.width * (1 + index));
     }
+
+
+    this.playButtonX = GameplayGraphics.screen.width / 2 - resources.playButton.width / 2;
+    this.playButtonY = GameplayGraphics.screen.height * 0.6 - resources.playButton.height / 2;
+
+    this.registerVolatileTouchScreenArea(
+      new TouchScreenArea(
+        this.playButtonX, this.playButtonY, resources.playButton.width, resources.playButton.height, GameplayGraphics,
+        'play',
+      ),
+    );
   }
 
   update(elapsedTime) {
@@ -62,8 +75,7 @@ class Menu extends Scene {
     );
     GameplayRenderer.renderBitmap(
       resources.playButton,
-      screen.width / 2 - resources.playButton.width / 2,
-      screen.height * 0.6 - resources.playButton.height / 2,
+      this.playButtonX, this.playButtonY,
     );
   }
 

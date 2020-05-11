@@ -19,7 +19,7 @@ class Entity {
     ++this.count;
   }
 
-  render(camera) {
+  render(camera = { x: 0, y: 0 }) {
     this.sprite.render(this.position.x - camera.x, this.position.y - camera.y);
   }
 

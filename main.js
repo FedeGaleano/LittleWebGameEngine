@@ -6,6 +6,7 @@ import Sprite from './engine/sprite.js';
 import FexDebug from './engine/debug.js';
 import Intro from './engine/intro.js';
 import Menu from './src/menu.js';
+import InputBuffer from './engine/InputBuffer.js';
 
 let debug = false;
 let focus = true;
@@ -58,9 +59,9 @@ fullScreenButton.onclick = goFullScreen;
 debugButton.onclick = () => { debug = !debug; };
 document.addEventListener('fullscreenchange', reactToFullscreenChange);
 
-const isPressed = {};
-const isFired = {};
-const isReleased = {};
+const isPressed = new InputBuffer();
+const isFired = new InputBuffer();
+const isReleased = new InputBuffer();
 const cursor = { x: null, y: null };
 
 const intro = new Intro();
@@ -81,6 +82,11 @@ const Effects = {
 
 function changeScene(newScene, effect) {
   scene.onFinish(() => {});
+  scene.volatileTouchScreenAreas.forEach((areaName) => {
+    InputBuffer.deleteTouchScreenArea(areaName);
+  });
+  scene.volatileTouchScreenAreas = [];
+
   let asyncAction = Promise.resolve();
   if (effect === Effects.blend) {
     const { width, height } = currentGraphics.canvas;
@@ -155,18 +161,32 @@ function handleInput(elapsedTime) {
   const x = Math.floor(cursor.x / currentGraphics.scale);
   const y = Math.floor(cursor.y / currentGraphics.scale);
 
-  iterateOverState(isPressed, (key) => {
+  iterateOverState(isPressed.keyboard, (key) => {
     tryToExecute(scene.pressed[key], x, y, elapsedTime);
   });
 
-  iterateOverState(isFired, (key) => {
-    tryToExecute(scene.fired[key], x, y, elapsedTime);
-    isFired[key] = false;
+  iterateOverState(isPressed.touchScreen, (key) => {
+    tryToExecute(scene.pressed.touchScreen[key], x, y, elapsedTime);
   });
 
-  iterateOverState(isReleased, (key) => {
+  iterateOverState(isFired.keyboard, (key) => {
+    tryToExecute(scene.fired[key], x, y, elapsedTime);
+    isFired.keyboard[key] = false;
+  });
+
+  iterateOverState(isFired.touchScreen, (key) => {
+    tryToExecute(scene.fired.touchScreen[key], x, y, elapsedTime);
+    isFired.touchScreen[key] = false;
+  });
+
+  iterateOverState(isReleased.keyboard, (key) => {
     tryToExecute(scene.released[key], x, y, elapsedTime);
-    isReleased[key] = false;
+    isReleased.keyboard[key] = false;
+  });
+
+  iterateOverState(isReleased.touchScreen, (key) => {
+    tryToExecute(scene.released.touchScreen[key], x, y, elapsedTime);
+    isReleased.touchScreen[key] = false;
   });
 
   scene.mouseOver(x, y, elapsedTime);
@@ -213,9 +233,12 @@ export default function run() {
 
   function clearInput() {
     FexDebug.logOnConsole('clearInput called!');
-    clearInputStatus(isFired);
-    clearInputStatus(isPressed);
-    clearInputStatus(isReleased);
+    // clearInputStatus(isFired);
+    // clearInputStatus(isPressed);
+    // clearInputStatus(isReleased);
+    isFired.clear();
+    isPressed.clear();
+    isReleased.clear();
   }
 
   function chooseLoopManager() {
@@ -254,7 +277,6 @@ export default function run() {
     loopManager(elapsedTime);
 
     if (debug) {
-      FexDebug.logOnScreen('cursor absolute', `(${cursor.x}, ${cursor.y})`);
       FexDebug.setGeneralInfo({ fps });
       FexDebug.render(currentGraphics);
     }
@@ -271,13 +293,15 @@ export default function run() {
   }
 
   document.addEventListener('keydown', ({ code }) => {
-    if (!isPressed[code]) isFired[code] = true;
-    isPressed[code] = true;
+    if (!isPressed.keyboard[code]) {
+      isFired.keyboard[code] = true;
+    }
+    isPressed.keyboard[code] = true;
   });
 
   document.addEventListener('keyup', ({ code }) => {
-    isPressed[code] = false;
-    isReleased[code] = true;
+    isPressed.keyboard[code] = false;
+    isReleased.keyboard[code] = true;
   });
 
   document.addEventListener('keydown', ({ code }) => {
@@ -287,15 +311,46 @@ export default function run() {
   });
 
   document.addEventListener('touchstart', (event) => {
-    cursor.x = Math.round(event.touches[0].clientX);
-    cursor.y = Math.round(event.touches[0].clientY);
-    if (!isPressed.ScreenTouch) isFired.ScreenTouch = true;
-    isPressed.ScreenTouch = true;
+    for (let i = 0; i < event.touches.length; ++i) {
+      const x = event.touches[i].clientX;
+      const y = event.touches[i].clientY;
+
+      const areas = InputBuffer.getRegisteredTouchScreenAreas();
+
+      // eslint-disable-next-line no-restricted-syntax
+      for (const areaName in areas) {
+        if (areas[areaName].covers(x, y)) {
+          if (!isPressed.touchScreen[areaName]) isFired.touchScreen[areaName] = true;
+          isPressed.touchScreen[areaName] = true;
+        }
+      }
+    }
+
+    // cursor.x = Math.round(event.touches[0].clientX);
+    // cursor.y = Math.round(event.touches[0].clientY);
+    // if (!isPressed.ScreenTouch) isFired.ScreenTouch = true;
+    // isPressed.ScreenTouch = true;
   });
 
-  document.addEventListener('touchend', () => {
-    isPressed.ScreenTouch = false;
-    isReleased.ScreenTouch = true;
+  document.addEventListener('touchend', (event) => {
+    for (let i = 0; i < event.changedTouches.length; ++i) {
+      const x = event.changedTouches[i].clientX;
+      const y = event.changedTouches[i].clientY;
+
+      const areas = InputBuffer.getRegisteredTouchScreenAreas();
+
+      // eslint-disable-next-line no-restricted-syntax
+      for (const areaName in areas) {
+        if (areas[areaName].covers(x, y)) {
+          // REVIEW: another touch can be still pressing the area
+          isPressed.touchScreen[areaName] = false;
+          isReleased.touchScreen[areaName] = true;
+        }
+      }
+    }
+
+    // isPressed.ScreenTouch = false;
+    // isReleased.ScreenTouch = true;
   });
 
   document.addEventListener('mousemove', (event) => {

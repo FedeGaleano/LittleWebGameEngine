@@ -2,6 +2,8 @@ import Scene from './scene.js';
 import { GameplayGraphics } from './rendering.js';
 import { resources } from './resources.js';
 import FexDebug from './debug.js';
+import InputBuffer from './InputBuffer.js';
+import TouchScreenArea from './TouchScreenArea.js';
 
 class Intro extends Scene {
   constructor() {
@@ -11,12 +13,19 @@ class Intro extends Scene {
     this.fadeSpeed = 0.005;
 
     this.fired.Enter = () => this.finish();
+    this.fired.touchScreen.any = () => this.finish();
   }
 
   init() {
     FexDebug.logOnConsole('init');
     GameplayGraphics.renderer.fillStyle = 'black';
     this.fade = 0;
+    this.registerVolatileTouchScreenArea(
+      new TouchScreenArea(
+        0, 0, GameplayGraphics.screen.width, GameplayGraphics.screen.height, GameplayGraphics,
+        'any',
+      ),
+    );
   }
 
   update() {
