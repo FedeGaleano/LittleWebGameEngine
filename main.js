@@ -197,6 +197,7 @@ export default function run() {
   let fps = 0;
   let lastTime = 0;
   let deltaTime = 0;
+  const info = { fps };
 
   function askForRotationLoop(elapsedTime) {
     if (rotationSprite === null) {
@@ -277,7 +278,8 @@ export default function run() {
     loopManager(elapsedTime);
 
     if (debug) {
-      FexDebug.setGeneralInfo({ fps });
+      info.fps = fps;
+      FexDebug.setGeneralInfo(info);
       FexDebug.render(currentGraphics);
     }
 
