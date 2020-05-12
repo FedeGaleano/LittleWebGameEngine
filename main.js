@@ -197,6 +197,11 @@ export default function run() {
   let fps = 0;
   let lastTime = 0;
   let deltaTime = 0;
+  const targetFPS = 60;
+  const targetSecondsForOneFrame = 1 / targetFPS;
+  const targetMillisForOneFrame = targetSecondsForOneFrame * 1000;
+  FexDebug.logOnConsole('targetMillisForOneFrame: ', targetMillisForOneFrame);
+  let fpsTimer = 0;
   const info = { fps };
 
   function askForRotationLoop(elapsedTime) {
@@ -213,11 +218,18 @@ export default function run() {
     );
   }
 
-  function gameLoop(elapsedTime) {
-    handleInput(elapsedTime);
-    scene.update(elapsedTime);
-    renderScene();
-    scene.postUpdate(elapsedTime);
+  function gameLoop() {
+    if (deltaTime > targetMillisForOneFrame) {
+      FexDebug.logOnConsole('ok');
+      handleInput(deltaTime);
+      while (deltaTime > targetMillisForOneFrame) {
+        scene.update(targetMillisForOneFrame);
+        deltaTime -= targetMillisForOneFrame;
+      }
+      renderScene();
+      ++frameCount;
+      scene.postUpdate(targetMillisForOneFrame);
+    }
   }
 
   let loopManager = () => { throw new Error('Loop manager called before first assignment'); };
@@ -257,25 +269,30 @@ export default function run() {
     }
   }
 
-  function loop(now = 0) {
-    ++frameCount;
+  function loop(now) {
     const elapsedTime = now - lastTime;
+    if (elapsedTime < 0) throw new Error('csm');
     deltaTime += elapsedTime;
+    fpsTimer += elapsedTime;
     lastTime = now;
 
-    if (deltaTime > 1000) {
-      fps = frameCount;
-      frameCount = 0;
-      deltaTime -= 1000;
-    }
-
+    // start focus managment
     const documentHasFocus = document.hasFocus();
 
     if (focus && !documentHasFocus) scene.onFocusLost();
 
     focus = documentHasFocus;
+    // end focus managment
 
-    loopManager(elapsedTime);
+    loopManager(deltaTime);
+
+    if (fpsTimer > 1000) {
+      fps = frameCount;
+      frameCount = 0;
+      fpsTimer -= 1000;
+    }
+
+    FexDebug.logOnScreen('frameCount', frameCount);
 
     if (debug) {
       info.fps = fps;
@@ -290,7 +307,8 @@ export default function run() {
     loadResources().then(() => {
       tryToExecute(scene.init);
       chooseLoopManager();
-      loop();
+      // loop();
+      window.requestAnimationFrame(loop);
     });
   }
 
