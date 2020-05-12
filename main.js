@@ -220,7 +220,6 @@ export default function run() {
 
   function gameLoop() {
     if (deltaTime > targetMillisForOneFrame) {
-      FexDebug.logOnConsole('ok');
       handleInput(deltaTime);
       while (deltaTime > targetMillisForOneFrame) {
         scene.update(targetMillisForOneFrame);
@@ -271,7 +270,6 @@ export default function run() {
 
   function loop(now) {
     const elapsedTime = now - lastTime;
-    if (elapsedTime < 0) throw new Error('csm');
     deltaTime += elapsedTime;
     fpsTimer += elapsedTime;
     lastTime = now;
@@ -292,8 +290,6 @@ export default function run() {
       fpsTimer -= 1000;
     }
 
-    FexDebug.logOnScreen('frameCount', frameCount);
-
     if (debug) {
       info.fps = fps;
       FexDebug.setGeneralInfo(info);
@@ -307,7 +303,6 @@ export default function run() {
     loadResources().then(() => {
       tryToExecute(scene.init);
       chooseLoopManager();
-      // loop();
       window.requestAnimationFrame(loop);
     });
   }
