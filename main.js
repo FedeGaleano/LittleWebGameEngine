@@ -233,21 +233,8 @@ export default function run() {
 
   let loopManager = () => { throw new Error('Loop manager called before first assignment'); };
 
-  function clearInputStatus(input) {
-    // eslint-disable-next-line no-restricted-syntax
-    for (const key in input) {
-      // eslint-disable-next-line no-prototype-builtins
-      if (input.hasOwnProperty(key)) {
-        input[key] = false;
-      }
-    }
-  }
-
   function clearInput() {
     FexDebug.logOnConsole('clearInput called!');
-    // clearInputStatus(isFired);
-    // clearInputStatus(isPressed);
-    // clearInputStatus(isReleased);
     isFired.clear();
     isPressed.clear();
     isReleased.clear();

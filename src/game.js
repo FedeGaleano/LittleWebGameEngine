@@ -219,9 +219,11 @@ class Game extends Scene {
     renderer.clearScreen();
 
     // Render background
+    // TOCACHE
     GameplayGraphics.renderer.renderBitmap(resources.background, 0, 0, screen.width, screen.height);
 
     // Render stars
+    // TOCACHE
     const xTimes = Math.ceil(screen.width / resources.stars.width);
     const yTimes = Math.ceil(screen.height / resources.stars.height);
 
@@ -235,10 +237,13 @@ class Game extends Scene {
 
     this.demoWorld.render(camera);
     this.character.render(camera);
+
+    // TOCACHE
     this.speech.render(camera);
     // cameraFollowBox.render(camera);
 
     // Curtain
+    // TOCACHE
     const curtainHeight = screen.height * curtainHeightFactor * curtain;
     GameplayRenderer.fillStyle = 'black';
     GameplayRenderer.renderFullRectangle(0, 0, screen.width, curtainHeight);
