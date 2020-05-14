@@ -220,8 +220,8 @@ export default function run() {
 
   function gameLoop() {
     if (deltaTime > targetMillisForOneFrame) {
-      handleInput(deltaTime);
       while (deltaTime > targetMillisForOneFrame) {
+        handleInput(targetMillisForOneFrame);
         scene.update(targetMillisForOneFrame);
         deltaTime -= targetMillisForOneFrame;
       }

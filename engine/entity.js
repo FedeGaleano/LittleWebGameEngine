@@ -7,16 +7,22 @@ class Entity {
     this.sprite.flop = flop;
     this.position = { x, y };
     this.count = 0;
+    this.t = 0;
     this.velocity = { x: 0, y: 0 };
     this.normalMovement = () => {};
     this.automaticMovement = this.normalMovement;
   }
 
   update(elapsedTime) {
-    this.automaticMovement(this.position, this.velocity, this.count * 2.5);
-    // [this.x, this.y] = this.automaticMovement(this.x, this.y, this.velocity, elapsedTime);
+    // to handle Physics.buildJumpMovement()
+    // this.automaticMovement(this.position, this.velocity, this.count * 2.5);
+
+    // to handle Physics.buildJumpMovement2()
+    this.automaticMovement(this.position, this.t);
+
     this.sprite.update(elapsedTime);
     ++this.count;
+    this.t += elapsedTime * 0.1;
   }
 
   render(camera = { x: 0, y: 0 }) {
@@ -32,12 +38,14 @@ class Entity {
   setAutomaticMovement(updateXYFunction) {
     this.automaticMovement = updateXYFunction;
     this.count = 0;
+    this.t = 0;
   }
 
   resetAutomaticMovement() {
     this.automaticMovement = this.normalMovement;
     this.velocity.x = 0;
     this.velocity.y = 0;
+    this.t = 0;
   }
 
   get width() {

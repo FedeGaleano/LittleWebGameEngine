@@ -5,6 +5,7 @@ const fontSize = 18;
 const font = `bold ${fontSize}px arial`;
 const bottomMargin = 10;
 const leftMargin = 10;
+let chargeHeavily = false;
 
 
 function renderOnScreen(message, graphics, position, color = 'yellow', backColor = 'black', padding = 0) {
@@ -33,6 +34,7 @@ function renderDebugInfoOnScreen(graphics) {
   });
 
   renderOnScreen('Debug Info', graphics, 7 + keys.length, 'cyan');
+  if (chargeHeavily) renderOnScreen('ChargeHeavily IS ACTIVE!', graphics, 7 + keys.length + 1, 'red');
 }
 
 const FexDebug = {
@@ -62,12 +64,12 @@ ___________________
   logOnScreen(key, message) {
     debugInfo[key] = message;
   },
-  chargeHeavily(count = 1000) {
-    console.log('\n');
+  chargeHeavily(count = 100000) {
+    chargeHeavily = true;
+    let x;
     for (let i = 0; i < count; ++i) {
-      console.log(i);
+      x **= i ** x;
     }
-    console.log('\n');
   },
 };
 
