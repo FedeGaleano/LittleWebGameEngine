@@ -7,6 +7,7 @@ import FexDebug from './engine/debug.js';
 import Intro from './engine/intro.js';
 import Menu from './src/menu.js';
 import InputBuffer from './engine/InputBuffer.js';
+import RotatePhoneScene from './src/rotatePhoneScene.js';
 
 let debug = false;
 let focus = true;
@@ -17,7 +18,7 @@ const fullScreenButton = document.getElementById('fullScreenButton');
 const fullScreenImage = document.getElementById('fullScreenImage');
 const debugButton = document.getElementById('debugButton');
 
-let rotationSprite = null;
+const rotationSprite = null;
 
 function fullScreenSetting() {
   fullScreenButton.onclick = exitFullScreen;
@@ -67,6 +68,9 @@ const cursor = { x: null, y: null };
 const intro = new Intro();
 const menu = new Menu();
 const game = new Game();
+const rotatePhoneScene = new RotatePhoneScene();
+
+let gameplaySceneBackup = intro;
 let scene = intro;
 let previousSceneLastFrame = null;
 let outComingFrame = null;
@@ -204,35 +208,6 @@ export default function run() {
   let fpsTimer = 0;
   const info = { fps };
 
-  function askForRotationLoop(elapsedTime) {
-    if (rotationSprite === null) {
-      rotationSprite = new Sprite(
-        resources.rotationImage, 4, [200, 200, 200, 400], AskForRotationGraphics,
-      );
-    }
-    AskForRotationGraphics.renderer.clearScreen();
-    rotationSprite.update(elapsedTime);
-    rotationSprite.render(
-      (screen.width - rotationSprite.frameWidth) / 2,
-      (screen.height - rotationSprite.frameHeight) / 2,
-    );
-  }
-
-  function gameLoop() {
-    if (deltaTime > targetMillisForOneFrame) {
-      while (deltaTime > targetMillisForOneFrame) {
-        handleInput(targetMillisForOneFrame);
-        scene.update(targetMillisForOneFrame);
-        deltaTime -= targetMillisForOneFrame;
-      }
-      renderScene();
-      ++frameCount;
-      scene.postUpdate(targetMillisForOneFrame);
-    }
-  }
-
-  let loopManager = () => { throw new Error('Loop manager called before first assignment'); };
-
   function clearInput() {
     FexDebug.logOnConsole('clearInput called!');
     isFired.clear();
@@ -246,12 +221,13 @@ export default function run() {
       GameplayGraphics.canvas.style.display = 'none';
       AskForRotationGraphics.canvas.style.display = 'inline';
       currentGraphics = AskForRotationGraphics;
-      loopManager = askForRotationLoop;
+      gameplaySceneBackup = scene;
+      scene = rotatePhoneScene;
     } else {
       GameplayGraphics.canvas.style.display = 'inline';
       AskForRotationGraphics.canvas.style.display = 'none';
       currentGraphics = GameplayGraphics;
-      loopManager = gameLoop;
+      scene = gameplaySceneBackup;
     }
   }
 
@@ -269,7 +245,16 @@ export default function run() {
     focus = documentHasFocus;
     // end focus managment
 
-    loopManager(deltaTime);
+    if (deltaTime > targetMillisForOneFrame) {
+      while (deltaTime > targetMillisForOneFrame) {
+        handleInput(targetMillisForOneFrame);
+        scene.update(targetMillisForOneFrame);
+        deltaTime -= targetMillisForOneFrame;
+      }
+      renderScene();
+      ++frameCount;
+      scene.postUpdate(targetMillisForOneFrame);
+    }
 
     if (fpsTimer > 1000) {
       fps = frameCount;
@@ -288,7 +273,8 @@ export default function run() {
 
   function start() {
     loadResources().then(() => {
-      tryToExecute(scene.init);
+      rotatePhoneScene.init();
+      scene.init();
       chooseLoopManager();
       window.requestAnimationFrame(loop);
     });

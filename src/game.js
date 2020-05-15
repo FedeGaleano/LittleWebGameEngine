@@ -274,7 +274,6 @@ class Game extends Scene {
     pause = true;
 
     const previousInput = { fired: this.fired, pressed: this.pressed, released: this.released };
-    this.deleteAllVolatileTouchScreenAreas();
     this.fired = Scene.emptyInputState();
     this.pressed = Scene.emptyInputState();
     this.released = Scene.emptyInputState();
