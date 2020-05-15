@@ -5,15 +5,33 @@ class Renderer {
     this.graphics = graphics;
   }
 
-  renderTileGrid() {
+  renderStaticTileGrid() {
     const {
       screen, renderingContext2D, scale, tileSize,
     } = this.graphics;
+    this.strokeStyle = 'cyan';
     for (let x = 0; x < screen.width; x += tileSize.w) {
       renderingContext2D.strokeRect(x * scale, 0, 0, screen.height * scale);
     }
     for (let y = 0; y < screen.height; y += tileSize.h) {
       renderingContext2D.strokeRect(0, y * scale, screen.width * scale, 0);
+    }
+  }
+
+  renderWorldTileGrid(world, camera) {
+    const {
+      screen, renderingContext2D, scale, tileSize,
+    } = this.graphics;
+    this.strokeStyle = 'cyan';
+    const x0 = world.origin.x;
+    const y0 = world.origin.y;
+    const w = world.size.width;
+    const h = world.size.height;
+    for (let x = x0 - camera.x; x <= x0 + w - camera.x; x += tileSize.w) {
+      renderingContext2D.strokeRect(x * scale, (y0 - camera.y) * scale, 0, h * scale);
+    }
+    for (let y = y0 - camera.y; y <= y0 + h - camera.y; y += tileSize.h) {
+      renderingContext2D.strokeRect((x0 - camera.x) * scale, y * scale, w * scale, 0);
     }
   }
 

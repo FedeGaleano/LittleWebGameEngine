@@ -148,6 +148,7 @@ class Game extends Scene {
       }, { startingSpriteKey: 'idle' },
       this.xFloor, this.yFloor,
     );
+    this.character.addHitbox(0.2, 0.2, 0.6, 0.8);
 
     cameraFollowBox.x = this.character.position.x - (cameraFollowBox.width - this.character.width) / 2;
     camera.x = cameraFollowBox.x - (screen.width - cameraFollowBox.width) / 2;
@@ -238,6 +239,7 @@ class Game extends Scene {
 
     this.demoWorld.render(camera);
     this.character.render(camera);
+    this.character.renderHitbox(camera);
 
     // TOCACHE
     this.speech.render(camera);
@@ -251,7 +253,7 @@ class Game extends Scene {
     GameplayRenderer.renderFullRectangle(0, screen.height - curtainHeight, screen.width, curtainHeight);
 
     if (showGrid) {
-      renderer.renderTileGrid();
+      renderer.renderWorldTileGrid(this.demoWorld, camera);
     }
 
     this.renderLogic();

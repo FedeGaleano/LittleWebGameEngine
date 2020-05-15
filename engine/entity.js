@@ -1,3 +1,5 @@
+import { GameplayRenderer } from './rendering.js';
+
 /* eslint-disable no-empty-function */
 class Entity {
   constructor(spriteMap, { startingSpriteKey, flip = false, flop = false }, x = 0, y = 0) {
@@ -29,6 +31,15 @@ class Entity {
     this.sprite.render(this.position.x - camera.x, this.position.y - camera.y);
   }
 
+  renderHitbox(camera) {
+    const x0 = this.position.x + this.width * this.hitbox.x0;
+    const y0 = this.position.y + this.height * this.hitbox.y0;
+    const width = this.width * this.hitbox.width;
+    const height = this.height * this.hitbox.height;
+    GameplayRenderer.strokeStyle = 'green';
+    GameplayRenderer.renderEmptyRectangle(x0 - camera.x, y0 - camera.y, width, height);
+  }
+
   changeSpriteTo(key, flip = false, flop = false) {
     this.sprite = this.spriteMap[key];
     this.sprite.flip = flip;
@@ -46,6 +57,13 @@ class Entity {
     this.velocity.x = 0;
     this.velocity.y = 0;
     this.t = 0;
+  }
+
+  // So far, only one
+  addHitbox(x0, y0, width, height) {
+    this.hitbox = {
+      x0, y0, width, height,
+    };
   }
 
   get width() {

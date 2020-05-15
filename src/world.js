@@ -104,6 +104,11 @@ class World {
     this.zones = [];
     let x = xOffset || 0;
     const y = yOffset || 0;
+    this.origin = { x, y };
+    this.size = {
+      width: tileMapList.map(tileMap => tileMap.scanline * GameplayGraphics.tileSize.w).reduce((a, b) => a + b),
+      height: tileMapList.map(tileMap => (tileMap.data.length / tileMap.scanline) * GameplayGraphics.tileSize.h).reduce((a, b) => a + b),
+    };
     tileMapList.forEach((tileMap) => {
       this.zones.push(new Zone(x, y, tileMap, tileSet));
       const width = tileMap.scanline * GameplayGraphics.tileSize.w;
