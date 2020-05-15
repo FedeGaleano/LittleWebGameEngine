@@ -30,7 +30,8 @@ let showGrid = false;
 const { renderer, screen } = GameplayGraphics;
 
 const camera = { x: 0, y: 0 };
-
+const artificialCameraOffsetX = 0;
+let artificialCameraOffsetY = 0;
 
 const numberOfTilesInTheFloorX = 7;
 const numberOfTilesInTheFloorY = 1;
@@ -313,8 +314,8 @@ class Game extends Scene {
       }
     }
 
-    camera.x = Math.max(this.finalCameraX - 100, cameraFollowBox.x - (screen.width - cameraFollowBox.width) / 2);
-    camera.y = -(screen.height * 0.6 - (numberOfTilesInTheFloorY / 2) * GameplayGraphics.tileSize.h);
+    camera.x = artificialCameraOffsetX + Math.max(this.finalCameraX - 100, cameraFollowBox.x - (screen.width - cameraFollowBox.width) / 2);
+    camera.y = artificialCameraOffsetY + -(screen.height * 0.6 - (numberOfTilesInTheFloorY / 2) * GameplayGraphics.tileSize.h);
   }
 
   idleUpdate(elapsedTime) {
@@ -384,6 +385,12 @@ class Game extends Scene {
     this.released = Scene.emptyInputState();
     this.fired = Scene.emptyInputState();
     this.fired.KeyP = this.onFocusLost;
+    this.pressed.KeyW = () => {
+      artificialCameraOffsetY -= 1;
+    };
+    this.pressed.KeyS = () => {
+      artificialCameraOffsetY += 1;
+    };
     this.fired.KeyD = () => {
       showGrid = !showGrid;
     };
