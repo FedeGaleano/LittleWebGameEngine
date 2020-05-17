@@ -30,14 +30,11 @@ class HitBox {
   }
 
   setMinkowskyDifferenceWith(x, y, width, height) {
-    const absoluteX = this.getAbsoluteX();
-    const absoluteY = this.getAbsoluteY();
-
     const mirroredShapeY = -(y + height);
     const mirroredShapeX = -(x + width);
 
-    this.minkowskiDifference.x = absoluteX + mirroredShapeX;
-    this.minkowskiDifference.y = absoluteY + mirroredShapeY;
+    this.minkowskiDifference.x = this.getAbsoluteX() + mirroredShapeX;
+    this.minkowskiDifference.y = this.getAbsoluteY() + mirroredShapeY;
     this.minkowskiDifference.width = width + this.absoluteWidth;
     this.minkowskiDifference.height = height + this.absoluteHieght;
   }
