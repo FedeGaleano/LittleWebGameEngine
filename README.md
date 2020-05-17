@@ -48,8 +48,10 @@ export default {
   Will interpret the bitmap as pixel art and render its data according to the current pixel scale
   
   ## World API
+   ```javascript
   FexEngine.World :: {
     zones :: [FexEngine.Zone],
     origin :: { x :: Double, y :: Double},
     size :: { x :: Double, y :: Double},
   }
+  ```
