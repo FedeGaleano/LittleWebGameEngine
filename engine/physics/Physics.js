@@ -14,6 +14,15 @@ class Physics {
       position.y = y0 - v0 * t + 0.5 * g * (t ** 2);
     };
   }
+
+  static boundContains(bound, point) {
+    return bound.x < point.x && bound.x + bound.width > point.x
+    && bound.y < point.y && bound.y + bound.height > point.y;
+  }
+
+  static get origin() {
+    return { x: 0, y: 0 };
+  }
 }
 
 export default Physics;

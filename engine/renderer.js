@@ -55,7 +55,6 @@ class Renderer {
 
   renderSubBitmap(image, x, y, sx, sy, sw, sh, w, h) {
     const { renderingContext2D, scale } = this.graphics;
-
     renderingContext2D.drawImage(
       image, sx, sy, sw - 0.05, sh - 0.05,
       x * scale, y * scale,

@@ -22,7 +22,7 @@ function renderOnScreen(message, graphics, position, color = 'yellow', backColor
 
   renderingContext2D.fillStyle = color;
   renderingContext2D.globalAlpha = 1;
-  renderingContext2D.fillText(message, leftMargin + padding, canvasHeight - (bottomMargin + fontSize) * position, 260);
+  renderingContext2D.fillText(message, leftMargin + padding, canvasHeight - (bottomMargin + fontSize) * position, 460);
   renderingContext2D.fillStyle = prevColor;
 }
 

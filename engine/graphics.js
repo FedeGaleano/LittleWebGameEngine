@@ -26,6 +26,8 @@ class Graphics {
     document.body.style.padding = document.body.style.margin = 0;
 
     this.renderingContext2D = canvas.getContext('2d');
+
+    // this.renderingContext2D.lineWidth = 2;
     this.canvasWidth = canvas.width;
     this.canvasHeight = canvas.height;
 
@@ -37,6 +39,8 @@ class Graphics {
     if (canvas.height % 2 !== 0) {
       this.renderingContext2D.translate(0, 0.5);
     }
+
+    // this.renderingContext2D.translate(0.5, 0.5);
 
     screen.width = this.canvasWidth / this.scale;
     screen.height = this.canvasHeight / this.scale;

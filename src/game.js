@@ -86,6 +86,9 @@ class Game extends Scene {
     this.jumpButton = null;
     this.speech = null;
     this.demoWorld = null;
+
+    // TOCACHE
+    this.getFinalCameraX = () => -(screen.width / 2 - (numberOfTilesInTheFloorX / 2) * GameplayGraphics.tileSize.w);
   }
 
   init() {
@@ -149,7 +152,8 @@ class Game extends Scene {
       }, { startingSpriteKey: 'idle' },
       this.xFloor, this.yFloor,
     );
-    this.character.addHitbox(0.2, 0.2, 0.6, 0.8);
+    // this.character.addHitbox(0.2, 0.2, 0.6, 0.8);
+    this.character.addHitbox(0, 0, 1, 1);
 
     cameraFollowBox.x = this.character.position.x - (cameraFollowBox.width - this.character.width) / 2;
     camera.x = cameraFollowBox.x - (screen.width - cameraFollowBox.width) / 2;
@@ -240,7 +244,6 @@ class Game extends Scene {
 
     this.demoWorld.render(camera);
     this.character.render(camera);
-    this.character.renderHitbox(camera);
 
     // TOCACHE
     this.speech.render(camera);
@@ -255,6 +258,7 @@ class Game extends Scene {
 
     if (showGrid) {
       renderer.renderWorldTileGrid(this.demoWorld, camera);
+      this.character.hitbox.render(camera, this.zoneIndex >= 0);
     }
 
     this.renderLogic();
@@ -266,6 +270,8 @@ class Game extends Scene {
       GameplayGraphics.renderingContext2D.globalAlpha = 1;
       GameplayGraphics.renderer.renderString('PAUSE', (screen.width / 2) - ('pause'.length / 2) * 6, screen.height / 2 - 2.5, fonts.normal);
     }
+
+    FexDebug.logOnScreen('zone index', this.zoneIndex);
   }
 
   postUpdate() {
@@ -296,11 +302,12 @@ class Game extends Scene {
       curtain = Math.max(0, Math.min(1, curtain + curtainSpeed * elapsedTime));
       this.character.update(elapsedTime);
 
-
-      if (this.character.position.y > this.yFloor) {
-        this.character.position.y = this.yFloor;
+      if (this.character.position.y > this.yFloor + GameplayGraphics.tileSize.h) {
+        this.character.position.y = this.yFloor + GameplayGraphics.tileSize.h;
         this.character.resetAutomaticMovement();
       }
+
+      this.zoneIndex = this.demoWorld.getZoneIndex(this.character.hitbox);
 
       this.speech.setBottomLeftCorner(this.character.position.x + 14, this.character.position.y);
       this.speech.update(elapsedTime);
@@ -326,7 +333,7 @@ class Game extends Scene {
     curtain = Math.max(0, Math.min(1, curtain + curtainSpeed * elapsedTime));
 
     const cameraCutSceneSpeed = 0.05;
-    const finalCameraX = -(screen.width / 2 - (numberOfTilesInTheFloorX / 2) * GameplayGraphics.tileSize.w);
+    const finalCameraX = this.getFinalCameraX();
     camera.x = Math.min(camera.x + elapsedTime * cameraCutSceneSpeed, finalCameraX);
 
     camera.y = -(screen.height * 0.6 - (numberOfTilesInTheFloorY / 2) * GameplayGraphics.tileSize.h);
@@ -378,6 +385,7 @@ class Game extends Scene {
     this.released = Scene.emptyInputState();
     this.fired = Scene.emptyInputState();
     this.fired.KeyP = this.onFocusLost;
+    this.fired.Enter = () => { camera.x = this.getFinalCameraX(); };
   }
 
   normalInput() {

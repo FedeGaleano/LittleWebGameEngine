@@ -102,22 +102,42 @@ class Zone {
 class World {
   constructor(tileMapList, tileSet, xOffset, yOffset) {
     this.zones = [];
-    let x = xOffset || 0;
-    const y = yOffset || 0;
-    this.origin = { x, y };
-    this.size = {
-      width: tileMapList.map(tileMap => tileMap.scanline * GameplayGraphics.tileSize.w).reduce((a, b) => a + b),
-      height: tileMapList.map(tileMap => (tileMap.data.length / tileMap.scanline) * GameplayGraphics.tileSize.h).reduce((a, b) => a + b),
-    };
+    this.origin = { x: xOffset || 0, y: yOffset || 0 };
+    let xZone = this.origin.x;
+
     tileMapList.forEach((tileMap) => {
-      this.zones.push(new Zone(x, y, tileMap, tileSet));
+      this.zones.push(new Zone(xZone, this.origin.y, tileMap, tileSet));
       const width = tileMap.scanline * GameplayGraphics.tileSize.w;
-      x += width;
+      xZone += width;
     });
+
+    this.size = this.zones.map(({ width, height }) => ({ width, height }))
+      .reduce((a, b) => ({ width: a.width + b.width, height: a.height + b.height }));
   }
 
   render(camera) {
     this.zones.forEach(zone => zone.render(camera));
+  }
+
+  getZoneIndex(hitBox) {
+    let index = -1;
+
+    index = -1;
+
+    for (let i = 0; i < this.zones.length; ++i) {
+      const {
+        x, y, width, height,
+      } = this.zones[i];
+      if (hitBox.collidesWithBound(x, y, width, height)) {
+        index = i;
+      }
+    }
+
+    return index;
+
+    // return this.zones.indexOf(({
+    //   x: xZone, y: yZone, width, height,
+    // }) => x > xZone && x < xZone + width && y > yZone && y < yZone + height);
   }
 }
 
