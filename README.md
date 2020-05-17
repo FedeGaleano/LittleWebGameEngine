@@ -59,7 +59,7 @@ export default {
     x :: Number,
     y :: Number,
     tileMap :: FexEngine.TileMap,
-    tileSet :: [Image | 0]
+    tileSet :: [Image <- (Tile) | 0]
   }
   
   FexEngine.TileMap :: {
