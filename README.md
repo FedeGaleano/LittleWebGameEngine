@@ -64,7 +64,7 @@ export default {
   
   FexEngine.TileMap :: {
     scanline :: Number,
-    data :: [Number <- (TileSet referring Number)] <- (RasterLayoutArray(scanline))
+    data :: [Number <- (Tile-referring Number)] <- (RasterLayoutArray(scanline))
   }
   
   ```
