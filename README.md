@@ -54,4 +54,17 @@ export default {
     origin :: { x :: Double, y :: Double},
     size :: { x :: Double, y :: Double},
   }
+  
+  FexEngine.Zone :: {
+    x :: Number,
+    y :: Number,
+    tileMap :: FexEngine.TileMap,
+    tileSet :: [Image | 0]
+  }
+  
+  FexEngine.TileMap :: {
+    scanline :: Number,
+    data :: [Number <- (TileSet referring Number)] <- (RasterLayoutArray(scanline))
+  }
+  
   ```
