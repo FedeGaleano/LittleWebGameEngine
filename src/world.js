@@ -90,8 +90,10 @@ class Zone {
     this.y = y;
     this.tileMap = tileMap;
     this.tileSet = tileSet;
-    this.width = tileMap.scanline * GameplayGraphics.tileSize.w;
-    this.height = (tileMap.data.length / tileMap.scanline) * GameplayGraphics.tileSize.h;
+    this.tilesInX = tileMap.scanline;
+    this.tilesInY = tileMap.data.length / tileMap.scanline;
+    this.width = this.tilesInX * GameplayGraphics.tileSize.w;
+    this.height = this.tilesInY * GameplayGraphics.tileSize.h;
   }
 
   render(camera) {
@@ -112,7 +114,7 @@ class World {
     });
 
     this.size = this.zones.map(({ width, height }) => ({ width, height }))
-      .reduce((a, b) => ({ width: a.width + b.width, height: a.height + b.height }));
+      .reduce((a, b) => ({ width: a.width + b.width, height: Math.max(a.height, b.height) }));
   }
 
   render(camera) {

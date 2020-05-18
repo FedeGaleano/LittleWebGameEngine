@@ -243,7 +243,6 @@ class Game extends Scene {
     }
 
     this.demoWorld.render(camera);
-    this.character.render(camera);
 
     // TOCACHE
     this.speech.render(camera);
@@ -256,12 +255,14 @@ class Game extends Scene {
     GameplayRenderer.renderFullRectangle(0, 0, screen.width, curtainHeight);
     GameplayRenderer.renderFullRectangle(0, screen.height - curtainHeight, screen.width, curtainHeight);
 
+    this.renderLogic();
+
     if (showGrid) {
-      renderer.renderWorldTileGrid(this.demoWorld, camera);
+      renderer.renderWorldTileGrid(this.demoWorld, camera, this.zoneIndex, this.character.position);
       this.character.hitbox.render(camera, this.zoneIndex >= 0);
     }
 
-    this.renderLogic();
+    this.character.render(camera);
 
     if (pause) {
       GameplayGraphics.renderingContext2D.globalAlpha = 0.75;

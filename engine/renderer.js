@@ -18,20 +18,45 @@ class Renderer {
     }
   }
 
-  renderWorldTileGrid(world, camera) {
+  renderWorldTileGrid(world, camera, zoneIndex, position) {
     const {
       screen, renderingContext2D, scale, tileSize,
     } = this.graphics;
-    this.strokeStyle = 'cyan';
-    const x0 = world.origin.x;
-    const y0 = world.origin.y;
-    const w = world.size.width;
-    const h = world.size.height;
-    for (let x = x0 - camera.x; x <= x0 + w - camera.x; x += tileSize.w) {
-      renderingContext2D.strokeRect(x * scale, (y0 - camera.y) * scale, 0, h * scale);
+
+    if (zoneIndex >= 0) {
+      const {
+        x: xZone, y: yZone, tilesInX, tilesInY,
+      } = world.zones[zoneIndex];
+      const xOffset = position.x - xZone;
+      const yOffset = position.y - yZone;
+      const xTileIndex = Math.floor(xOffset / tileSize.w);
+      const yTileIndex = Math.floor(yOffset / tileSize.h);
+
+      for (let j = yTileIndex; j < yTileIndex + 3; ++j) {
+        for (let i = xTileIndex; i < xTileIndex + 3; ++i) {
+          if (i >= 0 && j >= 0 && i < tilesInX && j < tilesInY) {
+            this.fillStyle = '#00FF00';
+            renderingContext2D.globalAlpha = 0.5;
+            renderingContext2D.fillRect((xZone + i * tileSize.w - camera.x) * scale, (yZone + j * tileSize.h - camera.y) * scale, tileSize.w * scale, tileSize.h * scale);
+            renderingContext2D.globalAlpha = 1;
+          }
+        }
+      }
     }
-    for (let y = y0 - camera.y; y <= y0 + h - camera.y; y += tileSize.h) {
-      renderingContext2D.strokeRect((x0 - camera.x) * scale, y * scale, w * scale, 0);
+
+    this.strokeStyle = 'cyan';
+    for (let i = 0; i < world.zones.length; ++i) {
+      const zone = world.zones[i];
+      const x0 = zone.x;
+      const y0 = zone.y;
+      const w = zone.width;
+      const h = zone.height;
+      for (let x = x0 - camera.x; x <= x0 + w - camera.x; x += tileSize.w) {
+        renderingContext2D.strokeRect(x * scale, (y0 - camera.y) * scale, 0, h * scale);
+      }
+      for (let y = y0 - camera.y; y <= y0 + h - camera.y; y += tileSize.h) {
+        renderingContext2D.strokeRect((x0 - camera.x) * scale, y * scale, w * scale, 0);
+      }
     }
   }
 
