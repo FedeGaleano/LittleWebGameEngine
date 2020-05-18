@@ -296,6 +296,7 @@ export default function run() {
     if (debugCamera) {
       currentGraphics.renderer.strokeStyle = 'magenta';
       currentGraphics.renderer.renderEmptyRectangle(0, 0, currentGraphics.screen.width, currentGraphics.screen.height);
+      currentGraphics.renderingContext2D.drawImage(resources.camera, 0, -resources.camera.height - 5);
     }
 
     window.requestAnimationFrame(loop);

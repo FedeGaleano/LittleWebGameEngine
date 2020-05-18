@@ -22,6 +22,7 @@ const resourceLoadingData = [
   { path: 'engine-demo-button-left.png', resourceName: 'uiButtonLeft' },
   { path: 'engine-demo-button-right.png', resourceName: 'uiButtonRight' },
   { path: 'engine-demo-button-action.png', resourceName: 'uiButtonAction' },
+  { path: 'fex-engine-camera.png', resourceName: 'camera' },
 ];
 
 const resources = {};
