@@ -1,5 +1,11 @@
 import Font from './font.js';
 
+const chooseMarkColor = {
+  1: '#0000FF',
+  2: '#00FF00',
+  3: '#FF0000',
+};
+
 class Renderer {
   constructor(graphics) {
     this.graphics = graphics;
@@ -43,6 +49,50 @@ class Renderer {
             renderingContext2D.globalAlpha = 1;
           }
         }
+      }
+    }
+
+    this.strokeStyle = 'cyan';
+    for (let i = 0; i < world.zones.length; ++i) {
+      const zone = world.zones[i];
+      const x0 = zone.x;
+      const y0 = zone.y;
+      const w = zone.width;
+      const h = zone.height;
+      for (let x = x0 - camera.x; x <= x0 + w - camera.x; x += tileSize.w) {
+        renderingContext2D.strokeRect(x * scale, (y0 - camera.y) * scale, 0, h * scale);
+      }
+      for (let y = y0 - camera.y; y <= y0 + h - camera.y; y += tileSize.h) {
+        renderingContext2D.strokeRect((x0 - camera.x) * scale, y * scale, w * scale, 0);
+      }
+    }
+  }
+
+  renderWorldTileGridNEW(world, camera, collisionInfo) {
+    const {
+      screen, renderingContext2D, scale, tileSize,
+    } = this.graphics;
+
+    /*
+
+collisionInfo :: [[TileInfo]]
+
+TileInfo :: {
+  x :: Number,
+  y :: Number,
+  tileMark :: (Number) <- {0: skipped, 1: checkedEmptyTile, 2: checkedOccupiedTile, 3: collided}
+}
+*/
+
+    for (let a = 0; a < collisionInfo.length; ++a) {
+      const tilesInfo = collisionInfo[a];
+
+      for (let i = 0; i < tilesInfo.length; ++i) {
+        const { x, y, tileMark } = tilesInfo[i];
+        this.fillStyle = chooseMarkColor[tileMark];
+        renderingContext2D.globalAlpha = 0.5;
+        renderingContext2D.fillRect((x - camera.x) * scale, (y - camera.y) * scale, tileSize.w * scale, tileSize.h * scale);
+        renderingContext2D.globalAlpha = 1;
       }
     }
 

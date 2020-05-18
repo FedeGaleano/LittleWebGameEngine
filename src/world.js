@@ -105,6 +105,7 @@ class Zone {
     this.tilesInY = tileMap.data.length / tileMap.scanline;
     this.width = this.tilesInX * GameplayGraphics.tileSize.w;
     this.height = this.tilesInY * GameplayGraphics.tileSize.h;
+    this.collisionInfo = Array(2).fill().map(() => Array(9).fill().map(() => ({ x: null, y: null, tileMark: 0 })));
   }
 
   render(camera) {
@@ -151,6 +152,72 @@ class World {
     // return this.zones.indexOf(({
     //   x: xZone, y: yZone, width, height,
     // }) => x > xZone && x < xZone + width && y > yZone && y < yZone + height);
+  }
+
+  getZoneIndexes(hitBox) {
+    const indexes = [-1, -1];
+    let collisionsFound = 0;
+
+    for (let i = 0; i < this.zones.length; ++i) {
+      const {
+        x, y, width, height,
+      } = this.zones[i];
+      if (hitBox.collidesWithBound(x, y, width, height)) {
+        indexes[collisionsFound++] = i;
+      }
+    }
+
+    return indexes;
+
+    // return this.zones.indexOf(({
+    //   x: xZone, y: yZone, width, height,
+    // }) => x > xZone && x < xZone + width && y > yZone && y < yZone + height);
+  }
+
+  clearCollisionInfo() {
+    for (let i = 0; i < this.collisionInfo.length; ++i) {
+      for (let j = 0; j < this.collisionInfo[i].length; ++j) {
+        this.collisionInfo[i][j].x = null;
+        this.collisionInfo[i][j].y = null;
+        this.collisionInfo[i][j].tileMark = 0;
+      }
+    }
+  }
+
+  getCollisionInfo(position, hitBox) {
+    // TOCACHE (probably I don't need to do this everytime)
+    this.clearCollisionInfo();
+
+    const zoneIndexes = this.getZoneIndexes(hitBox);
+
+    for (let a = 0; a < zoneIndexes.length; ++a) {
+      const zoneIndex = zoneIndexes[a];
+      if (zoneIndex >= 0) {
+        const {
+          x: xZone, y: yZone, tilesInX, tilesInY,
+        } = this.zones[zoneIndex];
+
+        const xOffset = position.x - xZone;
+        const yOffset = position.y - yZone;
+        const xTileIndex = Math.floor(xOffset / tileSize.w);
+        const yTileIndex = Math.floor(yOffset / tileSize.h);
+        const { tileMap } = world.zones[zoneIndex];
+        const tileMapData = tileMap.data;
+
+        for (let j = yTileIndex; j < yTileIndex + 3; ++j) {
+          for (let i = xTileIndex; i < xTileIndex + 3; ++i) {
+            if (i >= 0 && j >= 0 && i < tilesInX && j < tilesInY) {
+              this.fillStyle = tileMapData[j * tileMap.scanline + i] === 0 ? '#0000FF' : '#00FF00';
+              renderingContext2D.globalAlpha = 0.5;
+              renderingContext2D.fillRect((xZone + i * tileSize.w - camera.x) * scale, (yZone + j * tileSize.h - camera.y) * scale, tileSize.w * scale, tileSize.h * scale);
+              renderingContext2D.globalAlpha = 1;
+            }
+          }
+        }
+      }
+    }
+
+    return this.collisionInfo;
   }
 }
 
