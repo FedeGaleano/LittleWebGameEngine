@@ -72,6 +72,16 @@ const demoTileMap2 = {
   ],
 };
 
+const demoTileMap3 = {
+  scanline: 11,
+  data: [
+    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+    0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+  ],
+};
+
 const exampleTileMapList = [
   exampleTileMap,
   exampleTileMap2,
@@ -82,6 +92,7 @@ const exampleTileMapList = [
 const demoTileMapList = [
   demoTileMap,
   demoTileMap2,
+  demoTileMap3,
 ];
 
 class Zone {

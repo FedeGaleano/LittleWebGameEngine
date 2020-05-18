@@ -56,6 +56,25 @@ function toggleFullscreen() {
   }
 }
 
+let debugCamera = false;
+let playerScale = null;
+
+function manageDebugCamera() {
+  if (!debugCamera) {
+    playerScale = currentGraphics.scale;
+    const xTranslate = (currentGraphics.canvas.width / 2) * (1 - 1 / playerScale);
+    const yTranslate = (currentGraphics.canvas.height / 2) * (1 - 1 / playerScale);
+    FexDebug.setChangedOrigin(-xTranslate, -yTranslate);
+    currentGraphics.scale = 1;
+    currentGraphics.renderingContext2D.translate(xTranslate, yTranslate);
+    debugCamera = true;
+  } else {
+    FexDebug.setChangedOrigin(0, 0);
+    currentGraphics.adjustRenderingContext();
+    debugCamera = false;
+  }
+}
+
 fullScreenButton.onclick = goFullScreen;
 debugButton.onclick = () => { debug = !debug; };
 document.addEventListener('fullscreenchange', reactToFullscreenChange);
@@ -232,6 +251,13 @@ export default function run() {
   }
 
   function loop(now) {
+    if (debugCamera) {
+      const changedOrigin = FexDebug.getChangedOrigin();
+      currentGraphics.renderingContext2D.translate(changedOrigin.x, changedOrigin.y);
+      currentGraphics.renderingContext2D.clearRect(0, 0, currentGraphics.canvas.width, currentGraphics.canvas.height);
+      currentGraphics.renderingContext2D.translate(-changedOrigin.x, -changedOrigin.y);
+    }
+
     const elapsedTime = now - lastTime;
     deltaTime += elapsedTime;
     fpsTimer += elapsedTime;
@@ -267,6 +293,10 @@ export default function run() {
       FexDebug.setGeneralInfo(info);
       FexDebug.render(currentGraphics);
     }
+    if (debugCamera) {
+      currentGraphics.renderer.strokeStyle = 'magenta';
+      currentGraphics.renderer.renderEmptyRectangle(0, 0, currentGraphics.screen.width, currentGraphics.screen.height);
+    }
 
     window.requestAnimationFrame(loop);
   }
@@ -296,6 +326,7 @@ export default function run() {
     if (code === 'KeyF') toggleFullscreen();
     if (code === 'Escape') exitFullScreen();
     if (code === 'KeyL') { debug = !debug; }
+    if (code === 'KeyX') manageDebugCamera();
   });
 
   document.addEventListener('touchstart', (event) => {

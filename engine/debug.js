@@ -7,6 +7,8 @@ const bottomMargin = 10;
 const leftMargin = 10;
 let chargeHeavily = false;
 
+const changedOrigin = { x: null, y: null };
+
 
 function renderOnScreen(message, graphics, position, color = 'yellow', backColor = 'black', padding = 0) {
   const { renderingContext2D, canvasHeight } = graphics;
@@ -18,11 +20,11 @@ function renderOnScreen(message, graphics, position, color = 'yellow', backColor
   const prevColor = renderingContext2D.fillStyle;
   renderingContext2D.fillStyle = backColor;
   renderingContext2D.globalAlpha = 0.75;
-  renderingContext2D.fillRect(leftMargin + padding - 2, canvasHeight - (bottomMargin + fontSize) * position - 2 - 16, width, height + 4);
+  renderingContext2D.fillRect(changedOrigin.x + leftMargin + padding - 2, changedOrigin.y + canvasHeight - (bottomMargin + fontSize) * position - 2 - 16, width, height + 4);
 
   renderingContext2D.fillStyle = color;
   renderingContext2D.globalAlpha = 1;
-  renderingContext2D.fillText(message, leftMargin + padding, canvasHeight - (bottomMargin + fontSize) * position, 460);
+  renderingContext2D.fillText(message, changedOrigin.x + leftMargin + padding, changedOrigin.y + canvasHeight - (bottomMargin + fontSize) * position, 460);
   renderingContext2D.fillStyle = prevColor;
 }
 
@@ -70,6 +72,13 @@ ___________________
     for (let i = 0; i < count; ++i) {
       x **= i ** x;
     }
+  },
+  setChangedOrigin(x, y) {
+    changedOrigin.x = x;
+    changedOrigin.y = y;
+  },
+  getChangedOrigin() {
+    return changedOrigin;
   },
 };
 

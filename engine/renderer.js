@@ -31,11 +31,13 @@ class Renderer {
       const yOffset = position.y - yZone;
       const xTileIndex = Math.floor(xOffset / tileSize.w);
       const yTileIndex = Math.floor(yOffset / tileSize.h);
+      const { tileMap } = world.zones[zoneIndex];
+      const tileMapData = tileMap.data;
 
       for (let j = yTileIndex; j < yTileIndex + 3; ++j) {
         for (let i = xTileIndex; i < xTileIndex + 3; ++i) {
           if (i >= 0 && j >= 0 && i < tilesInX && j < tilesInY) {
-            this.fillStyle = '#00FF00';
+            this.fillStyle = tileMapData[j * tileMap.scanline + i] === 0 ? '#0000FF' : '#00FF00';
             renderingContext2D.globalAlpha = 0.5;
             renderingContext2D.fillRect((xZone + i * tileSize.w - camera.x) * scale, (yZone + j * tileSize.h - camera.y) * scale, tileSize.w * scale, tileSize.h * scale);
             renderingContext2D.globalAlpha = 1;

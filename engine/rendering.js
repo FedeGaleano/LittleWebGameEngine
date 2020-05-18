@@ -1,4 +1,5 @@
 import Graphics from './graphics.js';
+import FexDebug from './debug.js';
 
 class GameplayGraphicsClass extends Graphics {
   constructor() {
@@ -43,6 +44,7 @@ const GameplayRenderer = GameplayGraphics.renderer;
 const AskForRotationRenderer = AskForRotationGraphics.renderer;
 
 function adjust() {
+  FexDebug.setChangedOrigin(0, 0);
   GameplayGraphics.adjustRenderingContext();
   AskForRotationGraphics.adjustRenderingContext();
 }
