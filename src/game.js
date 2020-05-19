@@ -273,7 +273,7 @@ class Game extends Scene {
       GameplayGraphics.renderer.renderString('PAUSE', (screen.width / 2) - ('pause'.length / 2) * 6, screen.height / 2 - 2.5, fonts.normal);
     }
 
-    FexDebug.logOnScreen('zone index', this.zoneIndex);
+    FexDebug.logOnScreen('zone indexes', this.demoWorld.zoneIndexes);
   }
 
   postUpdate() {

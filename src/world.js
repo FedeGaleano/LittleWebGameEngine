@@ -131,6 +131,8 @@ class World {
       validZone: false,
       tilesInfo: Array(9).fill().map(() => ({ x: null, y: null, tileMark: 0 })),
     }));
+
+    this.zoneIndexes = [-1, -1];
   }
 
   render(camera) {
@@ -158,8 +160,8 @@ class World {
     // }) => x > xZone && x < xZone + width && y > yZone && y < yZone + height);
   }
 
-  getZoneIndexes(hitBox) {
-    const indexes = [-1, -1];
+  setZoneIndexes(hitBox) {
+    this.zoneIndexes[0] = this.zoneIndexes[1] = -1;
     let collisionsFound = 0;
 
     for (let i = 0; i < this.zones.length; ++i) {
@@ -167,11 +169,9 @@ class World {
         x, y, width, height,
       } = this.zones[i];
       if (hitBox.collidesWithBound(x, y, width, height)) {
-        indexes[collisionsFound++] = i;
+        this.zoneIndexes[collisionsFound++] = i;
       }
     }
-
-    return indexes;
 
     // return this.zones.indexOf(({
     //   x: xZone, y: yZone, width, height,
@@ -195,10 +195,10 @@ class World {
     // TOCACHE (probably I don't need to do this everytime)
     this.clearCollisionInfo();
 
-    const zoneIndexes = this.getZoneIndexes(hitBox);
+    this.setZoneIndexes(hitBox);
 
-    for (let a = 0; a < zoneIndexes.length; ++a) {
-      const zoneIndex = zoneIndexes[a];
+    for (let a = 0; a < this.zoneIndexes.length; ++a) {
+      const zoneIndex = this.zoneIndexes[a];
       const validZone = zoneIndex >= 0;
 
       if (validZone) {
@@ -230,16 +230,15 @@ class World {
               this.collisionInfo[a].tilesInfo[rasterPos].x = tileBoundX;
               this.collisionInfo[a].tilesInfo[rasterPos].y = tileBoundY;
 
-              const tileValue = tileMapData[tileMap.scanline * yTileIndex + xTileIndex];
+              const tileValue = tileMapData[tileMap.scanline * j + i];
 
+              this.collisionInfo[a].tilesInfo[rasterPos].tileMark = 1;
               if (tileValue > 0) {
                 this.collisionInfo[a].tilesInfo[rasterPos].tileMark = 2;
 
                 if (hitBox.collidesWithBound(tileBoundX, tileBoundY, tileBoundWidth, tileBoundHeight)) {
                   this.collisionInfo[a].tilesInfo[rasterPos].tileMark = 3;
                 }
-              } else {
-                this.collisionInfo[a].tilesInfo[rasterPos].tileMark = 1;
               }
             }
           }
