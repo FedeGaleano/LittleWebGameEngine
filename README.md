@@ -71,7 +71,7 @@ export default {
     data :: [Number <- (Tile-referring Number)] <- (RasterLayoutArray(scanline))
   }
   
-  // No class needed, FexEngine.Bound is just an interface definition
+  // No class needed, FexEngine.Bound is just an interface definition, any object fullfilling it qualifies as Bound
   FexEngine.Bound :: {
     x :: Number,
     y :: Number,
