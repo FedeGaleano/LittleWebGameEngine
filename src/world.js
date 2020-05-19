@@ -105,7 +105,6 @@ class Zone {
     this.tilesInY = tileMap.data.length / tileMap.scanline;
     this.width = this.tilesInX * GameplayGraphics.tileSize.w;
     this.height = this.tilesInY * GameplayGraphics.tileSize.h;
-    this.collisionInfo = Array(2).fill().map(() => Array(9).fill().map(() => ({ x: null, y: null, tileMark: 0 })));
   }
 
   render(camera) {
@@ -127,6 +126,11 @@ class World {
 
     this.size = this.zones.map(({ width, height }) => ({ width, height }))
       .reduce((a, b) => ({ width: a.width + b.width, height: Math.max(a.height, b.height) }));
+
+    this.collisionInfo = Array(2).fill().map(() => ({
+      validZone: false,
+      tilesInfo: Array(9).fill().map(() => ({ x: null, y: null, tileMark: 0 })),
+    }));
   }
 
   render(camera) {
@@ -176,15 +180,18 @@ class World {
 
   clearCollisionInfo() {
     for (let i = 0; i < this.collisionInfo.length; ++i) {
-      for (let j = 0; j < this.collisionInfo[i].length; ++j) {
-        this.collisionInfo[i][j].x = null;
-        this.collisionInfo[i][j].y = null;
-        this.collisionInfo[i][j].tileMark = 0;
+      this.collisionInfo[i].validZone = false;
+      for (let j = 0; j < this.collisionInfo[i].tilesInfo.length; ++j) {
+        this.collisionInfo[i].tilesInfo[j].x = null;
+        this.collisionInfo[i].tilesInfo[j].y = null;
+        this.collisionInfo[i].tilesInfo[j].tileMark = 0;
       }
     }
   }
 
-  getCollisionInfo(position, hitBox) {
+  getCollisionInfo(hitBox) {
+    const { tileSize } = GameplayGraphics;
+
     // TOCACHE (probably I don't need to do this everytime)
     this.clearCollisionInfo();
 
@@ -192,25 +199,48 @@ class World {
 
     for (let a = 0; a < zoneIndexes.length; ++a) {
       const zoneIndex = zoneIndexes[a];
-      if (zoneIndex >= 0) {
+      const validZone = zoneIndex >= 0;
+
+      if (validZone) {
+        this.collisionInfo[a].validZone = true;
+
         const {
           x: xZone, y: yZone, tilesInX, tilesInY,
         } = this.zones[zoneIndex];
 
-        const xOffset = position.x - xZone;
-        const yOffset = position.y - yZone;
+        const xOffset = hitBox.getAbsoluteX() - xZone;
+        const yOffset = hitBox.getAbsoluteY() - yZone;
         const xTileIndex = Math.floor(xOffset / tileSize.w);
         const yTileIndex = Math.floor(yOffset / tileSize.h);
-        const { tileMap } = world.zones[zoneIndex];
+        const { tileMap } = this.zones[zoneIndex];
         const tileMapData = tileMap.data;
 
         for (let j = yTileIndex; j < yTileIndex + 3; ++j) {
           for (let i = xTileIndex; i < xTileIndex + 3; ++i) {
             if (i >= 0 && j >= 0 && i < tilesInX && j < tilesInY) {
-              this.fillStyle = tileMapData[j * tileMap.scanline + i] === 0 ? '#0000FF' : '#00FF00';
-              renderingContext2D.globalAlpha = 0.5;
-              renderingContext2D.fillRect((xZone + i * tileSize.w - camera.x) * scale, (yZone + j * tileSize.h - camera.y) * scale, tileSize.w * scale, tileSize.h * scale);
-              renderingContext2D.globalAlpha = 1;
+              const tileBoundX = xZone + i * tileSize.w;
+              const tileBoundY = yZone + j * tileSize.h;
+              const tileBoundWidth = tileSize.w;
+              const tileBoundHeight = tileSize.h;
+
+              const yRasterPos = j - yTileIndex;
+              const xRasterPos = i - xTileIndex;
+              const rasterPos = yRasterPos * 3 + xRasterPos;
+
+              this.collisionInfo[a].tilesInfo[rasterPos].x = tileBoundX;
+              this.collisionInfo[a].tilesInfo[rasterPos].y = tileBoundY;
+
+              const tileValue = tileMapData[tileMap.scanline * yTileIndex + xTileIndex];
+
+              if (tileValue > 0) {
+                this.collisionInfo[a].tilesInfo[rasterPos].tileMark = 2;
+
+                if (hitBox.collidesWithBound(tileBoundX, tileBoundY, tileBoundWidth, tileBoundHeight)) {
+                  this.collisionInfo[a].tilesInfo[rasterPos].tileMark = 3;
+                }
+              } else {
+                this.collisionInfo[a].tilesInfo[rasterPos].tileMark = 1;
+              }
             }
           }
         }

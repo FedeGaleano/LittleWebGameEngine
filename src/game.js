@@ -258,7 +258,8 @@ class Game extends Scene {
     this.renderLogic();
 
     if (showGrid) {
-      renderer.renderWorldTileGrid(this.demoWorld, camera, this.zoneIndex, this.character.position);
+      // renderer.renderWorldTileGrid(this.demoWorld, camera, this.zoneIndex, this.character.position);
+      renderer.renderWorldTileGridNEW(this.demoWorld, camera, this.collisionInfo);
       this.character.hitbox.render(camera, this.zoneIndex >= 0);
     }
 
@@ -309,6 +310,7 @@ class Game extends Scene {
       }
 
       this.zoneIndex = this.demoWorld.getZoneIndex(this.character.hitbox);
+      this.collisionInfo = this.demoWorld.getCollisionInfo(this.character.hitbox);
 
       this.speech.setBottomLeftCorner(this.character.position.x + 14, this.character.position.y);
       this.speech.update(elapsedTime);

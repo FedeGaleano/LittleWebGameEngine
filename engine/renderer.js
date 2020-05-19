@@ -73,26 +73,19 @@ class Renderer {
       screen, renderingContext2D, scale, tileSize,
     } = this.graphics;
 
-    /*
-
-collisionInfo :: [[TileInfo]]
-
-TileInfo :: {
-  x :: Number,
-  y :: Number,
-  tileMark :: (Number) <- {0: skipped, 1: checkedEmptyTile, 2: checkedOccupiedTile, 3: collided}
-}
-*/
-
     for (let a = 0; a < collisionInfo.length; ++a) {
-      const tilesInfo = collisionInfo[a];
+      const { tilesInfo, validZone } = collisionInfo[a];
 
-      for (let i = 0; i < tilesInfo.length; ++i) {
-        const { x, y, tileMark } = tilesInfo[i];
-        this.fillStyle = chooseMarkColor[tileMark];
-        renderingContext2D.globalAlpha = 0.5;
-        renderingContext2D.fillRect((x - camera.x) * scale, (y - camera.y) * scale, tileSize.w * scale, tileSize.h * scale);
-        renderingContext2D.globalAlpha = 1;
+      if (validZone) {
+        for (let i = 0; i < tilesInfo.length; ++i) {
+          const { x, y, tileMark } = tilesInfo[i];
+          if (tileMark) {
+            this.fillStyle = chooseMarkColor[tileMark];
+            renderingContext2D.globalAlpha = 0.5;
+            renderingContext2D.fillRect((x - camera.x) * scale, (y - camera.y) * scale, tileSize.w * scale, tileSize.h * scale);
+            renderingContext2D.globalAlpha = 1;
+          }
+        }
       }
     }
 
