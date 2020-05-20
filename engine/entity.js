@@ -21,7 +21,7 @@ class Entity {
     // this.automaticMovement(this.position, this.velocity, this.count * 2.5);
 
     // to handle Physics.buildJumpMovement2()
-    this.automaticMovement(this.position, this.t);
+    this.automaticMovement(this.position, this.velocity, this.t);
 
     this.sprite.update(elapsedTime);
     ++this.count;

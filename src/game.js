@@ -152,8 +152,7 @@ class Game extends Scene {
       }, { startingSpriteKey: 'idle' },
       this.xFloor, this.yFloor,
     );
-    // this.character.addHitbox(0.2, 0.2, 0.6, 0.8);
-    this.character.addHitbox(0, 0, 1, 1);
+    this.character.addHitbox(0.2, 0.2, 0.6, 0.8);
 
     cameraFollowBox.x = this.character.position.x - (cameraFollowBox.width - this.character.width) / 2;
     camera.x = cameraFollowBox.x - (screen.width - cameraFollowBox.width) / 2;
@@ -257,13 +256,14 @@ class Game extends Scene {
 
     this.renderLogic();
 
-    if (showGrid) {
-      // renderer.renderWorldTileGrid(this.demoWorld, camera, this.zoneIndex, this.character.position);
-      renderer.renderWorldTileGridNEW(this.demoWorld, camera, this.collisionInfo);
-      this.character.hitbox.render(camera, this.zoneIndex >= 0);
-    }
 
-    this.character.render(camera);
+    if (showGrid) {
+      renderer.renderWorldTileGrid(this.demoWorld, camera, this.collisionInfo);
+      this.character.render(camera);
+      this.character.hitbox.render(camera, this.zoneIndex >= 0);
+    } else {
+      this.character.render(camera);
+    }
 
     if (pause) {
       GameplayGraphics.renderingContext2D.globalAlpha = 0.75;
@@ -273,11 +273,13 @@ class Game extends Scene {
       GameplayGraphics.renderer.renderString('PAUSE', (screen.width / 2) - ('pause'.length / 2) * 6, screen.height / 2 - 2.5, fonts.normal);
     }
 
-    FexDebug.logOnScreen('zone indexes', this.demoWorld.zoneIndexes);
+    FexDebug.logOnScreen('zone indexes', JSON.stringify(this.demoWorld.zoneIndexes));
+    FexDebug.logOnScreen('slime velocity', JSON.stringify(this.character.velocity));
   }
 
   postUpdate() {
     this.character.changeSpriteTo('idle');
+    // this.character.velocity.x = 0;
   }
 
   onFocusLost() {
@@ -304,13 +306,16 @@ class Game extends Scene {
       curtain = Math.max(0, Math.min(1, curtain + curtainSpeed * elapsedTime));
       this.character.update(elapsedTime);
 
-      if (this.character.position.y > this.yFloor + GameplayGraphics.tileSize.h) {
-        this.character.position.y = this.yFloor + GameplayGraphics.tileSize.h;
-        this.character.resetAutomaticMovement();
-      }
+      // if (this.character.position.y > this.yFloor + GameplayGraphics.tileSize.h) {
+      //   this.character.position.y = this.yFloor + GameplayGraphics.tileSize.h;
+      //   this.character.resetAutomaticMovement();
+      // }
 
       this.zoneIndex = this.demoWorld.getZoneIndex(this.character.hitbox);
-      this.collisionInfo = this.demoWorld.getCollisionInfo(this.character.hitbox);
+      this.collisionInfo = this.demoWorld.getCollisionInfo(this.character);
+      if (this.character.velocity.y === 0) {
+        this.character.resetAutomaticMovement();
+      }
 
       this.speech.setBottomLeftCorner(this.character.position.x + 14, this.character.position.y);
       this.speech.update(elapsedTime);
@@ -417,10 +422,6 @@ class Game extends Scene {
     };
     this.fired.touchScreen.jump = this.jump;
 
-    this.fired.Click = (x, y) => {
-      FexDebug.logOnScreen('clickazo', `(${x}, ${y})`);
-    };
-
     this.fired.KeyC = () => {
       if (curtainSpeed === 0) {
         curtainSpeed = 0.003;
@@ -440,11 +441,13 @@ class Game extends Scene {
   moveRight(elapsedTime) {
     this.character.changeSpriteTo('run');
     this.character.position.x += characterSpeed * elapsedTime;
+    this.character.velocity.x = 1;
   }
 
   moveLeft(elapsedTime) {
     this.character.changeSpriteTo('runInverse');
     this.character.position.x -= characterSpeed * elapsedTime;
+    this.character.velocity.x = -1;
   }
 
   jump() {

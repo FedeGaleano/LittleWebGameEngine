@@ -2,6 +2,7 @@ import { renderTileMap } from '../engine/tilemap.js';
 import { GameplayGraphics } from '../engine/rendering.js';
 import { resources } from '../engine/resources.js';
 import FexDebug from '../engine/debug.js';
+import TileMark from '../engine/TileMark.js';
 
 const exampleTileMap = {
   scanline: 10,
@@ -127,12 +128,14 @@ class World {
     this.size = this.zones.map(({ width, height }) => ({ width, height }))
       .reduce((a, b) => ({ width: a.width + b.width, height: Math.max(a.height, b.height) }));
 
+    this.collisionCheckAreaInTiles = { width: 2, height: 2 };
+    this.collisionCheckAreaInTiles.area = this.collisionCheckAreaInTiles.width * this.collisionCheckAreaInTiles.height;
     this.collisionInfo = Array(2).fill().map(() => ({
       validZone: false,
-      tilesInfo: Array(9).fill().map(() => ({ x: null, y: null, tileMark: 0 })),
+      tilesInfo: Array(this.collisionCheckAreaInTiles.area).fill().map(() => ({ x: null, y: null, tileMark: TileMark.Skipped })),
     }));
 
-    this.zoneIndexes = [-1, -1];
+    this.zoneIndexes = [null, null];
   }
 
   render(camera) {
@@ -161,9 +164,10 @@ class World {
   }
 
   setZoneIndexes(hitBox) {
-    this.zoneIndexes[0] = this.zoneIndexes[1] = -1;
+    this.zoneIndexes[0] = this.zoneIndexes[1] = null;
     let collisionsFound = 0;
 
+    // TOOPTIMIZE: Not all zones need to be even iterated
     for (let i = 0; i < this.zones.length; ++i) {
       const {
         x, y, width, height,
@@ -189,17 +193,18 @@ class World {
     }
   }
 
-  getCollisionInfo(hitBox) {
+  getCollisionInfo(entity) {
+    const { hitbox, velocity } = entity;
     const { tileSize } = GameplayGraphics;
 
     // TOCACHE (probably I don't need to do this everytime)
     this.clearCollisionInfo();
 
-    this.setZoneIndexes(hitBox);
+    this.setZoneIndexes(hitbox);
 
     for (let a = 0; a < this.zoneIndexes.length; ++a) {
       const zoneIndex = this.zoneIndexes[a];
-      const validZone = zoneIndex >= 0;
+      const validZone = zoneIndex !== null;
 
       if (validZone) {
         this.collisionInfo[a].validZone = true;
@@ -208,15 +213,18 @@ class World {
           x: xZone, y: yZone, tilesInX, tilesInY,
         } = this.zones[zoneIndex];
 
-        const xOffset = hitBox.getAbsoluteX() - xZone;
-        const yOffset = hitBox.getAbsoluteY() - yZone;
+        const xOffset = hitbox.getAbsoluteX() - xZone;
+        const yOffset = hitbox.getAbsoluteY() - yZone;
         const xTileIndex = Math.floor(xOffset / tileSize.w);
         const yTileIndex = Math.floor(yOffset / tileSize.h);
         const { tileMap } = this.zones[zoneIndex];
         const tileMapData = tileMap.data;
 
-        for (let j = yTileIndex; j < yTileIndex + 3; ++j) {
-          for (let i = xTileIndex; i < xTileIndex + 3; ++i) {
+        const areaWidth = this.collisionCheckAreaInTiles.width;
+        const areaHeight = this.collisionCheckAreaInTiles.height;
+
+        for (let j = yTileIndex; j < yTileIndex + areaHeight; ++j) {
+          for (let i = xTileIndex; i < xTileIndex + areaWidth; ++i) {
             if (i >= 0 && j >= 0 && i < tilesInX && j < tilesInY) {
               const tileBoundX = xZone + i * tileSize.w;
               const tileBoundY = yZone + j * tileSize.h;
@@ -225,19 +233,30 @@ class World {
 
               const yRasterPos = j - yTileIndex;
               const xRasterPos = i - xTileIndex;
-              const rasterPos = yRasterPos * 3 + xRasterPos;
+              const rasterPos = yRasterPos * areaWidth + xRasterPos;
 
               this.collisionInfo[a].tilesInfo[rasterPos].x = tileBoundX;
               this.collisionInfo[a].tilesInfo[rasterPos].y = tileBoundY;
 
               const tileValue = tileMapData[tileMap.scanline * j + i];
 
-              this.collisionInfo[a].tilesInfo[rasterPos].tileMark = 1;
+              this.collisionInfo[a].tilesInfo[rasterPos].tileMark = TileMark.Empty;
               if (tileValue > 0) {
-                this.collisionInfo[a].tilesInfo[rasterPos].tileMark = 2;
+                this.collisionInfo[a].tilesInfo[rasterPos].tileMark = TileMark.Occupied;
 
-                if (hitBox.collidesWithBound(tileBoundX, tileBoundY, tileBoundWidth, tileBoundHeight)) {
-                  this.collisionInfo[a].tilesInfo[rasterPos].tileMark = 3;
+                if (hitbox.collidesWithBound(tileBoundX, tileBoundY, tileBoundWidth, tileBoundHeight)) {
+                  const penetrationDepthY = 0 + velocity.y !== 0 && (hitbox.minkowskiDifference.y + velocity.y > 0 && hitbox.minkowskiDifference.height);
+                  const penetrationDepthX = 0 + velocity.x !== 0 && (hitbox.minkowskiDifference.x + velocity.x > 0 && hitbox.minkowskiDifference.width);
+                  entity.position.x -= penetrationDepthX;
+                  entity.position.y -= penetrationDepthY;
+                  if (penetrationDepthX) {
+                    entity.velocity.x = 0;
+                  }
+                  if (penetrationDepthY) {
+                    entity.velocity.y = 0;
+                  }
+
+                  this.collisionInfo[a].tilesInfo[rasterPos].tileMark = TileMark.Collided;
                 }
               }
             }
