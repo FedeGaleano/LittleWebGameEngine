@@ -48,7 +48,7 @@ const cameraFollowBox = {
   x: 0,
   y: -80,
   width: 50,
-  height: 80,
+  height: 50,
   render(customCamera) {
     const {
       x, y, width, height,
@@ -321,16 +321,23 @@ class Game extends Scene {
       this.speech.update(elapsedTime);
       const cameraFollowBoxLeftBound = Math.min(cameraFollowBox.x, this.character.position.x);
       const cameraFollowBoxRightBound = Math.max(cameraFollowBox.x + cameraFollowBox.width, this.character.position.x + this.character.width);
+      const cameraFollowBoxTopBound = Math.min(cameraFollowBox.y, this.character.position.y);
+      const cameraFollowBoxBottomBound = Math.max(cameraFollowBox.y + cameraFollowBox.height, this.character.position.y + this.character.height);
 
       if (cameraFollowBox.x !== cameraFollowBoxLeftBound) {
         cameraFollowBox.x = cameraFollowBoxLeftBound;
       } else if (cameraFollowBox.x !== cameraFollowBoxRightBound - cameraFollowBox.width) {
         cameraFollowBox.x = cameraFollowBoxRightBound - cameraFollowBox.width;
       }
+      if (cameraFollowBox.y !== cameraFollowBoxTopBound) {
+        cameraFollowBox.y = cameraFollowBoxTopBound;
+      } else if (cameraFollowBox.y !== cameraFollowBoxBottomBound - cameraFollowBox.height) {
+        cameraFollowBox.y = cameraFollowBoxBottomBound - cameraFollowBox.height;
+      }
     }
-
+    // aca papu
     camera.x = artificialCameraOffsetX + Math.max(this.finalCameraX - 100, cameraFollowBox.x - (screen.width - cameraFollowBox.width) / 2);
-    camera.y = artificialCameraOffsetY + -(screen.height * 0.6 - (numberOfTilesInTheFloorY / 2) * GameplayGraphics.tileSize.h);
+    camera.y = artificialCameraOffsetY + Math.min(this.finalCameraY + 300, cameraFollowBox.y - (screen.height - cameraFollowBox.height) / 2);
   }
 
   idleUpdate(elapsedTime) {
@@ -345,6 +352,7 @@ class Game extends Scene {
     camera.x = Math.min(camera.x + elapsedTime * cameraCutSceneSpeed, finalCameraX);
 
     camera.y = -(screen.height * 0.6 - (numberOfTilesInTheFloorY / 2) * GameplayGraphics.tileSize.h);
+    this.finalCameraY = camera.y;
 
     if (camera.x === finalCameraX) {
       this.finalCameraX = finalCameraX;
