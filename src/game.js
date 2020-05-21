@@ -401,7 +401,7 @@ class Game extends Scene {
     this.released = Scene.emptyInputState();
     this.fired = Scene.emptyInputState();
     this.fired.KeyP = this.onFocusLost;
-    this.fired.Enter = () => { camera.x = this.getFinalCameraX(); };
+    this.fired.Enter = this.fired.touchScreen.any = () => { camera.x = this.getFinalCameraX(); };
   }
 
   normalInput() {
