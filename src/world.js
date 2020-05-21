@@ -83,6 +83,22 @@ const demoTileMap3 = {
   ],
 };
 
+const demoTileMap4 = {
+  scanline: 11,
+  data: [
+    0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+    0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+    0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1,
+    0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+    0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+  ],
+};
+
 const exampleTileMapList = [
   exampleTileMap,
   exampleTileMap2,
@@ -94,6 +110,7 @@ const demoTileMapList = [
   demoTileMap,
   demoTileMap2,
   demoTileMap3,
+  demoTileMap4,
 ];
 
 class Zone {
