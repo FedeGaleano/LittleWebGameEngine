@@ -245,15 +245,18 @@ class World {
                 this.collisionInfo[a].tilesInfo[rasterPos].tileMark = TileMark.Occupied;
 
                 if (hitbox.collidesWithBound(tileBoundX, tileBoundY, tileBoundWidth, tileBoundHeight)) {
-                  const penetrationDepthY = 0 + velocity.y !== 0 && (hitbox.minkowskiDifference.y + velocity.y > 0 && hitbox.minkowskiDifference.height);
-                  const penetrationDepthX = 0 + velocity.x !== 0 && (hitbox.minkowskiDifference.x + velocity.x > 0 && hitbox.minkowskiDifference.width);
-                  entity.position.x -= penetrationDepthX;
-                  entity.position.y -= penetrationDepthY;
-                  if (penetrationDepthX) {
-                    entity.velocity.x = 0;
-                  }
-                  if (penetrationDepthY) {
+                  const penetrationDepthY = hitbox.minkowskiDifference.y + (velocity.y > 0 && hitbox.minkowskiDifference.height);
+                  const penetrationDepthX = hitbox.minkowskiDifference.x + (velocity.x > 0 && hitbox.minkowskiDifference.width);
+
+                  const factorToReachYAxis = Math.abs(penetrationDepthX / velocity.x);
+                  const factorToReachXAxis = Math.abs(penetrationDepthY / velocity.y);
+
+                  if (factorToReachXAxis <= factorToReachYAxis) { // TODO: considerate equality case separatly and resolve in both axis
+                    entity.position.y -= Math.ceil(penetrationDepthY);
                     entity.velocity.y = 0;
+                  } else {
+                    entity.position.x -= Math.ceil(penetrationDepthX);
+                    entity.velocity.x = 0;
                   }
 
                   this.collisionInfo[a].tilesInfo[rasterPos].tileMark = TileMark.Collided;
