@@ -70,6 +70,12 @@ class Game extends Scene {
     this.moveRight = this.moveRight.bind(this);
     this.moveLeft = this.moveLeft.bind(this);
     this.jump = this.jump.bind(this);
+    this.moveLeftDebug = this.moveLeftDebug.bind(this);
+    this.moveDownDebug = this.moveDownDebug.bind(this);
+    this.moveRightDebug = this.moveRightDebug.bind(this);
+    this.moveUpDebug = this.moveUpDebug.bind(this);
+
+
     this.idleUpdate = this.idleUpdate.bind(this);
     this.initialCutSceneUpdate = this.initialCutSceneUpdate.bind(this);
     this.normalUpdate = this.normalUpdate.bind(this);
@@ -279,7 +285,6 @@ class Game extends Scene {
 
   postUpdate() {
     this.character.changeSpriteTo('idle');
-    // this.character.velocity.x = 0;
   }
 
   onFocusLost() {
@@ -409,13 +414,13 @@ class Game extends Scene {
     this.released = Scene.emptyInputState();
     this.fired = Scene.emptyInputState();
     this.fired.KeyP = this.onFocusLost;
-    this.pressed.KeyW = () => {
+    this.pressed.ArrowUp = () => {
       artificialCameraOffsetY -= 1;
     };
-    this.pressed.KeyS = () => {
+    this.pressed.ArrowDown = () => {
       artificialCameraOffsetY += 1;
     };
-    this.fired.KeyD = () => {
+    this.fired.KeyG = () => {
       showGrid = !showGrid;
     };
     this.fired.KeyK = () => {
@@ -440,6 +445,12 @@ class Game extends Scene {
     this.pressed.ArrowRight = (x, y, elapsedTime) => this.moveRight(elapsedTime);
     this.pressed.ArrowLeft = (x, y, elapsedTime) => this.moveLeft(elapsedTime);
     this.fired.Space = (x, y, elapsedTime) => this.jump(elapsedTime);
+
+
+    this.pressed.KeyA = (x, y, elapsedTime) => this.moveLeftDebug(elapsedTime);
+    this.pressed.KeyS = (x, y, elapsedTime) => this.moveDownDebug(elapsedTime);
+    this.pressed.KeyD = (x, y, elapsedTime) => this.moveRightDebug(elapsedTime);
+    this.pressed.KeyW = (x, y, elapsedTime) => this.moveUpDebug(elapsedTime);
   }
 
   isInUIRegion(x, y, x0, y0) {
@@ -460,6 +471,26 @@ class Game extends Scene {
 
   jump() {
     this.character.setAutomaticMovement(jumpMovement2);
+  }
+
+  moveLeftDebug(elapsedTime) {
+    this.character.velocity.x = -0.1;
+    this.character.position.x += this.character.velocity.x * elapsedTime;
+  }
+
+  moveDownDebug(elapsedTime) {
+    this.character.velocity.y = 0.1;
+    this.character.position.y += this.character.velocity.y * elapsedTime;
+  }
+
+  moveRightDebug(elapsedTime) {
+    this.character.velocity.x = 0.1;
+    this.character.position.x += this.character.velocity.x * elapsedTime;
+  }
+
+  moveUpDebug(elapsedTime) {
+    this.character.velocity.y = -0.1;
+    this.character.position.y += this.character.velocity.y * elapsedTime;
   }
 }
 
