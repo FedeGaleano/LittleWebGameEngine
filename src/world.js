@@ -233,30 +233,36 @@ class World {
 
         const xOffset = hitbox.getAbsoluteX() - xZone;
         const yOffset = hitbox.getAbsoluteY() - yZone;
-        const xTileIndex = Math.floor(xOffset / tileSize.w);
-        const yTileIndex = Math.floor(yOffset / tileSize.h);
+        const xBaseTileIndex = Math.floor(xOffset / tileSize.w);
+        const yBaseTileIndex = Math.floor(yOffset / tileSize.h);
         const { tileMap } = this.zones[zoneIndex];
         const tileMapData = tileMap.data;
 
         const areaWidth = this.collisionCheckAreaInTiles.width;
         const areaHeight = this.collisionCheckAreaInTiles.height;
+        const iLimit = areaWidth - 1;
+        const jLimit = areaHeight - 1;
 
-        for (let j = yTileIndex; j < yTileIndex + areaHeight; ++j) {
-          for (let i = xTileIndex; i < xTileIndex + areaWidth; ++i) {
-            if (i >= 0 && j >= 0 && i < tilesInX && j < tilesInY) {
-              const tileBoundX = FexMath.precision(xZone + i * tileSize.w, 2);
-              const tileBoundY = FexMath.precision(yZone + j * tileSize.h, 2);
+        for (let j = 0; j <= jLimit; ++j) {
+          for (let i = 0; i <= iLimit; ++i) {
+            const forwardX = velocity.x >= 0;
+            const forwardY = velocity.y >= 0;
+            const xTileIndex = (iLimit * Number(!forwardX)) + (i * FexMath.signedBoolean(forwardX)) + xBaseTileIndex;
+            const yTileIndex = (jLimit * Number(!forwardY)) + (j * FexMath.signedBoolean(forwardY)) + yBaseTileIndex;
+            if (xTileIndex >= 0 && yTileIndex >= 0 && xTileIndex < tilesInX && yTileIndex < tilesInY) {
+              const tileBoundX = FexMath.precision(xZone + xTileIndex * tileSize.w, 2);
+              const tileBoundY = FexMath.precision(yZone + yTileIndex * tileSize.h, 2);
               const tileBoundWidth = tileSize.w;
               const tileBoundHeight = tileSize.h;
 
-              const yRasterPos = j - yTileIndex;
-              const xRasterPos = i - xTileIndex;
+              const yRasterPos = yTileIndex - yBaseTileIndex;
+              const xRasterPos = xTileIndex - xBaseTileIndex;
               const rasterPos = yRasterPos * areaWidth + xRasterPos;
 
               this.collisionInfo[a].tilesInfo[rasterPos].x = tileBoundX;
               this.collisionInfo[a].tilesInfo[rasterPos].y = tileBoundY;
 
-              const tileValue = tileMapData[tileMap.scanline * j + i];
+              const tileValue = tileMapData[tileMap.scanline * yTileIndex + xTileIndex];
 
               this.collisionInfo[a].tilesInfo[rasterPos].tileMark = TileMark.Empty;
               if (tileValue > 0) {
@@ -271,8 +277,10 @@ class World {
 
                   if (factorToReachXAxis <= factorToReachYAxis) { // TODO: considerate equality case separatly and resolve in both axis
                     entity.position.y -= penetrationDepthY;
+                    entity.velocity.y = 0;
                   } else if (factorToReachXAxis > factorToReachYAxis) {
                     entity.position.x -= penetrationDepthX;
+                    entity.velocity.x = 0;
                   }
 
                   this.collisionInfo[a].tilesInfo[rasterPos].tileMark = TileMark.Collided;

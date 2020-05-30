@@ -43,7 +43,9 @@ let curtainSpeed = 0;
 
 let pause = false;
 
-const characterSpeed = 0.1;
+const characterSpeed = 0.15;
+const jumpVelocity = 0.3;
+const gravity = 0.02;
 
 const cameraFollowBox = {
   x: 0,
@@ -201,7 +203,7 @@ class Game extends Scene {
     // exampleWorld = new World(exampleTileMapList, [0, resources.tile], 10, 50);
     this.demoWorld = new World(
       demoTileMapList,
-      [0, resources.tile], 75.1, 0,
+      [0, resources.tile], 0, 0,
     );
 
 
@@ -252,7 +254,7 @@ class Game extends Scene {
 
     // TOCACHE
     this.speech.render(camera);
-    cameraFollowBox.render(camera);
+    // cameraFollowBox.render(camera);
 
     // Curtain
     // TOCACHE
@@ -294,7 +296,6 @@ class Game extends Scene {
   postUpdate() {
     this.character.changeSpriteTo('idle');
     this.character.velocity.x = 0;
-    this.character.velocity.y = 0;
   }
 
   onFocusLost() {
@@ -319,7 +320,9 @@ class Game extends Scene {
     // FexDebug.chargeHeavily();
     if (!pause) {
       curtain = Math.max(0, Math.min(1, curtain + curtainSpeed * elapsedTime));
+
       this.character.update(elapsedTime);
+      this.character.velocity.y += gravity;
 
       // if (this.character.position.y > this.yFloor + GameplayGraphics.tileSize.h) {
       //   this.character.position.y = this.yFloor + GameplayGraphics.tileSize.h;
@@ -469,18 +472,17 @@ class Game extends Scene {
 
   moveRight(elapsedTime) {
     this.character.changeSpriteTo('run');
-    this.character.position.x += characterSpeed * elapsedTime;
-    this.character.velocity.x = 1;
+    this.character.velocity.x = characterSpeed;
   }
 
   moveLeft(elapsedTime) {
     this.character.changeSpriteTo('runInverse');
-    this.character.position.x -= characterSpeed * elapsedTime;
-    this.character.velocity.x = -1;
+    this.character.velocity.x = -characterSpeed;
   }
 
   jump() {
-    this.character.setAutomaticMovement(jumpMovement2);
+    // this.character.setAutomaticMovement(jumpMovement2);
+    this.character.velocity.y = -jumpVelocity;
   }
 
   moveLeftDebug(elapsedTime) {
@@ -488,7 +490,7 @@ class Game extends Scene {
   }
 
   moveDownDebug(elapsedTime) {
-    this.character.velocity.y = 0.22;
+    this.character.velocity.y += 0.1;
   }
 
   moveRightDebug(elapsedTime) {
@@ -496,7 +498,7 @@ class Game extends Scene {
   }
 
   moveUpDebug(elapsedTime) {
-    this.character.velocity.y = -0.22;
+    this.character.velocity.y += -0.1;
   }
 }
 
