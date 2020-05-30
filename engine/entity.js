@@ -1,5 +1,6 @@
 import { GameplayRenderer } from './rendering.js';
 import HitBox from './physics/HitBox.js';
+import FexMath from './utils/FexMath.js';
 
 /* eslint-disable no-empty-function */
 class Entity {
@@ -25,8 +26,8 @@ class Entity {
     // this.automaticMovement(this.position, this.velocity, this.t);
     this.lastStep.x = this.velocity.x * elapsedTime;
     this.lastStep.y = this.velocity.y * elapsedTime;
-    this.position.x += this.lastStep.x;
-    this.position.y += this.lastStep.y;
+    this.position.x += FexMath.precision(this.lastStep.x, 2);
+    this.position.y += FexMath.precision(this.lastStep.y, 2);
     this.sprite.update(elapsedTime);
     ++this.count;
     this.t += elapsedTime * 0.1;

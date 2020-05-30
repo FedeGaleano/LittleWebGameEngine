@@ -10,6 +10,7 @@ import Speech from '../engine/speech.js';
 import Scene from '../engine/scene.js';
 import Physics from '../engine/physics/Physics.js';
 import TouchScreenArea from '../engine/TouchScreenArea.js';
+import FexMath from '../engine/utils/FexMath.js';
 
 const ArrayNewFunctionalities = {
   removeIf(condition) {
@@ -59,7 +60,6 @@ const cameraFollowBox = {
 
 const jumpMovement = Physics.buildJumpMovement(5, 0.01);
 const jumpMovement2 = Physics.buildJumpMovement2(5);
-const movementVelocity = 0.1;
 
 class Game extends Scene {
   constructor() {
@@ -159,7 +159,7 @@ class Game extends Scene {
       }, { startingSpriteKey: 'idle' },
       this.xFloor, this.yFloor,
     );
-    this.character.addHitbox(0, 0, 0.6, 0.8);
+    this.character.addHitbox(0.2, 0.2, 0.6, 0.8);
 
     cameraFollowBox.x = this.character.position.x - (cameraFollowBox.width - this.character.width) / 2;
     camera.x = cameraFollowBox.x - (screen.width - cameraFollowBox.width) / 2;
@@ -201,7 +201,7 @@ class Game extends Scene {
     // exampleWorld = new World(exampleTileMapList, [0, resources.tile], 10, 50);
     this.demoWorld = new World(
       demoTileMapList,
-      [0, resources.tile], 0, 0,
+      [0, resources.tile], 75.1, 0,
     );
 
 
@@ -282,10 +282,13 @@ class Game extends Scene {
 
     FexDebug.logOnScreen('zone indexes', JSON.stringify(this.demoWorld.zoneIndexes));
     FexDebug.logOnScreen('slime velocity', JSON.stringify(this.character.velocity));
-    FexDebug.logOnScreen('slime pos from cam x', this.character.position.x - camera.x);
-    FexDebug.logOnScreen('slime pos from cam y', this.character.position.y - camera.y);
-    FexDebug.logOnScreen('hitbox pos from cam x', this.character.hitbox.getAbsoluteX() - camera.x);
-    FexDebug.logOnScreen('hitbox pos from cam y', this.character.hitbox.getAbsoluteY() - camera.y);
+    // FexDebug.logOnScreen('slime pos from cam x', this.character.position.x - camera.x);
+    // FexDebug.logOnScreen('slime pos from cam y', this.character.position.y - camera.y);
+    // FexDebug.logOnScreen('hitbox pos from cam x', this.character.hitbox.getAbsoluteX() - camera.x);
+    // FexDebug.logOnScreen('hitbox pos from cam y', this.character.hitbox.getAbsoluteY() - camera.y);
+
+    FexDebug.logOnScreen('hitbox pos x', this.character.hitbox.getAbsoluteX() + this.character.hitbox.absoluteWidth);
+    FexDebug.logOnScreen('hitbox pos y', this.character.hitbox.getAbsoluteY() + this.character.hitbox.absoluteHieght);
   }
 
   postUpdate() {
@@ -481,19 +484,19 @@ class Game extends Scene {
   }
 
   moveLeftDebug(elapsedTime) {
-    this.character.velocity.x = -0.2;
+    this.character.velocity.x = -0.1;
   }
 
   moveDownDebug(elapsedTime) {
-    this.character.velocity.y = 0.1;
+    this.character.velocity.y = 0.22;
   }
 
   moveRightDebug(elapsedTime) {
-    this.character.velocity.x = 0.2;
+    this.character.velocity.x = 0.1;
   }
 
   moveUpDebug(elapsedTime) {
-    this.character.velocity.y = -0.1;
+    this.character.velocity.y = -0.22;
   }
 }
 

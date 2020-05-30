@@ -3,6 +3,7 @@ import { GameplayGraphics } from '../engine/rendering.js';
 import { resources } from '../engine/resources.js';
 import FexDebug from '../engine/debug.js';
 import TileMark from '../engine/TileMark.js';
+import FexMath from '../engine/utils/FexMath.js';
 
 const exampleTileMap = {
   scanline: 10,
@@ -243,8 +244,8 @@ class World {
         for (let j = yTileIndex; j < yTileIndex + areaHeight; ++j) {
           for (let i = xTileIndex; i < xTileIndex + areaWidth; ++i) {
             if (i >= 0 && j >= 0 && i < tilesInX && j < tilesInY) {
-              const tileBoundX = xZone + i * tileSize.w;
-              const tileBoundY = yZone + j * tileSize.h;
+              const tileBoundX = FexMath.precision(xZone + i * tileSize.w, 2);
+              const tileBoundY = FexMath.precision(yZone + j * tileSize.h, 2);
               const tileBoundWidth = tileSize.w;
               const tileBoundHeight = tileSize.h;
 
@@ -269,15 +270,9 @@ class World {
                   const factorToReachXAxis = Math.abs(penetrationDepthY / velocity.y);
 
                   if (factorToReachXAxis <= factorToReachYAxis) { // TODO: considerate equality case separatly and resolve in both axis
-                    // entity.position.y -= Math.ceil(penetrationDepthY);
                     entity.position.y -= penetrationDepthY;
-                    // entity.position.y -= entity.lastStep.y;
-                    // entity.velocity.y = 0;
-                  } else {
-                    // entity.position.x -= Math.ceil(penetrationDepthX);
+                  } else if (factorToReachXAxis > factorToReachYAxis) {
                     entity.position.x -= penetrationDepthX;
-                    // entity.position.x -= entity.lastStep.x;
-                    // entity.velocity.x = 0;
                   }
 
                   this.collisionInfo[a].tilesInfo[rasterPos].tileMark = TileMark.Collided;
