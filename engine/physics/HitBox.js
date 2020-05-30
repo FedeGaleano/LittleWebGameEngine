@@ -9,8 +9,8 @@ class HitBox {
     this.relativeWidth = relativeWidth;
     this.relativeHeight = relativeHeight;
 
-    this.xOffset = this.x0 * this.entity.width;
-    this.yOffset = this.y0 * this.entity.height;
+    this.xOffset = Math.floor(this.x0 * this.entity.width);
+    this.yOffset = Math.floor(this.y0 * this.entity.height);
     this.absoluteWidth = this.relativeWidth * this.entity.width;
     this.absoluteHieght = this.relativeHeight * this.entity.height;
 
@@ -47,11 +47,11 @@ class HitBox {
   }
 
   getAbsoluteX() {
-    return Math.floor(this.entity.position.x + this.xOffset);
+    return this.entity.position.x + this.xOffset;
   }
 
   getAbsoluteY() {
-    return Math.floor(this.entity.position.y + this.yOffset);
+    return this.entity.position.y + this.yOffset;
   }
 }
 

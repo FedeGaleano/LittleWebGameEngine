@@ -269,11 +269,15 @@ class World {
                   const factorToReachXAxis = Math.abs(penetrationDepthY / velocity.y);
 
                   if (factorToReachXAxis <= factorToReachYAxis) { // TODO: considerate equality case separatly and resolve in both axis
-                    entity.position.y -= Math.ceil(penetrationDepthY);
-                    entity.velocity.y = 0;
+                    // entity.position.y -= Math.ceil(penetrationDepthY);
+                    entity.position.y -= penetrationDepthY;
+                    // entity.position.y -= entity.lastStep.y;
+                    // entity.velocity.y = 0;
                   } else {
-                    entity.position.x -= Math.ceil(penetrationDepthX);
-                    entity.velocity.x = 0;
+                    // entity.position.x -= Math.ceil(penetrationDepthX);
+                    entity.position.x -= penetrationDepthX;
+                    // entity.position.x -= entity.lastStep.x;
+                    // entity.velocity.x = 0;
                   }
 
                   this.collisionInfo[a].tilesInfo[rasterPos].tileMark = TileMark.Collided;

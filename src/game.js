@@ -59,6 +59,7 @@ const cameraFollowBox = {
 
 const jumpMovement = Physics.buildJumpMovement(5, 0.01);
 const jumpMovement2 = Physics.buildJumpMovement2(5);
+const movementVelocity = 0.1;
 
 class Game extends Scene {
   constructor() {
@@ -158,7 +159,7 @@ class Game extends Scene {
       }, { startingSpriteKey: 'idle' },
       this.xFloor, this.yFloor,
     );
-    this.character.addHitbox(0.2, 0.2, 0.6, 0.8);
+    this.character.addHitbox(0, 0, 0.6, 0.8);
 
     cameraFollowBox.x = this.character.position.x - (cameraFollowBox.width - this.character.width) / 2;
     camera.x = cameraFollowBox.x - (screen.width - cameraFollowBox.width) / 2;
@@ -251,7 +252,7 @@ class Game extends Scene {
 
     // TOCACHE
     this.speech.render(camera);
-    // cameraFollowBox.render(camera);
+    cameraFollowBox.render(camera);
 
     // Curtain
     // TOCACHE
@@ -281,10 +282,16 @@ class Game extends Scene {
 
     FexDebug.logOnScreen('zone indexes', JSON.stringify(this.demoWorld.zoneIndexes));
     FexDebug.logOnScreen('slime velocity', JSON.stringify(this.character.velocity));
+    FexDebug.logOnScreen('slime pos from cam x', this.character.position.x - camera.x);
+    FexDebug.logOnScreen('slime pos from cam y', this.character.position.y - camera.y);
+    FexDebug.logOnScreen('hitbox pos from cam x', this.character.hitbox.getAbsoluteX() - camera.x);
+    FexDebug.logOnScreen('hitbox pos from cam y', this.character.hitbox.getAbsoluteY() - camera.y);
   }
 
   postUpdate() {
     this.character.changeSpriteTo('idle');
+    this.character.velocity.x = 0;
+    this.character.velocity.y = 0;
   }
 
   onFocusLost() {
@@ -319,7 +326,7 @@ class Game extends Scene {
       this.zoneIndex = this.demoWorld.getZoneIndex(this.character.hitbox);
       this.collisionInfo = this.demoWorld.getCollisionInfo(this.character);
       if (this.character.velocity.y === 0) {
-        this.character.resetAutomaticMovement();
+        // this.character.resetAutomaticMovement();
       }
 
       this.speech.setBottomLeftCorner(this.character.position.x + 14, this.character.position.y);
@@ -474,23 +481,19 @@ class Game extends Scene {
   }
 
   moveLeftDebug(elapsedTime) {
-    this.character.velocity.x = -0.1;
-    this.character.position.x += this.character.velocity.x * elapsedTime;
+    this.character.velocity.x = -0.2;
   }
 
   moveDownDebug(elapsedTime) {
     this.character.velocity.y = 0.1;
-    this.character.position.y += this.character.velocity.y * elapsedTime;
   }
 
   moveRightDebug(elapsedTime) {
-    this.character.velocity.x = 0.1;
-    this.character.position.x += this.character.velocity.x * elapsedTime;
+    this.character.velocity.x = 0.2;
   }
 
   moveUpDebug(elapsedTime) {
     this.character.velocity.y = -0.1;
-    this.character.position.y += this.character.velocity.y * elapsedTime;
   }
 }
 

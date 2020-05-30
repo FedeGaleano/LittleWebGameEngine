@@ -9,6 +9,7 @@ class Entity {
     this.sprite.flip = flip;
     this.sprite.flop = flop;
     this.position = { x, y };
+    this.lastStep = { x: 0, y: 0 };
     this.count = 0;
     this.t = 0;
     this.velocity = { x: 0, y: 0 };
@@ -21,8 +22,11 @@ class Entity {
     // this.automaticMovement(this.position, this.velocity, this.count * 2.5);
 
     // to handle Physics.buildJumpMovement2()
-    this.automaticMovement(this.position, this.velocity, this.t);
-
+    // this.automaticMovement(this.position, this.velocity, this.t);
+    this.lastStep.x = this.velocity.x * elapsedTime;
+    this.lastStep.y = this.velocity.y * elapsedTime;
+    this.position.x += this.lastStep.x;
+    this.position.y += this.lastStep.y;
     this.sprite.update(elapsedTime);
     ++this.count;
     this.t += elapsedTime * 0.1;
