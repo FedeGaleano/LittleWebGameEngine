@@ -1,5 +1,7 @@
+const defaultPrecision = 3;
+
 const FexMath = {
-  precision(inputValue, precision) {
+  precision(inputValue, precision = defaultPrecision) {
     return Math.round(inputValue * (10 ** precision)) / (10 ** precision);
   },
   signedBoolean(condition) {

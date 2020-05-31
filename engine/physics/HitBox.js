@@ -13,8 +13,8 @@ class HitBox {
 
     this.xOffset = Math.floor(this.x0 * this.entity.width);
     this.yOffset = Math.floor(this.y0 * this.entity.height);
-    this.absoluteWidth = FexMath.precision(this.relativeWidth * this.entity.width, 2);
-    this.absoluteHieght = FexMath.precision(this.relativeHeight * this.entity.height, 2);
+    this.absoluteWidth = FexMath.precision(this.relativeWidth * this.entity.width);
+    this.absoluteHieght = FexMath.precision(this.relativeHeight * this.entity.height);
 
     FexDebug.logOnConsole('this.absoluteWidth: ', this.absoluteWidth);
     FexDebug.logOnConsole('this.absoluteHieght: ', this.absoluteHieght);
@@ -38,10 +38,10 @@ class HitBox {
     const mirroredShapeY = -(y + height);
     const mirroredShapeX = -(x + width);
 
-    this.minkowskiDifference.x = FexMath.precision(this.getAbsoluteX() + mirroredShapeX, 2);
-    this.minkowskiDifference.y = FexMath.precision(this.getAbsoluteY() + mirroredShapeY, 2);
-    this.minkowskiDifference.width = FexMath.precision(width + this.absoluteWidth, 2);
-    this.minkowskiDifference.height = FexMath.precision(height + this.absoluteHieght, 2);
+    this.minkowskiDifference.x = FexMath.precision(this.getAbsoluteX() + mirroredShapeX);
+    this.minkowskiDifference.y = FexMath.precision(this.getAbsoluteY() + mirroredShapeY);
+    this.minkowskiDifference.width = FexMath.precision(width + this.absoluteWidth);
+    this.minkowskiDifference.height = FexMath.precision(height + this.absoluteHieght);
   }
 
   render(camera, collide) {
@@ -52,11 +52,11 @@ class HitBox {
   }
 
   getAbsoluteX() {
-    return FexMath.precision(this.entity.position.x + this.xOffset, 2);
+    return FexMath.precision(this.entity.position.x + this.xOffset);
   }
 
   getAbsoluteY() {
-    return FexMath.precision(this.entity.position.y + this.yOffset, 2);
+    return FexMath.precision(this.entity.position.y + this.yOffset);
   }
 }
 

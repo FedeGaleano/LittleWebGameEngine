@@ -20,7 +20,7 @@ class Graphics {
     const { canvas, screen } = this;
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    canvas.style.backgroundColor = '#120011';
+    canvas.style.backgroundColor = '#111111';
     canvas.style.padding = canvas.style.margin = 0;
     document.body.style.overflow = 'hidden';
     document.body.style.padding = document.body.style.margin = 0;

@@ -66,11 +66,17 @@ const demoTileMap = {
 };
 
 const demoTileMap2 = {
-  scanline: 8,
+  scanline: 32,
   data: [
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 1, 0, 0, 1, 1, 0, 1,
-    0, 1, 1, 1, 1, 1, 1, 1,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1,
+    0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1,
+    0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+    0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+    0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+    0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+    0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1,
+    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
   ],
 };
 
@@ -250,8 +256,8 @@ class World {
             const xTileIndex = (iLimit * Number(!forwardX)) + (i * FexMath.signedBoolean(forwardX)) + xBaseTileIndex;
             const yTileIndex = (jLimit * Number(!forwardY)) + (j * FexMath.signedBoolean(forwardY)) + yBaseTileIndex;
             if (xTileIndex >= 0 && yTileIndex >= 0 && xTileIndex < tilesInX && yTileIndex < tilesInY) {
-              const tileBoundX = FexMath.precision(xZone + xTileIndex * tileSize.w, 2);
-              const tileBoundY = FexMath.precision(yZone + yTileIndex * tileSize.h, 2);
+              const tileBoundX = FexMath.precision(xZone + xTileIndex * tileSize.w);
+              const tileBoundY = FexMath.precision(yZone + yTileIndex * tileSize.h);
               const tileBoundWidth = tileSize.w;
               const tileBoundHeight = tileSize.h;
 

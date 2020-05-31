@@ -26,8 +26,8 @@ class Entity {
     // this.automaticMovement(this.position, this.velocity, this.t);
     this.lastStep.x = this.velocity.x * elapsedTime;
     this.lastStep.y = this.velocity.y * elapsedTime;
-    this.position.x += FexMath.precision(this.lastStep.x, 2);
-    this.position.y += FexMath.precision(this.lastStep.y, 2);
+    this.position.x += FexMath.precision(this.lastStep.x);
+    this.position.y += FexMath.precision(this.lastStep.y);
     this.sprite.update(elapsedTime);
     ++this.count;
     this.t += elapsedTime * 0.1;

@@ -253,9 +253,10 @@ export default function run() {
   function loop(now) {
     if (debugCamera) {
       const changedOrigin = FexDebug.getChangedOrigin();
-      currentGraphics.renderingContext2D.translate(changedOrigin.x, changedOrigin.y);
-      currentGraphics.renderingContext2D.clearRect(0, 0, currentGraphics.canvas.width, currentGraphics.canvas.height);
-      currentGraphics.renderingContext2D.translate(-changedOrigin.x, -changedOrigin.y);
+      // currentGraphics.renderingContext2D.translate(changedOrigin.x, changedOrigin.y);
+      currentGraphics.renderingContext2D.fillStyle = currentGraphics.canvas.style.backgroundColor;
+      currentGraphics.renderingContext2D.fillRect(changedOrigin.x, changedOrigin.y, currentGraphics.canvas.width, currentGraphics.canvas.height);
+      // currentGraphics.renderingContext2D.translate(-changedOrigin.x, -changedOrigin.y);
     }
 
     const elapsedTime = now - lastTime;

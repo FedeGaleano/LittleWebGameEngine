@@ -43,9 +43,9 @@ let curtainSpeed = 0;
 
 let pause = false;
 
-const characterSpeed = 0.15;
+const characterSpeed = 0.12;
 const jumpVelocity = 0.3;
-const gravity = 0.02;
+const gravity = 0.001;
 
 const cameraFollowBox = {
   x: 0,
@@ -322,7 +322,7 @@ class Game extends Scene {
       curtain = Math.max(0, Math.min(1, curtain + curtainSpeed * elapsedTime));
 
       this.character.update(elapsedTime);
-      this.character.velocity.y += gravity;
+      this.character.velocity.y += gravity * elapsedTime;
 
       // if (this.character.position.y > this.yFloor + GameplayGraphics.tileSize.h) {
       //   this.character.position.y = this.yFloor + GameplayGraphics.tileSize.h;
