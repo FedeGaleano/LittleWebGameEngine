@@ -1,4 +1,4 @@
-const defaultPrecision = 3;
+const defaultPrecision = 2;
 
 const FexMath = {
   precision(inputValue, precision = defaultPrecision) {

@@ -44,6 +44,9 @@ let curtainSpeed = 0;
 let pause = false;
 
 const characterSpeed = 0.12;
+const moveAcceleration = 0.003;
+const maxMoveVelocity = 0.1;
+const friction = 0.0001;
 const jumpVelocity = 0.3;
 const gravity = 0.001;
 
@@ -283,19 +286,19 @@ class Game extends Scene {
     }
 
     FexDebug.logOnScreen('zone indexes', JSON.stringify(this.demoWorld.zoneIndexes));
-    FexDebug.logOnScreen('slime velocity', JSON.stringify(this.character.velocity));
+    FexDebug.logOnScreen('slime velocity x', FexMath.precision(this.character.velocity.x));
+    FexDebug.logOnScreen('slime velocity y', FexMath.precision(this.character.velocity.y));
     // FexDebug.logOnScreen('slime pos from cam x', this.character.position.x - camera.x);
     // FexDebug.logOnScreen('slime pos from cam y', this.character.position.y - camera.y);
     // FexDebug.logOnScreen('hitbox pos from cam x', this.character.hitbox.getAbsoluteX() - camera.x);
     // FexDebug.logOnScreen('hitbox pos from cam y', this.character.hitbox.getAbsoluteY() - camera.y);
 
-    FexDebug.logOnScreen('hitbox pos x', this.character.hitbox.getAbsoluteX() + this.character.hitbox.absoluteWidth);
-    FexDebug.logOnScreen('hitbox pos y', this.character.hitbox.getAbsoluteY() + this.character.hitbox.absoluteHieght);
+    FexDebug.logOnScreen('hitbox pos x', FexMath.precision(this.character.hitbox.getAbsoluteX() + this.character.hitbox.absoluteWidth));
+    FexDebug.logOnScreen('hitbox pos y', FexMath.precision(this.character.hitbox.getAbsoluteY() + this.character.hitbox.absoluteHieght));
   }
 
   postUpdate() {
     this.character.changeSpriteTo('idle');
-    this.character.velocity.x = 0;
   }
 
   onFocusLost() {
@@ -323,6 +326,12 @@ class Game extends Scene {
 
       this.character.update(elapsedTime);
       this.character.velocity.y += gravity * elapsedTime;
+      this.character.velocity.x -= friction * Math.sign(this.character.velocity.x) * elapsedTime;
+      if (this.character.velocity.x > 0) {
+        this.character.velocity.x = Math.max(0, this.character.velocity.x - friction * elapsedTime);
+      } else if (this.character.velocity.x < 0) {
+        this.character.velocity.x = Math.min(0, this.character.velocity.x + friction * elapsedTime);
+      }
 
       // if (this.character.position.y > this.yFloor + GameplayGraphics.tileSize.h) {
       //   this.character.position.y = this.yFloor + GameplayGraphics.tileSize.h;
@@ -472,12 +481,16 @@ class Game extends Scene {
 
   moveRight(elapsedTime) {
     this.character.changeSpriteTo('run');
-    this.character.velocity.x = characterSpeed;
+    this.character.velocity.x = Math.min(
+      maxMoveVelocity, this.character.velocity.x + moveAcceleration * elapsedTime,
+    );
   }
 
   moveLeft(elapsedTime) {
     this.character.changeSpriteTo('runInverse');
-    this.character.velocity.x = -characterSpeed;
+    this.character.velocity.x = Math.max(
+      -maxMoveVelocity, this.character.velocity.x - moveAcceleration * elapsedTime,
+    );
   }
 
   jump() {
