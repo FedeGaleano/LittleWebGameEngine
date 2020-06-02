@@ -44,9 +44,9 @@ let curtainSpeed = 0;
 let pause = false;
 
 const characterSpeed = 0.12;
-const moveAcceleration = 0.003;
+const moveAcceleration = 0.0003;
 const maxMoveVelocity = 0.1;
-const friction = 0.0001;
+const friction = 0.00005;
 const jumpVelocity = 0.3;
 const gravity = 0.001;
 
@@ -326,7 +326,7 @@ class Game extends Scene {
 
       this.character.update(elapsedTime);
       this.character.velocity.y += gravity * elapsedTime;
-      this.character.velocity.x -= friction * Math.sign(this.character.velocity.x) * elapsedTime;
+      // this.character.velocity.x -= friction * Math.sign(this.character.velocity.x) * elapsedTime;
       if (this.character.velocity.x > 0) {
         this.character.velocity.x = Math.max(0, this.character.velocity.x - friction * elapsedTime);
       } else if (this.character.velocity.x < 0) {

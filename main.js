@@ -1,10 +1,9 @@
 import Game from './src/game.js';
-import introduction from './src/introduction.js';
 import { loadResources, resources } from './engine/resources.js';
 import { GameplayGraphics, AskForRotationGraphics } from './engine/rendering.js';
 import Sprite from './engine/sprite.js';
 import FexDebug from './engine/debug.js';
-import Intro from './engine/intro.js';
+import Intro from './src/intro.js';
 import Menu from './src/menu.js';
 import InputBuffer from './engine/InputBuffer.js';
 import RotatePhoneScene from './src/rotatePhoneScene.js';

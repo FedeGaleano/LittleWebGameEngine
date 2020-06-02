@@ -281,7 +281,7 @@ class World {
                   const factorToReachYAxis = Math.abs(penetrationDepthX / velocity.x);
                   const factorToReachXAxis = Math.abs(penetrationDepthY / velocity.y);
 
-                  if (factorToReachXAxis <= factorToReachYAxis) { // TODO: considerate equality case separatly and resolve in both axis
+                  if (factorToReachXAxis <= factorToReachYAxis) { // TODO: considerate equality case separatly and resolve in both axes
                     entity.position.y -= penetrationDepthY;
                     entity.velocity.y = 0;
                   } else if (factorToReachXAxis > factorToReachYAxis) {
