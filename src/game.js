@@ -48,7 +48,7 @@ const characterSpeed = 0.12;
 const moveAcceleration = 0.0003;
 const maxMoveVelocity = 0.1;
 const friction = 0.00005;
-const jumpVelocity = 0.3;
+const jumpVelocity = 0.32;
 const gravity = 0.001;
 
 const cameraFollowBox = {
@@ -68,6 +68,10 @@ const jumpMovement = Physics.buildJumpMovement(5, 0.01);
 const jumpMovement2 = Physics.buildJumpMovement2(5);
 
 class Game extends Scene {
+  static get camera() {
+    return camera;
+  }
+
   constructor() {
     super();
     this.unpause = this.unpause.bind(this);

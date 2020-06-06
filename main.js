@@ -7,6 +7,7 @@ import Intro from './src/intro.js';
 import Menu from './src/menu.js';
 import InputBuffer from './engine/InputBuffer.js';
 import RotatePhoneScene from './src/rotatePhoneScene.js';
+import FexMath from './engine/utils/FexMath.js';
 
 let debug = false;
 let focus = true;
@@ -294,9 +295,16 @@ export default function run() {
       FexDebug.render(currentGraphics);
     }
     if (debugCamera) {
+      currentGraphics.renderingContext2D.font = `bold ${11}px arial`;
+      currentGraphics.renderer.fillStyle = 'rgba(0, 0, 0, 0.9)';
+      currentGraphics.renderer.renderFullRectangle(0, -32, 90, 32);
       currentGraphics.renderer.strokeStyle = 'magenta';
+      currentGraphics.renderer.renderEmptyRectangle(0, -32, 90, 32);
+      currentGraphics.renderer.fillStyle = 'magenta';
       currentGraphics.renderer.renderEmptyRectangle(0, 0, currentGraphics.screen.width, currentGraphics.screen.height);
-      currentGraphics.renderingContext2D.drawImage(resources.camera, 0, -resources.camera.height - 5);
+      currentGraphics.renderingContext2D.drawImage(resources.camera, 2, -resources.camera.height - 10);
+      currentGraphics.renderingContext2D.fillText(`x: ${FexMath.precision(Game.camera.x)}`, 0 + resources.camera.width + 15, -resources.camera.height / 2 - 12, 250);
+      currentGraphics.renderingContext2D.fillText(`y: ${FexMath.precision(Game.camera.y)}`, 0 + resources.camera.width + 15, -resources.camera.height / 2, 250);
     }
 
     window.requestAnimationFrame(loop);
