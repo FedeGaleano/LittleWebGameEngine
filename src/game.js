@@ -11,6 +11,7 @@ import Scene from '../engine/scene.js';
 import Physics from '../engine/physics/Physics.js';
 import TouchScreenArea from '../engine/TouchScreenArea.js';
 import FexMath from '../engine/utils/FexMath.js';
+import Light from '../engine/light.js';
 
 const ArrayNewFunctionalities = {
   removeIf(condition) {
@@ -223,6 +224,20 @@ class Game extends Scene {
     curtainSpeed = 0.003;
     camera.x = -screen.width;
     this.speechClosed = true;
+
+    // this.lightSource = GameplayRenderer.createLightSource(
+    //   this.character.position.x, this.character.position.y,
+    //   30,
+    //   255, 0, 255,
+    //   1,
+    // );
+
+    this.light = new Light(
+      this.character.position.x, this.character.position.y,
+      this.character.width / 2 + 35,
+      255, 0, 255,
+      0.1,
+    );
   }
 
   update(elapsedTime) {
@@ -266,8 +281,11 @@ class Game extends Scene {
     GameplayRenderer.renderFullRectangle(0, 0, screen.width, curtainHeight);
     GameplayRenderer.renderFullRectangle(0, screen.height - curtainHeight, screen.width, curtainHeight);
 
+    this.light.render(camera);
+
     this.renderLogic();
 
+    // GameplayRenderer.renderLightSource(this.lightSource);
 
     if (showGrid) {
       renderer.renderWorldTileGrid(this.demoWorld, camera, this.collisionInfo);
@@ -332,6 +350,9 @@ class Game extends Scene {
       } else if (this.character.velocity.x < 0) {
         this.character.velocity.x = Math.min(0, this.character.velocity.x + friction * elapsedTime);
       }
+
+      this.light.x = this.character.position.x + this.character.width / 2;
+      this.light.y = this.character.position.y + this.character.height / 2;
 
       // if (this.character.position.y > this.yFloor + GameplayGraphics.tileSize.h) {
       //   this.character.position.y = this.yFloor + GameplayGraphics.tileSize.h;

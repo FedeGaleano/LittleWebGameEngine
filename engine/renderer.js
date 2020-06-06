@@ -104,7 +104,7 @@ class Renderer {
     );
   }
 
-  renderFullRectangle(x, y, w, h, color) {
+  renderFullRectangle(x = 0, y = 0, w = this.graphics.screen.width, h = this.graphics.screen.height, color) {
     const { renderingContext2D, scale } = this.graphics;
     const prevColor = renderingContext2D.fillStyle;
     renderingContext2D.fillStyle = color || prevColor;
@@ -174,6 +174,24 @@ class Renderer {
   set alpha(value) {
     const { renderingContext2D } = this.graphics;
     renderingContext2D.globalAlpha = Math.max(0, value);
+  }
+
+  createLightSource(x, y, radius, r, g, b, intensity = 1) {
+    const { renderingContext2D, scale } = this.graphics;
+    const realX = x * scale;
+    const realY = y * scale;
+    const realRadius = radius * scale;
+    const gradient = renderingContext2D.createRadialGradient(realX, realY, 0, realX, realY, realRadius);
+
+    gradient.addColorStop(0, `rgba(${r},${g},${b},${intensity})`);
+    gradient.addColorStop(1, `rgba(${0},${0},${0},0.75)`);
+
+    return gradient;
+  }
+
+  renderLightSource(lightSource) {
+    this.fillStyle = lightSource;
+    this.renderFullRectangle();
   }
 }
 
