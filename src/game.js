@@ -34,6 +34,7 @@ const { renderer, screen } = GameplayGraphics;
 const camera = { x: 0, y: 0 };
 const artificialCameraOffsetX = 0;
 let artificialCameraOffsetY = 0;
+const starsParallax = 0.25;
 
 const numberOfTilesInTheFloorX = 7;
 const numberOfTilesInTheFloorY = 1;
@@ -103,6 +104,9 @@ class Game extends Scene {
     this.jumpButton = null;
     this.speech = null;
     this.demoWorld = null;
+    this.starPanels = [];
+
+    this.back = null;
 
     // TOCACHE
     this.getFinalCameraX = () => -(screen.width / 2 - (numberOfTilesInTheFloorX / 2) * GameplayGraphics.tileSize.w);
@@ -242,6 +246,9 @@ class Game extends Scene {
       255, 0, 255,
       0.1,
     );
+
+    const panelWidth = resources.stars.width;
+    const panelHeight = resources.stars.height;
   }
 
   update(elapsedTime) {
@@ -257,7 +264,10 @@ class Game extends Scene {
 
     // Render background
     // TOCACHE
-    GameplayGraphics.renderer.renderBitmap(resources.background, 0, 0, screen.width, screen.height);
+
+    // GameplayGraphics.renderer.renderBitmap(resources.background, 0, 0, screen.width, screen.height);
+    GameplayRenderer.fillStyle = this.back;
+    GameplayRenderer.renderFullRectangle();
 
     // Render stars
     // TOCACHE
@@ -267,7 +277,7 @@ class Game extends Scene {
     for (let j = 0; j < yTimes; ++j) {
       for (let i = 0; i < xTimes; ++i) {
         GameplayGraphics.renderer.renderBitmap(
-          resources.stars, resources.stars.width * i, resources.stars.height * j,
+          resources.stars, resources.stars.width * i - camera.x * starsParallax, resources.stars.height * j - camera.y * starsParallax,
         );
       }
     }
@@ -357,6 +367,10 @@ class Game extends Scene {
 
       this.light.x = this.character.position.x + this.character.width / 2;
       this.light.y = this.character.position.y + this.character.height / 2;
+
+      this.back = GameplayGraphics.renderingContext2D.createLinearGradient(0, 0, 0, GameplayGraphics.screen.height * GameplayGraphics.scale);
+      this.back.addColorStop(0, '#333333');
+      this.back.addColorStop(1, '#333366');
 
       // if (this.character.position.y > this.yFloor + GameplayGraphics.tileSize.h) {
       //   this.character.position.y = this.yFloor + GameplayGraphics.tileSize.h;
