@@ -19,12 +19,6 @@ class Intro extends Scene {
   init() {
     FexDebug.logOnConsole('init');
 
-    this.light = GameplayRenderer.createLightSource(
-      GameplayGraphics.canvasWidth / 2, GameplayGraphics.canvasHeight / 2,
-      100,
-      255, 0, 255, 0.25,
-    );
-
     this.fade = 0;
     this.registerVolatileTouchScreenArea(
       new TouchScreenArea(
@@ -40,7 +34,7 @@ class Intro extends Scene {
       this.fadeSpeed = -0.01;
     }
     if (this.fade < 0) {
-      // this.finish();
+      this.finish();
     }
   }
 
@@ -48,9 +42,7 @@ class Intro extends Scene {
     const { screen } = GameplayGraphics;
     // GameplayGraphics.renderer.clearScreen();
     GameplayGraphics.renderer.fillStyle = 'black';
-    GameplayGraphics.renderingContext2D.fillRect(0, 0, GameplayGraphics.canvasWidth, GameplayGraphics.canvasHeight);
-
-    GameplayRenderer.renderLightSource(this.light);
+    GameplayRenderer.renderFullRectangle();
 
     const prevOpacity = GameplayGraphics.renderingContext2D.globalAlpha;
 
