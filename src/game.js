@@ -249,6 +249,10 @@ class Game extends Scene {
 
     const panelWidth = resources.stars.width;
     const panelHeight = resources.stars.height;
+
+    // for(const j = 0; j <;) {
+
+    // }
   }
 
   update(elapsedTime) {
