@@ -244,7 +244,7 @@ class Game extends Scene {
       this.character.position.x, this.character.position.y,
       this.character.width / 2 + 35,
       255, 0, 255,
-      0.1,
+      0.05,
     );
 
     const panelWidth = resources.stars.width;
