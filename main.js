@@ -267,7 +267,10 @@ export default function run() {
     // start focus managment
     const documentHasFocus = document.hasFocus();
 
-    if (focus && !documentHasFocus) scene.onFocusLost();
+    if (focus && !documentHasFocus) {
+      clearInput();
+      scene.onFocusLost();
+    }
 
     focus = documentHasFocus;
     // end focus managment
