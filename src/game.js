@@ -49,8 +49,12 @@ const characterSpeed = 0.12;
 const moveAcceleration = 0.0003;
 const maxMoveVelocity = 0.1;
 const friction = 0.00005;
-const jumpVelocity = 0.32;
+const maxJumpVelocity = 0.32;
+const minJumpVelocity = 0.05;
+const jumpAcceleration = 0.004;
 const gravity = 0.001;
+const maxTimeImpusingJumping = 100;
+let timeImpusingJumping = 0;
 
 const cameraFollowBox = {
   x: 0,
@@ -81,7 +85,8 @@ class Game extends Scene {
     this.cutSceneInput = this.cutSceneInput.bind(this);
     this.moveRight = this.moveRight.bind(this);
     this.moveLeft = this.moveLeft.bind(this);
-    this.jump = this.jump.bind(this);
+    this.jump = this.jumpAlongTime.bind(this);
+    this.jumpInstantly = this.jumpInstantly.bind(this);
     this.moveLeftDebug = this.moveLeftDebug.bind(this);
     this.moveDownDebug = this.moveDownDebug.bind(this);
     this.moveRightDebug = this.moveRightDebug.bind(this);
@@ -405,7 +410,7 @@ class Game extends Scene {
         cameraFollowBox.y = cameraFollowBoxBottomBound - cameraFollowBox.height;
       }
     }
-    // aca papu
+
     camera.x = artificialCameraOffsetX + Math.max(this.finalCameraX - 100, cameraFollowBox.x - (screen.width - cameraFollowBox.width) / 2);
     camera.y = artificialCameraOffsetY + Math.min(this.finalCameraY + 300, cameraFollowBox.y - (screen.height - cameraFollowBox.height) / 2);
   }
@@ -498,7 +503,6 @@ class Game extends Scene {
     this.pressed.touchScreen.right = (x, y, elapsedTime) => {
       this.moveRight(elapsedTime);
     };
-    this.fired.touchScreen.jump = this.jump;
 
     this.fired.KeyC = () => {
       if (curtainSpeed === 0) {
@@ -509,13 +513,17 @@ class Game extends Scene {
     };
     this.pressed.ArrowRight = (x, y, elapsedTime) => this.moveRight(elapsedTime);
     this.pressed.ArrowLeft = (x, y, elapsedTime) => this.moveLeft(elapsedTime);
-    this.fired.Space = (x, y, elapsedTime) => this.jump(elapsedTime);
-
+    // this.pressed.Space = (x, y, elapsedTime) => this.jumpAlongTime(elapsedTime);
+    this.fired.Space = this.fired.touchScreen.jump = this.jumpInstantly;
 
     this.pressed.KeyA = (x, y, elapsedTime) => this.moveLeftDebug(elapsedTime);
     this.pressed.KeyS = (x, y, elapsedTime) => this.moveDownDebug(elapsedTime);
     this.pressed.KeyD = (x, y, elapsedTime) => this.moveRightDebug(elapsedTime);
     this.pressed.KeyW = (x, y, elapsedTime) => this.moveUpDebug(elapsedTime);
+
+    this.released.Space = this.released.touchScreen.jump = () => {
+      timeImpusingJumping = 0;
+    };
   }
 
   isInUIRegion(x, y, x0, y0) {
@@ -536,9 +544,15 @@ class Game extends Scene {
     );
   }
 
-  jump() {
-    // this.character.setAutomaticMovement(jumpMovement2);
-    this.character.velocity.y = -jumpVelocity;
+  jumpAlongTime(elapsedTime) {
+    const timeLeft = Math.max(0, maxTimeImpusingJumping - timeImpusingJumping);
+    const deltaTime = Math.min(elapsedTime, timeLeft);
+    this.character.velocity.y = Math.min(-minJumpVelocity, this.character.velocity.y - jumpAcceleration * deltaTime);
+    timeImpusingJumping += elapsedTime;
+  }
+
+  jumpInstantly() {
+    this.character.velocity.y = -maxJumpVelocity;
   }
 
   moveLeftDebug(elapsedTime) {
