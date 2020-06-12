@@ -215,7 +215,7 @@ function handleInput(elapsedTime) {
   scene.mouseOver(x, y, elapsedTime);
 }
 
-export default function run() {
+export default function startEngine() {
   let frameCount = 0;
   let fps = 0;
   let lastTime = 0;
@@ -253,10 +253,8 @@ export default function run() {
   function loop(now) {
     if (debugCamera) {
       const changedOrigin = FexDebug.getChangedOrigin();
-      // currentGraphics.renderingContext2D.translate(changedOrigin.x, changedOrigin.y);
       currentGraphics.renderingContext2D.fillStyle = currentGraphics.canvas.style.backgroundColor;
       currentGraphics.renderingContext2D.fillRect(changedOrigin.x, changedOrigin.y, currentGraphics.canvas.width, currentGraphics.canvas.height);
-      // currentGraphics.renderingContext2D.translate(-changedOrigin.x, -changedOrigin.y);
     }
 
     const elapsedTime = now - lastTime;
