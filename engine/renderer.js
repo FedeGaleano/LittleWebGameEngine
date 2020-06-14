@@ -70,10 +70,11 @@ class Renderer {
 
   renderBitmap(image, x, y, w, h) {
     const { renderingContext2D, scale } = this.graphics;
+    // const render
     renderingContext2D.drawImage(
       image,
-      x * scale,
-      y * scale,
+      Math.floor(x * scale),
+      Math.floor(y * scale),
       (w || image.width) * scale,
       (h || image.height) * scale,
     );
@@ -82,10 +83,11 @@ class Renderer {
   renderSubBitmap(image, x, y, sx, sy, sw, sh, w, h) {
     const { renderingContext2D, scale } = this.graphics;
     renderingContext2D.drawImage(
-      image, sx, sy, sw - 0.05, sh - 0.05,
-      x * scale, y * scale,
-      (w || sw) * scale,
-      (h || sh) * scale,
+      image,
+      // SubRectangle
+      sx, sy, sw - 0.05, sh - 0.05,
+      // Destiny Canvas
+      Math.floor(x * scale), Math.floor(y * scale), (w || sw) * scale, (h || sh) * scale,
     );
   }
 

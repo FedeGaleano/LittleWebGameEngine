@@ -48,7 +48,8 @@ let pause = false;
 const characterSpeed = 0.12;
 const moveAcceleration = 0.0003;
 const maxMoveVelocity = 0.1;
-const friction = 0.00005;
+// const friction = 0.00005;
+const friction = 0.0001;
 const maxJumpVelocity = 0.32;
 const minJumpVelocity = 0.05;
 const jumpAcceleration = 0.004;
@@ -65,7 +66,7 @@ const cameraFollowBox = {
     const {
       x, y, width, height,
     } = cameraFollowBox;
-    GameplayRenderer.renderEmptyRectangle(x - customCamera.x, y - customCamera.y, width, height, 'green');
+    GameplayRenderer.renderEmptyRectangle(x - customCamera.x, y - customCamera.y, width, height, 'magenta');
   },
 };
 
@@ -75,6 +76,10 @@ const jumpMovement2 = Physics.buildJumpMovement2(5);
 class Game extends Scene {
   static get camera() {
     return camera;
+  }
+
+  static get cameraFollowBox() {
+    return cameraFollowBox;
   }
 
   constructor() {
@@ -97,6 +102,8 @@ class Game extends Scene {
     this.initialCutSceneUpdate = this.initialCutSceneUpdate.bind(this);
     this.normalUpdate = this.normalUpdate.bind(this);
 
+    this.createBackground = this.createBackground.bind(this);
+
     this.spriteSlimeIdle = null;
     this.spriteSlimeRunning = null;
     this.leftButtonSprite = null;
@@ -111,7 +118,7 @@ class Game extends Scene {
     this.demoWorld = null;
     this.starPanels = [];
 
-    this.back = null;
+    this.createBackground();
 
     // TOCACHE
     this.getFinalCameraX = () => -(screen.width / 2 - (numberOfTilesInTheFloorX / 2) * GameplayGraphics.tileSize.w);
@@ -179,6 +186,7 @@ class Game extends Scene {
       this.xFloor, this.yFloor,
     );
     this.character.addHitbox(0.2, 0.2, 0.6, 0.8);
+    // this.character.addHitbox(0, 0, 1, 1);
 
     cameraFollowBox.x = this.character.position.x - (cameraFollowBox.width - this.character.width) / 2;
     camera.x = cameraFollowBox.x - (screen.width - cameraFollowBox.width) / 2;
@@ -260,6 +268,12 @@ class Game extends Scene {
     // }
   }
 
+  createBackground() {
+    this.back = GameplayGraphics.renderingContext2D.createLinearGradient(0, 0, 0, GameplayGraphics.screen.height * GameplayGraphics.scale);
+    this.back.addColorStop(0, '#333333');
+    this.back.addColorStop(1, '#333366');
+  }
+
   update(elapsedTime) {
     if (!pause) {
       this.updateLogic(elapsedTime);
@@ -304,6 +318,10 @@ class Game extends Scene {
     GameplayRenderer.renderFullRectangle(0, 0, screen.width, curtainHeight);
     GameplayRenderer.renderFullRectangle(0, screen.height - curtainHeight, screen.width, curtainHeight);
 
+    // GameplayRenderer.fillStyle = 'black';
+    // GameplayRenderer.alpha = 0.75;
+    // GameplayRenderer.renderFullRectangle();
+    // GameplayRenderer.alpha = 1;
     this.light.render(camera);
 
     this.renderLogic();
@@ -327,15 +345,19 @@ class Game extends Scene {
     }
 
     FexDebug.logOnScreen('zone indexes', JSON.stringify(this.demoWorld.zoneIndexes));
-    FexDebug.logOnScreen('slime velocity x', FexMath.precision(this.character.velocity.x));
-    FexDebug.logOnScreen('slime velocity y', FexMath.precision(this.character.velocity.y));
+    FexDebug.logOnScreen('character velocity x', FexMath.precision(this.character.velocity.x));
+    FexDebug.logOnScreen('character velocity y', FexMath.precision(this.character.velocity.y));
+    FexDebug.logOnScreen('character pos x', this.character.position.x);
+    FexDebug.logOnScreen('character pos y', this.character.position.y);
+    // FexDebug.logOnScreen('cameraFollowBox x', cameraFollowBox.x);
+    // FexDebug.logOnScreen('cameraFollowBox y', cameraFollowBox.y);
     // FexDebug.logOnScreen('slime pos from cam x', this.character.position.x - camera.x);
     // FexDebug.logOnScreen('slime pos from cam y', this.character.position.y - camera.y);
     // FexDebug.logOnScreen('hitbox pos from cam x', this.character.hitbox.getAbsoluteX() - camera.x);
     // FexDebug.logOnScreen('hitbox pos from cam y', this.character.hitbox.getAbsoluteY() - camera.y);
 
-    FexDebug.logOnScreen('hitbox pos x', FexMath.precision(this.character.hitbox.getAbsoluteX() + this.character.hitbox.absoluteWidth));
-    FexDebug.logOnScreen('hitbox pos y', FexMath.precision(this.character.hitbox.getAbsoluteY() + this.character.hitbox.absoluteHieght));
+    // FexDebug.logOnScreen('hitbox pos x', FexMath.precision(this.character.hitbox.getAbsoluteX() + this.character.hitbox.absoluteWidth));
+    // FexDebug.logOnScreen('hitbox pos y', FexMath.precision(this.character.hitbox.getAbsoluteY() + this.character.hitbox.absoluteHieght));
   }
 
   postUpdate() {
@@ -365,8 +387,8 @@ class Game extends Scene {
     if (!pause) {
       curtain = Math.max(0, Math.min(1, curtain + curtainSpeed * elapsedTime));
 
-      this.character.update(elapsedTime);
       this.character.velocity.y += gravity * elapsedTime;
+      this.character.update(elapsedTime);
       // this.character.velocity.x -= friction * Math.sign(this.character.velocity.x) * elapsedTime;
       if (this.character.velocity.x > 0) {
         this.character.velocity.x = Math.max(0, this.character.velocity.x - friction * elapsedTime);
@@ -377,9 +399,7 @@ class Game extends Scene {
       this.light.x = this.character.position.x + this.character.width / 2;
       this.light.y = this.character.position.y + this.character.height / 2;
 
-      this.back = GameplayGraphics.renderingContext2D.createLinearGradient(0, 0, 0, GameplayGraphics.screen.height * GameplayGraphics.scale);
-      this.back.addColorStop(0, '#333333');
-      this.back.addColorStop(1, '#333366');
+      this.createBackground();
 
       // if (this.character.position.y > this.yFloor + GameplayGraphics.tileSize.h) {
       //   this.character.position.y = this.yFloor + GameplayGraphics.tileSize.h;
@@ -516,13 +536,25 @@ class Game extends Scene {
     // this.pressed.Space = (x, y, elapsedTime) => this.jumpAlongTime(elapsedTime);
     this.fired.Space = this.fired.touchScreen.jump = this.jumpInstantly;
 
-    this.pressed.KeyA = (x, y, elapsedTime) => this.moveLeftDebug(elapsedTime);
-    this.pressed.KeyS = (x, y, elapsedTime) => this.moveDownDebug(elapsedTime);
-    this.pressed.KeyD = (x, y, elapsedTime) => this.moveRightDebug(elapsedTime);
-    this.pressed.KeyW = (x, y, elapsedTime) => this.moveUpDebug(elapsedTime);
-
     this.released.Space = this.released.touchScreen.jump = () => {
       timeImpusingJumping = 0;
+    };
+
+    this.fired.KeyB = () => {
+      cameraFollowBox.x = 354.7199999999988;
+      this.character.position.x = 373.19000000000057;
+    };
+    this.fired.KeyA = () => {
+      this.character.position.x -= 0.02;
+    };
+    this.fired.KeyD = () => {
+      this.character.position.x += 0.02;
+    };
+    this.fired.KeyQ = () => {
+      cameraFollowBox.x -= 0.02;
+    };
+    this.fired.KeyE = () => {
+      cameraFollowBox.x += 0.02;
     };
   }
 

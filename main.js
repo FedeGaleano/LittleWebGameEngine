@@ -306,6 +306,7 @@ export default function startEngine() {
       currentGraphics.renderingContext2D.drawImage(resources.camera, 2, -resources.camera.height - 10);
       currentGraphics.renderingContext2D.fillText(`x: ${FexMath.precision(Game.camera.x)}`, 0 + resources.camera.width + 15, -resources.camera.height / 2 - 12, 250);
       currentGraphics.renderingContext2D.fillText(`y: ${FexMath.precision(Game.camera.y)}`, 0 + resources.camera.width + 15, -resources.camera.height / 2, 250);
+      Game.cameraFollowBox.render(Game.camera);
     }
 
     window.requestAnimationFrame(loop);

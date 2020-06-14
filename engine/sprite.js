@@ -23,23 +23,16 @@ class Sprite {
     this.currentFrameDuration += elapsedTime;
   }
 
-  render(x, y) {
+  render(x, y, debug = false) {
     const {
       image, currentFrame, frameWidth, graphics, flip, flop,
     } = this;
 
     // if (flip || flop) graphics.renderingContext2D.scale(flip ? -1 : 1, flop ? -1 : 1);
 
-    graphics.renderingContext2D.drawImage(
-      image,
-      // SubRectangle
-      frameWidth * currentFrame, 0, frameWidth - 0.05, image.height - 0.05,
-      // Destiny Canvas
-      x * graphics.scale, y * graphics.scale,
-      frameWidth * graphics.scale, image.height * graphics.scale,
+    graphics.renderer.renderSubBitmap(
+      image, x, y, frameWidth * currentFrame, 0, frameWidth, image.height,
     );
-
-    // graphics.renderingContext2D.restore();
   }
 }
 
