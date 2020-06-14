@@ -62,41 +62,41 @@ class WordBubble {
     GameplayGraphics.renderingContext2D.globalAlpha = this.opening ** 4;
 
     // Top Left Corner
-    GameplayGraphics.renderer.renderSubBitmap(
+    GameplayGraphics.renderer.renderSubBitmapNoRound(
       resources.wordBubbleParts, A.x, A.y, 0, 0, marginX, marginY,
     );
     // Top Right Corner
-    GameplayGraphics.renderer.renderSubBitmap(
+    GameplayGraphics.renderer.renderSubBitmapNoRound(
       resources.wordBubbleParts, C.x, C.y, 3, 0, marginX, marginY,
     );
     // Bottom Left Corner
-    GameplayGraphics.renderer.renderSubBitmap(
+    GameplayGraphics.renderer.renderSubBitmapNoRound(
       resources.wordBubbleParts, I.x, I.y, 3 * 9, 0, marginX, needleHeight,
     );
     // Bottom Right Corner
-    GameplayGraphics.renderer.renderSubBitmap(
+    GameplayGraphics.renderer.renderSubBitmapNoRound(
       resources.wordBubbleParts, K.x, K.y, 3 * 3, 0, marginX, marginY,
     );
 
     // Top Edge
-    GameplayGraphics.renderer.renderSubBitmap(
+    GameplayGraphics.renderer.renderSubBitmapNoRound(
       resources.wordBubbleParts, B.x, B.y, 3 * 6, 0, 1, marginY, width, 3,
     );
     // Bottom Edge
-    GameplayGraphics.renderer.renderSubBitmap(
+    GameplayGraphics.renderer.renderSubBitmapNoRound(
       resources.wordBubbleParts, J.x, J.y, 3 * 7, 0, 1, marginY, width, marginY,
     );
     // Left Edge
-    GameplayGraphics.renderer.renderSubBitmap(
+    GameplayGraphics.renderer.renderSubBitmapNoRound(
       resources.wordBubbleParts, E.x, E.y, 3 * 4, 0, marginX, 1, marginX, height,
     );
     // Right Edge
-    GameplayGraphics.renderer.renderSubBitmap(
+    GameplayGraphics.renderer.renderSubBitmapNoRound(
       resources.wordBubbleParts, G.x, G.y, 3 * 5, 0, marginX, 1, marginX, height,
     );
 
     // Fill
-    GameplayGraphics.renderer.renderSubBitmap(
+    GameplayGraphics.renderer.renderSubBitmapNoRound(
       resources.wordBubbleParts, F.x, F.y, 3 * 8, 0, 1, 1, width, height,
     );
 

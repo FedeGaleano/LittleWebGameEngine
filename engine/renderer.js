@@ -87,7 +87,18 @@ class Renderer {
       // SubRectangle
       sx, sy, sw - 0.05, sh - 0.05,
       // Destiny Canvas
-      Math.floor(x * scale), Math.floor(y * scale), (w || sw) * scale, (h || sh) * scale,
+      Math.floor(x * scale), Math.floor(y * scale), Math.floor(w || sw) * scale, Math.floor(h || sh) * scale,
+    );
+  }
+
+  renderSubBitmapNoRound(image, x, y, sx, sy, sw, sh, w, h) {
+    const { renderingContext2D, scale } = this.graphics;
+    renderingContext2D.drawImage(
+      image,
+      // SubRectangle
+      sx, sy, sw - 0.05, sh - 0.05,
+      // Destiny Canvas
+      x * scale, y * scale, (w || sw) * scale, (h || sh) * scale,
     );
   }
 
