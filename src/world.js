@@ -126,6 +126,10 @@ const demoTileMapList = [
   demoTileMap4,
 ];
 
+const tileFriction = {
+  1: 0.0001,
+};
+
 class Zone {
   constructor(x, y, tileMap, tileSet) {
     this.x = x;
@@ -223,7 +227,7 @@ class World {
     }
   }
 
-  getCollisionInfo(entity) {
+  getCollisionInfo(entity, elapsedTime) {
     const { hitbox, velocity } = entity;
     const { tileSize } = GameplayGraphics;
 
@@ -290,6 +294,11 @@ class World {
                   if (factorToReachXAxis <= factorToReachYAxis) { // TODO: considerate equality case separatly and resolve in both axes
                     entity.position.y -= penetrationDepthY;
                     entity.velocity.y = 0;
+
+                    if (entity.velocity.x !== 0) {
+                      const newRapidness = Math.max(0, Math.abs(entity.velocity.x) - tileFriction[tileValue] * elapsedTime);
+                      entity.velocity.x = newRapidness * Math.sign(entity.velocity.x);
+                    }
                   } else if (factorToReachXAxis > factorToReachYAxis) {
                     entity.position.x -= penetrationDepthX;
                     entity.velocity.x = 0;

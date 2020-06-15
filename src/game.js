@@ -389,12 +389,6 @@ class Game extends Scene {
 
       this.character.velocity.y += gravity * elapsedTime;
       this.character.update(elapsedTime);
-      // this.character.velocity.x -= friction * Math.sign(this.character.velocity.x) * elapsedTime;
-      if (this.character.velocity.x > 0) {
-        this.character.velocity.x = Math.max(0, this.character.velocity.x - friction * elapsedTime);
-      } else if (this.character.velocity.x < 0) {
-        this.character.velocity.x = Math.min(0, this.character.velocity.x + friction * elapsedTime);
-      }
 
       this.light.x = this.character.position.x + this.character.width / 2;
       this.light.y = this.character.position.y + this.character.height / 2;
@@ -407,10 +401,7 @@ class Game extends Scene {
       // }
 
       this.zoneIndex = this.demoWorld.getZoneIndex(this.character.hitbox);
-      this.collisionInfo = this.demoWorld.getCollisionInfo(this.character);
-      if (this.character.velocity.y === 0) {
-        // this.character.resetAutomaticMovement();
-      }
+      this.collisionInfo = this.demoWorld.getCollisionInfo(this.character, elapsedTime);
 
       this.speech.setBottomLeftCorner(this.character.position.x + 14, this.character.position.y);
       this.speech.update(elapsedTime);
