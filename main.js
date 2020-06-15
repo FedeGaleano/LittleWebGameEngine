@@ -251,6 +251,8 @@ export default function startEngine() {
   }
 
   function loop(now) {
+    if (lastTime === 0) lastTime = now;
+
     if (debugCamera) {
       const changedOrigin = FexDebug.getChangedOrigin();
       currentGraphics.renderingContext2D.fillStyle = currentGraphics.canvas.style.backgroundColor;
