@@ -127,7 +127,7 @@ const demoTileMapList = [
 ];
 
 const tileFriction = {
-  1: 0.0001,
+  1: 0.00015,
 };
 
 class Zone {
@@ -164,10 +164,13 @@ class World {
 
     this.collisionCheckAreaInTiles = { width: 2, height: 2 };
     this.collisionCheckAreaInTiles.area = this.collisionCheckAreaInTiles.width * this.collisionCheckAreaInTiles.height;
-    this.collisionInfo = Array(2).fill().map(() => ({
-      validZone: false,
-      tilesInfo: Array(this.collisionCheckAreaInTiles.area).fill().map(() => ({ x: null, y: null, tileMark: TileMark.Skipped })),
-    }));
+    this.collisionInfo = {
+      isInAir: false,
+      map: Array(2).fill().map(() => ({
+        validZone: false,
+        tilesInfo: Array(this.collisionCheckAreaInTiles.area).fill().map(() => ({ x: null, y: null, tileMark: TileMark.Skipped })),
+      })),
+    };
 
     this.zoneIndexes = [null, null];
   }
@@ -216,23 +219,27 @@ class World {
     // }) => x > xZone && x < xZone + width && y > yZone && y < yZone + height);
   }
 
-  clearCollisionInfo() {
-    for (let i = 0; i < this.collisionInfo.length; ++i) {
-      this.collisionInfo[i].validZone = false;
-      for (let j = 0; j < this.collisionInfo[i].tilesInfo.length; ++j) {
-        this.collisionInfo[i].tilesInfo[j].x = null;
-        this.collisionInfo[i].tilesInfo[j].y = null;
-        this.collisionInfo[i].tilesInfo[j].tileMark = 0;
+  clearCollisionMap() {
+    this.collisionInfo.isInAir = true;
+    const { map } = this.collisionInfo;
+    for (let i = 0; i < map.length; ++i) {
+      map[i].validZone = false;
+      for (let j = 0; j < map[i].tilesInfo.length; ++j) {
+        map[i].tilesInfo[j].x = null;
+        map[i].tilesInfo[j].y = null;
+        map[i].tilesInfo[j].tileMark = 0;
       }
     }
   }
 
-  getCollisionInfo(entity, elapsedTime) {
+  setCollisionInfo(entity, elapsedTime) {
     const { hitbox, velocity } = entity;
     const { tileSize } = GameplayGraphics;
 
     // TOCACHE (probably I don't need to do this everytime)
-    this.clearCollisionInfo();
+    this.clearCollisionMap();
+
+    const { map } = this.collisionInfo;
 
     this.setZoneIndexes(hitbox);
 
@@ -241,7 +248,7 @@ class World {
       const validZone = zoneIndex !== null;
 
       if (validZone) {
-        this.collisionInfo[a].validZone = true;
+        map[a].validZone = true;
 
         const {
           x: xZone, y: yZone, tilesInX, tilesInY,
@@ -275,14 +282,14 @@ class World {
               const xRasterPos = xTileIndex - xBaseTileIndex;
               const rasterPos = yRasterPos * areaWidth + xRasterPos;
 
-              this.collisionInfo[a].tilesInfo[rasterPos].x = tileBoundX;
-              this.collisionInfo[a].tilesInfo[rasterPos].y = tileBoundY;
+              map[a].tilesInfo[rasterPos].x = tileBoundX;
+              map[a].tilesInfo[rasterPos].y = tileBoundY;
 
               const tileValue = tileMapData[tileMap.scanline * yTileIndex + xTileIndex];
 
-              this.collisionInfo[a].tilesInfo[rasterPos].tileMark = TileMark.Empty;
+              map[a].tilesInfo[rasterPos].tileMark = TileMark.Empty;
               if (tileValue > 0) {
-                this.collisionInfo[a].tilesInfo[rasterPos].tileMark = TileMark.Occupied;
+                map[a].tilesInfo[rasterPos].tileMark = TileMark.Occupied;
 
                 if (hitbox.collidesWithBound(tileBoundX, tileBoundY, tileBoundWidth, tileBoundHeight)) {
                   const penetrationDepthY = hitbox.minkowskiDifference.y + (velocity.y > 0 && hitbox.minkowskiDifference.height);
@@ -290,11 +297,10 @@ class World {
 
                   const factorToReachYAxis = Math.abs(penetrationDepthX / velocity.x);
                   const factorToReachXAxis = Math.abs(penetrationDepthY / velocity.y);
-
                   if (factorToReachXAxis <= factorToReachYAxis) { // TODO: considerate equality case separatly and resolve in both axes
                     entity.position.y -= penetrationDepthY;
                     entity.velocity.y = 0;
-
+                    this.collisionInfo.isInAir = false;
                     if (entity.velocity.x !== 0) {
                       const newRapidness = Math.max(0, Math.abs(entity.velocity.x) - tileFriction[tileValue] * elapsedTime);
                       entity.velocity.x = newRapidness * Math.sign(entity.velocity.x);
@@ -304,7 +310,7 @@ class World {
                     entity.velocity.x = 0;
                   }
 
-                  this.collisionInfo[a].tilesInfo[rasterPos].tileMark = TileMark.Collided;
+                  map[a].tilesInfo[rasterPos].tileMark = TileMark.Collided;
                 }
               }
             }

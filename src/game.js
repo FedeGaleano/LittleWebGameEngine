@@ -46,11 +46,11 @@ let curtainSpeed = 0;
 let pause = false;
 
 const characterSpeed = 0.12;
-const moveAcceleration = 0.0003;
+const moveAcceleration = max => (max ? 0.001 : 0.0003);
 const maxMoveVelocity = 0.1;
 // const friction = 0.00005;
 const friction = 0.0001;
-const maxJumpVelocity = 0.32;
+const maxJumpVelocity = 0.35;
 const minJumpVelocity = 0.05;
 const jumpAcceleration = 0.004;
 const gravity = 0.001;
@@ -329,7 +329,7 @@ class Game extends Scene {
     // GameplayRenderer.renderLightSource(this.lightSource);
 
     if (showGrid) {
-      renderer.renderWorldTileGrid(this.demoWorld, camera, this.collisionInfo);
+      renderer.renderWorldTileGrid(this.demoWorld, camera, this.demoWorld.collisionInfo.map);
       this.character.render(camera);
       this.character.hitbox.render(camera, this.zoneIndex >= 0);
     } else {
@@ -349,6 +349,7 @@ class Game extends Scene {
     FexDebug.logOnScreen('character velocity y', FexMath.precision(this.character.velocity.y));
     FexDebug.logOnScreen('character pos x', this.character.position.x);
     FexDebug.logOnScreen('character pos y', this.character.position.y);
+    FexDebug.logOnScreen('isInAir', this.demoWorld.collisionInfo.isInAir);
     // FexDebug.logOnScreen('cameraFollowBox x', cameraFollowBox.x);
     // FexDebug.logOnScreen('cameraFollowBox y', cameraFollowBox.y);
     // FexDebug.logOnScreen('slime pos from cam x', this.character.position.x - camera.x);
@@ -401,7 +402,7 @@ class Game extends Scene {
       // }
 
       this.zoneIndex = this.demoWorld.getZoneIndex(this.character.hitbox);
-      this.collisionInfo = this.demoWorld.getCollisionInfo(this.character, elapsedTime);
+      this.demoWorld.setCollisionInfo(this.character, elapsedTime);
 
       this.speech.setBottomLeftCorner(this.character.position.x + 14, this.character.position.y);
       this.speech.update(elapsedTime);
@@ -554,16 +555,20 @@ class Game extends Scene {
   }
 
   moveRight(elapsedTime) {
+    const { isInAir } = this.demoWorld.collisionInfo;
+    const goMax = isInAir && this.character.velocity.x < 0;
     this.character.changeSpriteTo('run');
     this.character.velocity.x = Math.min(
-      maxMoveVelocity, this.character.velocity.x + moveAcceleration * elapsedTime,
+      maxMoveVelocity, this.character.velocity.x + moveAcceleration(goMax) * elapsedTime,
     );
   }
 
   moveLeft(elapsedTime) {
+    const { isInAir } = this.demoWorld.collisionInfo;
+    const goMax = isInAir && this.character.velocity.x > 0;
     this.character.changeSpriteTo('runInverse');
     this.character.velocity.x = Math.max(
-      -maxMoveVelocity, this.character.velocity.x - moveAcceleration * elapsedTime,
+      -maxMoveVelocity, this.character.velocity.x - moveAcceleration(goMax) * elapsedTime,
     );
   }
 
