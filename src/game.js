@@ -48,8 +48,6 @@ let pause = false;
 const characterSpeed = 0.12;
 const moveAcceleration = max => (max ? 0.001 : 0.0003);
 const maxMoveVelocity = 0.1;
-// const friction = 0.00005;
-const friction = 0.0001;
 const maxJumpVelocity = 0.35;
 const minJumpVelocity = 0.05;
 const jumpAcceleration = 0.004;
@@ -390,6 +388,12 @@ class Game extends Scene {
 
       this.character.velocity.y += gravity * elapsedTime;
       this.character.update(elapsedTime);
+
+      const { friction } = this.demoWorld.collisionInfo;
+      if (this.character.velocity.x !== 0) {
+        const newRapidness = Math.max(0, Math.abs(this.character.velocity.x) - friction * elapsedTime);
+        this.character.velocity.x = newRapidness * Math.sign(this.character.velocity.x);
+      }
 
       this.light.x = this.character.position.x + this.character.width / 2;
       this.light.y = this.character.position.y + this.character.height / 2;

@@ -164,8 +164,10 @@ class World {
 
     this.collisionCheckAreaInTiles = { width: 2, height: 2 };
     this.collisionCheckAreaInTiles.area = this.collisionCheckAreaInTiles.width * this.collisionCheckAreaInTiles.height;
+    this.airFriction = 0.00005;
     this.collisionInfo = {
       isInAir: false,
+      friction: this.airFriction,
       map: Array(2).fill().map(() => ({
         validZone: false,
         tilesInfo: Array(this.collisionCheckAreaInTiles.area).fill().map(() => ({ x: null, y: null, tileMark: TileMark.Skipped })),
@@ -221,6 +223,7 @@ class World {
 
   clearCollisionMap() {
     this.collisionInfo.isInAir = true;
+    this.collisionInfo.friction = this.airFriction;
     const { map } = this.collisionInfo;
     for (let i = 0; i < map.length; ++i) {
       map[i].validZone = false;
@@ -301,10 +304,7 @@ class World {
                     entity.position.y -= penetrationDepthY;
                     entity.velocity.y = 0;
                     this.collisionInfo.isInAir = false;
-                    if (entity.velocity.x !== 0) {
-                      const newRapidness = Math.max(0, Math.abs(entity.velocity.x) - tileFriction[tileValue] * elapsedTime);
-                      entity.velocity.x = newRapidness * Math.sign(entity.velocity.x);
-                    }
+                    this.collisionInfo.friction = tileFriction[tileValue];
                   } else if (factorToReachXAxis > factorToReachYAxis) {
                     entity.position.x -= penetrationDepthX;
                     entity.velocity.x = 0;
