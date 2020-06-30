@@ -1,11 +1,11 @@
 import { GameplayGraphics, GameplayRenderer } from '../engine/rendering.js';
 import Sprite from '../engine/sprite.js';
-import { resources, fonts } from '../engine/resources.js';
+import {
+  resources, fonts, tileMaps, tilesets,
+} from '../engine/resources.js';
 import FexDebug from '../engine/debug.js';
-import { World, exampleTileMapList, demoTileMapList } from './world.js';
+import { World } from './world.js';
 import Entity from '../engine/entity.js';
-import WordBubble from '../engine/wordBubble.js';
-import Dialog from '../engine/dialog.js';
 import Speech from '../engine/speech.js';
 import Scene from '../engine/scene.js';
 import Physics from '../engine/physics/Physics.js';
@@ -183,8 +183,7 @@ class Game extends Scene {
       }, { startingSpriteKey: 'idle' },
       this.xFloor, this.yFloor,
     );
-    this.character.addHitbox(0.2, 0.2, 0.6, 0.8);
-    // this.character.addHitbox(0, 0, 1, 1);
+    this.character.addHitbox(0.25, 0.3, 0.5, 0.7);
 
     cameraFollowBox.x = this.character.position.x - (cameraFollowBox.width - this.character.width) / 2;
     camera.x = cameraFollowBox.x - (screen.width - cameraFollowBox.width) / 2;
@@ -223,10 +222,10 @@ class Game extends Scene {
       ],
     ], dialogSpeed);
 
-    // exampleWorld = new World(exampleTileMapList, [0, resources.tile], 10, 50);
     this.demoWorld = new World(
-      demoTileMapList,
-      [0, resources.tile], 0, 0,
+      [tileMaps.zone1, tileMaps.try, tileMaps.try2],
+      tilesets.world,
+      0, 0,
     );
 
 

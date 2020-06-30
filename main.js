@@ -1,5 +1,5 @@
 import Game from './src/game.js';
-import { loadResources, resources } from './engine/resources.js';
+import { setEnvironment, resources } from './engine/resources.js';
 import { GameplayGraphics, AskForRotationGraphics } from './engine/rendering.js';
 import Sprite from './engine/sprite.js';
 import FexDebug from './engine/debug.js';
@@ -315,7 +315,7 @@ export default function startEngine() {
   }
 
   function start() {
-    loadResources().then(() => {
+    setEnvironment().then(() => {
       rotatePhoneScene.init();
       scene.init();
       chooseLoopManager();

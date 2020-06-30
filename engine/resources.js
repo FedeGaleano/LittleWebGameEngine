@@ -1,5 +1,9 @@
 import FexDebug from './debug.js';
 import Font from './font.js';
+import TileSet from './Tileset.js';
+import Graphics from './graphics.js';
+import { GameplayGraphics } from './rendering.js';
+import TileMap from './tilemap.js';
 
 const resourceLoadingData = [
   { path: 'fede-engine-title.png', resourceName: 'titleImage' },
@@ -23,10 +27,43 @@ const resourceLoadingData = [
   { path: 'engine-demo-button-right.png', resourceName: 'uiButtonRight' },
   { path: 'engine-demo-button-action.png', resourceName: 'uiButtonAction' },
   { path: 'fex-engine-camera.png', resourceName: 'camera' },
+  { path: 'tileset-engine-demo.png', resourceName: 'tileset' },
 ];
 
 const resources = {};
 const fonts = {};
+const tileMaps = {
+  try: 'try.json',
+  try2: 'try2.json',
+  zone1: 'zone1.json',
+};
+const tilesets = {};
+
+function loadFonts() {
+  FexDebug.logOnConsole('loading fonts');
+  fonts.normal = new Font(resources.font);
+  FexDebug.logOnConsole('kerning data: ', fonts.normal.kerningData);
+}
+
+function loadTileMaps() {
+  FexDebug.logOnConsole('loading tileMaps');
+
+  const jsonPaths = Object.keys(tileMaps);
+  const createTileMapFromJsonPath = tileMapName => fetch(`tileMaps/${tileMaps[tileMapName]}`)
+    .then(res => res.json())
+    .then((metadata) => {
+      tileMaps[tileMapName] = new TileMap(metadata);
+    });
+
+  return Promise.all(jsonPaths.map(createTileMapFromJsonPath));
+}
+
+function createTileSets() {
+  FexDebug.logOnConsole('creating tilesets');
+  tilesets.world = new TileSet(
+    resources.tileset, GameplayGraphics.tileSize.w, GameplayGraphics.tileSize.h,
+  );
+}
 
 function loadResources() {
   FexDebug.logOnConsole('loading resources');
@@ -41,11 +78,16 @@ function loadResources() {
         };
       });
     }),
-  )
-    .then(() => {
-      fonts.normal = new Font(resources.font);
-      FexDebug.logOnConsole('kerning data: ', fonts.normal.kerningData);
-    });
+  );
+}
+function setEnvironment() {
+  return Promise.resolve()
+    .then(loadResources)
+    .then(loadFonts)
+    .then(loadTileMaps)
+    .then(createTileSets);
 }
 
-export { loadResources, resources, fonts };
+export {
+  setEnvironment, resources, fonts, tileMaps, tilesets,
+};

@@ -1,134 +1,13 @@
-import { renderTileMap } from '../engine/tilemap.js';
 import { GameplayGraphics } from '../engine/rendering.js';
-import { resources } from '../engine/resources.js';
-import FexDebug from '../engine/debug.js';
 import TileMark from '../engine/TileMark.js';
 import FexMath from '../engine/utils/FexMath.js';
 
-const exampleTileMap = {
-  scanline: 10,
-  data: [
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    0, 0, 0, 0, 1, 1, 1, 0, 0, 0,
-    1, 1, 1, 0, 0, 1, 0, 0, 1, 1,
-    1, 1, 1, 1, 0, 0, 0, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  ],
-};
-
-const exampleTileMap2 = {
-  scanline: 10,
-  data: [
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 0, 0, 1, 1, 1, 1, 1, 1, 1,
-    1, 0, 0, 0, 0, 1, 0, 0, 0, 0,
-    1, 0, 0, 0, 0, 0, 0, 1, 1, 0,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  ],
-};
-
-const exampleTileMap3 = {
-  scanline: 10,
-  data: [
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 0, 0, 0, 1, 0, 0, 0, 1, 1,
-    0, 0, 1, 0, 0, 0, 1, 0, 0, 0,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  ],
-};
-
-const exampleTileMap4 = {
-  scanline: 10,
-  data: [
-    0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-};
-
-const demoTileMap = {
-  scanline: 7,
-  data: [
-    1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1,
-  ],
-};
-
-const demoTileMap2 = {
-  scanline: 32,
-  data: [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1,
-    0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1,
-    0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-    0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-    0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-    0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-    0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1,
-    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  ],
-};
-
-const demoTileMap3 = {
-  scanline: 11,
-  data: [
-    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-    0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1,
-  ],
-};
-
-const demoTileMap4 = {
-  scanline: 11,
-  data: [
-    0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-    0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-    0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1,
-    0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-    0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  ],
-};
-
-const exampleTileMapList = [
-  exampleTileMap,
-  exampleTileMap2,
-  exampleTileMap3,
-  exampleTileMap4,
-];
-
-const demoTileMapList = [
-  demoTileMap,
-  demoTileMap2,
-  demoTileMap3,
-  demoTileMap4,
-];
-
-const tileFriction = {
+const defaultFriction = 0.00015;
+const tileFriction = tileValue => ({
   1: 0.00015,
-};
+  2: 0.00015,
+  3: 0.00015,
+}[tileValue]) || defaultFriction;
 
 class Zone {
   constructor(x, y, tileMap, tileSet) {
@@ -143,7 +22,15 @@ class Zone {
   }
 
   render(camera) {
-    renderTileMap(this.tileMap, this.tileSet, this.x - camera.x, this.y - camera.y);
+    const x = this.x - camera.x;
+    const y = this.y - camera.y;
+    const { scanline, data } = this.tileMap;
+    const { w, h } = GameplayGraphics.tileSize;
+    for (let i = 0; i < data.length; ++i) {
+      const finalX = (i % scanline) * w + x;
+      const finalY = Math.floor(i / scanline) * h + y;
+      this.tileSet.render(data[i], finalX, finalY);
+    }
   }
 }
 
@@ -196,10 +83,6 @@ class World {
     }
 
     return index;
-
-    // return this.zones.indexOf(({
-    //   x: xZone, y: yZone, width, height,
-    // }) => x > xZone && x < xZone + width && y > yZone && y < yZone + height);
   }
 
   setZoneIndexes(hitBox) {
@@ -215,10 +98,6 @@ class World {
         this.zoneIndexes[collisionsFound++] = i;
       }
     }
-
-    // return this.zones.indexOf(({
-    //   x: xZone, y: yZone, width, height,
-    // }) => x > xZone && x < xZone + width && y > yZone && y < yZone + height);
   }
 
   clearCollisionMap() {
@@ -304,7 +183,7 @@ class World {
                     entity.position.y -= penetrationDepthY;
                     entity.velocity.y = 0;
                     this.collisionInfo.isInAir = false;
-                    this.collisionInfo.friction = tileFriction[tileValue];
+                    this.collisionInfo.friction = tileFriction(tileValue);
                   } else if (factorToReachXAxis > factorToReachYAxis) {
                     entity.position.x -= penetrationDepthX;
                     entity.velocity.x = 0;
@@ -323,12 +202,4 @@ class World {
   }
 }
 
-const exampleZone = new Zone(200, 0, exampleTileMap, [0, resources.tile]);
-const exampleWorld = new World(exampleTileMapList, [0, resources.tile], 200);
-
-export {
-  exampleTileMapList,
-  demoTileMapList,
-  Zone,
-  World,
-};
+export { Zone, World };
