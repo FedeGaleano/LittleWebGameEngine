@@ -197,7 +197,17 @@ class Renderer {
     const gradient = renderingContext2D.createRadialGradient(realX, realY, 0, realX, realY, realRadius);
 
     gradient.addColorStop(0, `rgba(${r},${g},${b},${intensity})`);
-    gradient.addColorStop(1, `rgba(${0},${0},${0},0.75)`);
+    gradient.addColorStop(1, `rgba(${r},${g},${b},0)`);
+
+    // gradient.addColorStop(0, `rgba(${r},${g},${b},${intensity})`);
+    // gradient.addColorStop(0.25, `rgba(${r},${g},${b},0.5)`);
+    // gradient.addColorStop(1, `rgba(${r},${g},${b},0)`);
+
+    // gradient.addColorStop(0, `rgba(${255},${255},${255},${1})`);
+    // gradient.addColorStop(0.2, `rgba(${255},${255},${255},${1})`);
+    // gradient.addColorStop(0.21, `rgba(${r},${g},${b},${intensity})`);
+    // // gradient.addColorStop(0.5, `rgba(${r},${g},${b},0.5)`);
+    // gradient.addColorStop(1, `rgba(${r},${g},${b},0)`);
 
     return gradient;
   }

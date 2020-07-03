@@ -22,13 +22,15 @@ class Menu extends Scene {
   }
 
   init() {
+    FexDebug.logOnConsole('menu init()');
+
     const { screen } = GameplayGraphics;
     GameplayRenderer.fillStyle = 'red';
     this.xTimes = Math.ceil(screen.width / resources.stars.width);
+    this.starPanels = [];
     for (let index = 0; index < this.xTimes; ++index) {
       this.starPanels.push(screen.width - resources.stars.width * (1 + index));
     }
-
 
     this.playButtonX = GameplayGraphics.screen.width / 2 - resources.playButton.width / 2;
     this.playButtonY = GameplayGraphics.screen.height * 0.6 - resources.playButton.height / 2;

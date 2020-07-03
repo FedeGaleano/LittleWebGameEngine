@@ -17,7 +17,7 @@ class Intro extends Scene {
   }
 
   init() {
-    FexDebug.logOnConsole('init');
+    FexDebug.logOnConsole('intro init');
 
     this.fade = 0;
     this.registerVolatileTouchScreenArea(

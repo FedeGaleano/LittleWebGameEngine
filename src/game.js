@@ -254,15 +254,13 @@ class Game extends Scene {
       this.character.position.x, this.character.position.y,
       this.character.width / 2 + 35,
       255, 0, 255,
-      0.05,
+      1,
     );
 
     const panelWidth = resources.stars.width;
     const panelHeight = resources.stars.height;
 
-    // for(const j = 0; j <;) {
-
-    // }
+    this.init = () => {};
   }
 
   createBackground() {
@@ -316,9 +314,10 @@ class Game extends Scene {
     GameplayRenderer.renderFullRectangle(0, screen.height - curtainHeight, screen.width, curtainHeight);
 
     // GameplayRenderer.fillStyle = 'black';
-    // GameplayRenderer.alpha = 0.75;
+    // GameplayRenderer.alpha = 0.5;
     // GameplayRenderer.renderFullRectangle();
     // GameplayRenderer.alpha = 1;
+
     this.light.render(camera);
 
     this.renderLogic();

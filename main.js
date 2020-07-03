@@ -408,7 +408,7 @@ export default function startEngine() {
     chooseLoopManager();
   });
 
-  window.addEventListener('resize', scene.init);
+  window.addEventListener('resize', () => scene.init());
 
   window.onload = start;
 }
