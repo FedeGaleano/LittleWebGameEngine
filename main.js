@@ -408,10 +408,15 @@ export default function startEngine() {
     isReleased.Click = true;
   });
 
-  window.addEventListener('orientationchange', () => {
+  const handleOrientationChange = () => {
     scene.onFocusLost();
     chooseLoopManager();
-  });
+  };
+
+  const orientationMediaQuery = window.matchMedia('(orientation: portrait)');
+  orientationMediaQuery.addListener(handleOrientationChange);
+
+  window.addEventListener('orientationchange', handleOrientationChange);
 
   window.addEventListener('resize', () => scene.init());
 
