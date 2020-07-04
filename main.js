@@ -11,6 +11,8 @@ import FexMath from './engine/utils/FexMath.js';
 
 let debug = false;
 let focus = true;
+let orientation = null;
+let previousOrientation = null;
 
 let currentGraphics = null;
 const { screen } = AskForRotationGraphics;
@@ -236,7 +238,7 @@ export default function startEngine() {
 
   function chooseLoopManager() {
     clearInput();
-    if (/^portrait/i.test(window.screen.orientation.type)) {
+    if (/^portrait/i.test(orientation)) {
       GameplayGraphics.canvas.style.display = 'none';
       AskForRotationGraphics.canvas.style.display = 'inline';
       currentGraphics = AskForRotationGraphics;
@@ -248,6 +250,11 @@ export default function startEngine() {
       currentGraphics = GameplayGraphics;
       scene = gameplaySceneBackup;
     }
+  }
+
+  function handleOrientationChange() {
+    scene.onFocusLost();
+    chooseLoopManager();
   }
 
   function loop(now) {
@@ -274,6 +281,14 @@ export default function startEngine() {
 
     focus = documentHasFocus;
     // end focus managment
+
+    // orientation managment
+    orientation = window.screen.orientation.type;
+    if (orientation !== previousOrientation) {
+      previousOrientation = orientation;
+      handleOrientationChange();
+    }
+    // end orientation amnagment
 
     if (deltaTime > targetMillisForOneFrame) {
       while (deltaTime > targetMillisForOneFrame) {
@@ -322,6 +337,7 @@ export default function startEngine() {
     setEnvironment().then(() => {
       rotatePhoneScene.init();
       scene.init();
+      orientation = window.screen.orientation.type;
       chooseLoopManager();
       window.requestAnimationFrame(loop);
     });
@@ -408,15 +424,7 @@ export default function startEngine() {
     isReleased.Click = true;
   });
 
-  const handleOrientationChange = () => {
-    scene.onFocusLost();
-    chooseLoopManager();
-  };
-
-  const orientationMediaQuery = window.matchMedia('(orientation: portrait)');
-  orientationMediaQuery.addListener(handleOrientationChange);
-
-  window.addEventListener('orientationchange', handleOrientationChange);
+  // window.addEventListener('orientationchange', handleOrientationChange);
 
   window.addEventListener('resize', () => scene.init());
 
