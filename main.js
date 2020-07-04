@@ -337,7 +337,7 @@ export default function startEngine() {
     setEnvironment().then(() => {
       rotatePhoneScene.init();
       scene.init();
-      orientation = window.screen.orientation.type;
+      orientation = previousOrientation = window.screen.orientation.type;
       chooseLoopManager();
       window.requestAnimationFrame(loop);
     });
