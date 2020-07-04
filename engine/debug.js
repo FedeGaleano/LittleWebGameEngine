@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+const version = '0.0.1';
 const debugInfo = { };
 const generalInfo = {};
 const fontSize = 18;
@@ -52,7 +53,7 @@ ___________________
     `);
   },
   render(graphics) {
-    renderOnScreen('General Info', graphics, 6);
+    renderOnScreen(`General Info(v:${version})`, graphics, 6);
     renderOnScreen(`scale: ${graphics.scale}`, graphics, 5, 'yellow', 'black', 20);
     renderOnScreen(`w: ${graphics.canvas.width}`, graphics, 4, 'yellow', 'black', 20);
     renderOnScreen(`h: ${graphics.canvas.height}`, graphics, 3, 'yellow', 'black', 20);

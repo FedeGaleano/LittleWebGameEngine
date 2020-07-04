@@ -38,7 +38,7 @@ class AskForRotationGraphicsClass extends Graphics {
   }
 }
 
-const GameplayGraphics = new GameplayGraphicsClass();
+let GameplayGraphics = new GameplayGraphicsClass();
 const AskForRotationGraphics = new AskForRotationGraphicsClass();
 const GameplayRenderer = GameplayGraphics.renderer;
 const AskForRotationRenderer = AskForRotationGraphics.renderer;
@@ -50,7 +50,7 @@ function adjust() {
 }
 
 window.addEventListener('orientationchange', adjust);
-window.addEventListener('resize', adjust);
+window.addEventListener('resize', adjust /* () => { console.log('resize'); } */);
 
 GameplayGraphics.canvas.id = 'canvas';
 AskForRotationGraphics.canvas.id = 'askToRotatePhone';
@@ -58,6 +58,13 @@ document.body.appendChild(GameplayGraphics.canvas);
 document.body.appendChild(AskForRotationGraphics.canvas);
 adjust();
 
+function recreate() {
+  document.body.removeChild(GameplayGraphics.canvas);
+  GameplayGraphics = new GameplayGraphicsClass();
+  GameplayGraphics.canvas.id = 'canvas';
+  document.body.appendChild(GameplayGraphics.canvas);
+}
+
 export {
-  GameplayGraphics, AskForRotationGraphics, GameplayRenderer, AskForRotationRenderer,
+  GameplayGraphics, AskForRotationGraphics, GameplayRenderer, AskForRotationRenderer, recreate,
 };

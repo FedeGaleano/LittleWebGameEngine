@@ -1,6 +1,6 @@
 import Game from './src/game.js';
 import { setEnvironment, resources } from './engine/resources.js';
-import { GameplayGraphics, AskForRotationGraphics } from './engine/rendering.js';
+import { GameplayGraphics, AskForRotationGraphics, recreate } from './engine/rendering.js';
 import Sprite from './engine/sprite.js';
 import FexDebug from './engine/debug.js';
 import Intro from './src/intro.js';
@@ -136,7 +136,7 @@ intro.onFinish(() => {
   changeScene(menu, Effects.blend);
 });
 menu.onFinish(() => {
-  changeScene(game, Effects.fadeInOut);
+  changeScene(game, Effects.blend);
 });
 
 function renderScene() {
@@ -292,6 +292,10 @@ export default function startEngine() {
       fpsTimer -= 1000;
     }
 
+    // WORKAROUND (FIXME)
+    // if (fps < 50) adjust();
+    // END WORKAROUND
+
     if (debug) {
       info.fps = fps;
       FexDebug.setGeneralInfo(info);
@@ -340,6 +344,7 @@ export default function startEngine() {
     if (code === 'Escape') exitFullScreen();
     if (code === 'KeyL') { debug = !debug; }
     if (code === 'KeyX') manageDebugCamera();
+    if (code === 'KeyM') recreate();
   });
 
   document.addEventListener('touchstart', (event) => {
