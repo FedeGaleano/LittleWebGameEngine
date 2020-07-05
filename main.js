@@ -1,3 +1,5 @@
+/* eslint-disable guard-for-in */
+/* eslint-disable no-restricted-syntax */
 import Game from './src/game.js';
 import { setEnvironment, resources } from './engine/resources.js';
 import { GameplayGraphics, AskForRotationGraphics, recreate } from './engine/rendering.js';
@@ -383,6 +385,26 @@ export default function startEngine() {
     // cursor.y = Math.round(event.touches[0].clientY);
     // if (!isPressed.ScreenTouch) isFired.ScreenTouch = true;
     // isPressed.ScreenTouch = true;
+  });
+
+  document.addEventListener('touchmove', (event) => {
+    const areas = InputBuffer.getRegisteredTouchScreenAreas();
+
+    for (const areaName in areas) {
+      let covered = false;
+      for (let i = 0; i < event.touches.length; ++i) {
+        const x = event.touches[i].clientX;
+        const y = event.touches[i].clientY;
+
+        if (areas[areaName].covers(x, y)) {
+          covered = true;
+          if (!isPressed.touchScreen[areaName]) isFired.touchScreen[areaName] = true;
+          break;
+        }
+      }
+      isPressed.touchScreen[areaName] = covered;
+      isReleased.touchScreen[areaName] = !covered;
+    }
   });
 
   document.addEventListener('touchend', (event) => {
