@@ -243,13 +243,6 @@ class Game extends Scene {
     camera.x = -screen.width;
     this.speechClosed = true;
 
-    // this.lightSource = GameplayRenderer.createLightSource(
-    //   this.character.position.x, this.character.position.y,
-    //   30,
-    //   255, 0, 255,
-    //   1,
-    // );
-
     this.light = new Light(
       this.character.position.x, this.character.position.y,
       this.character.width / 2 + 35,
@@ -257,8 +250,28 @@ class Game extends Scene {
       1,
     );
 
+    const createLightAt = (x, y) => new Light(
+      x, y,
+      this.character.width / 2 + 35,
+      255, 0, 255,
+      1,
+    );
+
+    const xx = this.character.position.x;
+    const yy = this.character.position.y;
+
+    // this.lights = Array(10).fill().map((_, i) => createLightAt(xx + i * 10, yy));
+
     const panelWidth = resources.stars.width;
     const panelHeight = resources.stars.height;
+
+    this.bossSprite = new Sprite(resources.boss, 1, [1], GameplayGraphics);
+
+    this.boss = new Entity(
+      { normal: this.bossSprite },
+      { startingSpriteKey: 'normal' },
+      730, 350 - this.bossSprite.height,
+    );
 
     this.init = () => {};
   }
@@ -318,11 +331,11 @@ class Game extends Scene {
     // GameplayRenderer.renderFullRectangle();
     // GameplayRenderer.alpha = 1;
 
-    // this.light.render(camera);
+    this.boss.render(camera);
+    this.light.render(camera);
+    // this.lights.forEach(l => l.render(camera));
 
     this.renderLogic();
-
-    // GameplayRenderer.renderLightSource(this.lightSource);
 
     if (showGrid) {
       renderer.renderWorldTileGrid(this.demoWorld, camera, this.demoWorld.collisionInfo.map);
@@ -395,6 +408,11 @@ class Game extends Scene {
 
       this.light.x = this.character.position.x + this.character.width / 2;
       this.light.y = this.character.position.y + this.character.height / 2;
+
+      // this.lights.forEach((l, i) => {
+      //   l.x = this.character.position.x + this.character.width / 2 + 10 * i;
+      //   l.y = this.character.position.y + this.character.height / 2;
+      // });
 
       this.createBackground();
 
