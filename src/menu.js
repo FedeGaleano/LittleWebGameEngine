@@ -11,7 +11,11 @@ class Menu extends Scene {
     super();
     this.audio = new Audio('res/select2.wav');
     const finishScene = () => {
-      this.audio.play();
+      try {
+        this.audio.play();
+      } catch (error) {
+        FexDebug.logOnConsole('Error from menu audio.play()', error);
+      }
       this.finish();
     };
     this.fired.Enter = finishScene;
