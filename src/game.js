@@ -318,7 +318,7 @@ class Game extends Scene {
     // GameplayRenderer.renderFullRectangle();
     // GameplayRenderer.alpha = 1;
 
-    this.light.render(camera);
+    // this.light.render(camera);
 
     this.renderLogic();
 

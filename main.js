@@ -10,6 +10,7 @@ import Menu from './src/menu.js';
 import InputBuffer from './engine/InputBuffer.js';
 import RotatePhoneScene from './src/rotatePhoneScene.js';
 import FexMath from './engine/utils/FexMath.js';
+import Lambda from './engine/utils/Lambda.js';
 
 let debug = false;
 let focus = true;
@@ -171,7 +172,8 @@ function renderScene() {
 }
 
 function tryToExecute(func, ...args) {
-  (func || (() => {}))(...args);
+  if (func) func(...args);
+  // (func || Lambda.Empty)(...args);
 }
 
 function handleInput(elapsedTime) {
@@ -216,7 +218,7 @@ function handleInput(elapsedTime) {
     isReleased.touchScreen[key] = false;
   });
 
-  scene.mouseOver(x, y, elapsedTime);
+  // scene.mouseOver(x, y, elapsedTime);
 }
 
 export default function startEngine() {
