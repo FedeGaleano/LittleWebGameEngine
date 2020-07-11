@@ -37,6 +37,7 @@ const tileMaps = {
   try: 'try.json',
   try2: 'try2.json',
   zone1: 'zone1.json',
+  min: 'min.json',
 };
 const tilesets = {};
 

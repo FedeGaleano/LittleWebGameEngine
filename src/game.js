@@ -241,7 +241,7 @@ class Game extends Scene {
     ], dialogSpeed);
 
     this.demoWorld = new World(
-      [tileMaps.zone1, tileMaps.try, tileMaps.try2],
+      [tileMaps.min], /* tileMaps.zone1, tileMaps.try, tileMaps.try2 */
       tilesets.world,
       0, 0,
     );
