@@ -96,11 +96,11 @@ const rotatePhoneScene = new RotatePhoneScene();
 
 let gameplaySceneBackup = intro; // first scene
 let scene = gameplaySceneBackup;
-let previousSceneLastFrame = null;
-let outComingFrame = null;
-let transitionAlpha = 1;
+const previousSceneLastFrame = null;
+const outComingFrame = null;
+let transitionAlpha = -1;
 let transitionSpeed = -0.1;
-let transitionEffect = null;
+const transitionEffect = null;
 
 const Effects = {
   none: 0,
@@ -108,33 +108,35 @@ const Effects = {
   fadeInOut: 2,
 };
 
+let nextScene = null;
+
 function changeScene(newScene, effect) {
   scene.onFinish(() => {});
   scene.volatileTouchScreenAreas.forEach((areaName) => {
     InputBuffer.deleteTouchScreenArea(areaName);
   });
   scene.volatileTouchScreenAreas = [];
+  newScene.init();
+  nextScene = newScene;
+  transitionAlpha = 0;
+  transitionSpeed = 0.1;
+}
 
-  let asyncAction = Promise.resolve();
-  if (effect === Effects.blend) {
-    const { width, height } = currentGraphics.canvas;
-    previousSceneLastFrame = currentGraphics.renderingContext2D.getImageData(0, 0, width, height);
-    transitionAlpha = 1;
-    transitionSpeed = -0.1;
-    asyncAction = window.createImageBitmap(previousSceneLastFrame);
-  } else if (effect === Effects.fadeInOut) {
-    const { width, height } = currentGraphics.canvas;
-    previousSceneLastFrame = currentGraphics.renderingContext2D.getImageData(0, 0, width, height);
-    transitionAlpha = 0.01;
-    transitionSpeed = 0.1;
-    asyncAction = window.createImageBitmap(previousSceneLastFrame);
+function renderScene() {
+  scene.render();
+  if (transitionAlpha >= 0) {
+    if (transitionAlpha >= 1) {
+      transitionAlpha = 1;
+      transitionSpeed *= -1;
+      scene = nextScene;
+      nextScene = null;
+    }
+    currentGraphics.renderer.alpha = transitionAlpha;
+    currentGraphics.renderer.fillStyle = 'black';
+    currentGraphics.renderer.renderFullRectangle();
+    currentGraphics.renderer.alpha = 1;
+    transitionAlpha += transitionSpeed;
   }
-  return asyncAction.then((takenFrame) => {
-    transitionEffect = effect;
-    outComingFrame = takenFrame;
-    newScene.init();
-    scene = newScene;
-  });
 }
 
 intro.onFinish(() => {
@@ -143,33 +145,6 @@ intro.onFinish(() => {
 menu.onFinish(() => {
   changeScene(game, Effects.blend);
 });
-
-function renderScene() {
-  if (transitionEffect === Effects.fadeInOut && transitionAlpha < 1) {
-    transitionAlpha += transitionSpeed;
-    currentGraphics.renderingContext2D.drawImage(outComingFrame, 0, 0);
-    currentGraphics.renderer.fillStyle = 'black';
-    currentGraphics.renderer.alpha = transitionAlpha;
-    currentGraphics.renderer.renderFullRectangle(0, 0, currentGraphics.screen.width, currentGraphics.screen.height);
-    currentGraphics.renderer.alpha = 1;
-    return;
-  }
-  scene.render();
-  if (transitionEffect === Effects.fadeInOut && transitionAlpha >= 1 && transitionAlpha < 2) {
-    transitionAlpha += transitionSpeed;
-    currentGraphics.renderer.fillStyle = 'black';
-    currentGraphics.renderer.alpha = 1 - (transitionAlpha - 1);
-    currentGraphics.renderer.renderFullRectangle(0, 0, currentGraphics.screen.width, currentGraphics.screen.height);
-    currentGraphics.renderer.alpha = 1;
-    return;
-  }
-  if (transitionEffect === Effects.blend && transitionAlpha > 0) {
-    transitionAlpha += transitionSpeed;
-    currentGraphics.renderer.alpha = transitionAlpha;
-    currentGraphics.renderingContext2D.drawImage(outComingFrame, 0, 0);
-    currentGraphics.renderer.alpha = 1;
-  }
-}
 
 function tryToExecute(func, ...args) {
   if (func) func(...args);
