@@ -94,8 +94,8 @@ const menu = new Menu();
 const game = new Game();
 const rotatePhoneScene = new RotatePhoneScene();
 
-let gameplaySceneBackup = intro;
-let scene = intro;
+let gameplaySceneBackup = game;
+let scene = game;
 let previousSceneLastFrame = null;
 let outComingFrame = null;
 let transitionAlpha = 1;
