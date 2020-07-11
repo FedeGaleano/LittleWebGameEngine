@@ -24,6 +24,11 @@ class Zone {
   render(camera) {
     const x = this.x - camera.x;
     const y = this.y - camera.y;
+
+    const { width: screeenWidth, height: screeenHeight } = GameplayGraphics.screen;
+
+    if (x > screeenWidth || x + this.width < 0 || y > screeenHeight || y + this.height < 0) return;
+
     const { scanline, data } = this.tileMap;
     const { w, h } = GameplayGraphics.tileSize;
     for (let i = 0; i < data.length; ++i) {
