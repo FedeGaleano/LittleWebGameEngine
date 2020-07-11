@@ -50,6 +50,10 @@ class Scene {
 
   }
 
+  onScreenResize() {
+
+  }
+
   clicked(x, y) {
 
   }

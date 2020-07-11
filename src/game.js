@@ -71,6 +71,9 @@ const cameraFollowBox = {
 const jumpMovement = Physics.buildJumpMovement(5, 0.01);
 const jumpMovement2 = Physics.buildJumpMovement2(5);
 
+const characterTilePositionX = 16;
+const characterTilePositionY = 22;
+
 class Game extends Scene {
   static get camera() {
     return camera;
@@ -94,7 +97,7 @@ class Game extends Scene {
     this.moveDownDebug = this.moveDownDebug.bind(this);
     this.moveRightDebug = this.moveRightDebug.bind(this);
     this.moveUpDebug = this.moveUpDebug.bind(this);
-
+    this.updateCameraFollowBox = this.updateCameraFollowBox.bind(this);
 
     this.idleUpdate = this.idleUpdate.bind(this);
     this.initialCutSceneUpdate = this.initialCutSceneUpdate.bind(this);
@@ -119,7 +122,20 @@ class Game extends Scene {
     this.createBackground();
 
     // TOCACHE
-    this.getFinalCameraX = () => -(screen.width / 2 - (numberOfTilesInTheFloorX / 2) * GameplayGraphics.tileSize.w);
+    // this.getFinalCameraX = () => -(screen.width / 2 - (numberOfTilesInTheFloorX / 2) * GameplayGraphics.tileSize.w);
+    this.getFinalCameraX = () => cameraFollowBox.x - (screen.width - cameraFollowBox.width) / 2;
+    this.getFinalCameraY = () => cameraFollowBox.y - (screen.height - cameraFollowBox.height) / 2;
+  }
+
+  onScreenResize() {
+    this.leftButton.position.x = 10;
+    this.leftButton.position.y = screen.height - 10 - this.uiButtonSize;
+
+    this.rightButton.position.x = 10 + this.uiButtonSize + 10;
+    this.rightButton.position.y = screen.height - 10 - this.uiButtonSize;
+
+    this.jumpButton.position.x = screen.width - 10 - this.uiButtonSize;
+    this.jumpButton.position.y = screen.height - 10 - this.uiButtonSize;
   }
 
   init() {
@@ -173,8 +189,8 @@ class Game extends Scene {
     this.registerVolatileTouchScreenArea(this.rightButtonTouchScreenArea);
     this.registerVolatileTouchScreenArea(this.jumpButtonTouchScreenArea);
 
-    this.xFloor = GameplayGraphics.tileSize.w * 3;
-    this.yFloor = -this.spriteSlimeIdle.height;
+    this.xFloor = GameplayGraphics.tileSize.w * characterTilePositionX;
+    this.yFloor = GameplayGraphics.tileSize.h * characterTilePositionY - this.spriteSlimeIdle.height;
     this.character = new Entity(
       {
         idle: this.spriteSlimeIdle,
@@ -186,7 +202,9 @@ class Game extends Scene {
     this.character.addHitbox(0.25, 0.3, 0.5, 0.7);
 
     cameraFollowBox.x = this.character.position.x - (cameraFollowBox.width - this.character.width) / 2;
-    camera.x = cameraFollowBox.x - (screen.width - cameraFollowBox.width) / 2;
+    cameraFollowBox.y = this.character.position.y - (cameraFollowBox.height - this.character.height);
+
+    camera.x = -screen.width;
 
     const dialogPoint = { x: this.character.position.x + 14, y: this.character.position.y };
     const dialogSpeed = 0.15;
@@ -240,11 +258,10 @@ class Game extends Scene {
     this.cutSceneInput();
     curtain = -500;
     curtainSpeed = 0.003;
-    camera.x = -screen.width;
     this.speechClosed = true;
 
     this.light = new Light(
-      this.character.position.x, this.character.position.y,
+      this.character.position.x + this.character.width / 2, this.character.position.y + this.character.height / 2,
       this.character.width / 2 + 35,
       255, 0, 255,
       1,
@@ -392,6 +409,24 @@ class Game extends Scene {
     this.jumpButton.render();
   }
 
+  updateCameraFollowBox() {
+    const cameraFollowBoxLeftBound = Math.min(cameraFollowBox.x, this.character.position.x);
+    const cameraFollowBoxRightBound = Math.max(cameraFollowBox.x + cameraFollowBox.width, this.character.position.x + this.character.width);
+    const cameraFollowBoxTopBound = Math.min(cameraFollowBox.y, this.character.position.y);
+    const cameraFollowBoxBottomBound = Math.max(cameraFollowBox.y + cameraFollowBox.height, this.character.position.y + this.character.height);
+
+    if (cameraFollowBox.x !== cameraFollowBoxLeftBound) {
+      cameraFollowBox.x = cameraFollowBoxLeftBound;
+    } else if (cameraFollowBox.x !== cameraFollowBoxRightBound - cameraFollowBox.width) {
+      cameraFollowBox.x = cameraFollowBoxRightBound - cameraFollowBox.width;
+    }
+    if (cameraFollowBox.y !== cameraFollowBoxTopBound) {
+      cameraFollowBox.y = cameraFollowBoxTopBound;
+    } else if (cameraFollowBox.y !== cameraFollowBoxBottomBound - cameraFollowBox.height) {
+      cameraFollowBox.y = cameraFollowBoxBottomBound - cameraFollowBox.height;
+    }
+  }
+
   normalUpdate(elapsedTime) {
     // FexDebug.chargeHeavily();
     if (!pause) {
@@ -426,24 +461,11 @@ class Game extends Scene {
 
       this.speech.setBottomLeftCorner(this.character.position.x + 14, this.character.position.y);
       this.speech.update(elapsedTime);
-      const cameraFollowBoxLeftBound = Math.min(cameraFollowBox.x, this.character.position.x);
-      const cameraFollowBoxRightBound = Math.max(cameraFollowBox.x + cameraFollowBox.width, this.character.position.x + this.character.width);
-      const cameraFollowBoxTopBound = Math.min(cameraFollowBox.y, this.character.position.y);
-      const cameraFollowBoxBottomBound = Math.max(cameraFollowBox.y + cameraFollowBox.height, this.character.position.y + this.character.height);
 
-      if (cameraFollowBox.x !== cameraFollowBoxLeftBound) {
-        cameraFollowBox.x = cameraFollowBoxLeftBound;
-      } else if (cameraFollowBox.x !== cameraFollowBoxRightBound - cameraFollowBox.width) {
-        cameraFollowBox.x = cameraFollowBoxRightBound - cameraFollowBox.width;
-      }
-      if (cameraFollowBox.y !== cameraFollowBoxTopBound) {
-        cameraFollowBox.y = cameraFollowBoxTopBound;
-      } else if (cameraFollowBox.y !== cameraFollowBoxBottomBound - cameraFollowBox.height) {
-        cameraFollowBox.y = cameraFollowBoxBottomBound - cameraFollowBox.height;
-      }
+      this.updateCameraFollowBox();
     }
 
-    camera.x = artificialCameraOffsetX + Math.max(this.finalCameraX - 100, cameraFollowBox.x - (screen.width - cameraFollowBox.width) / 2);
+    camera.x = artificialCameraOffsetX + Math.max(0, cameraFollowBox.x - (screen.width - cameraFollowBox.width) / 2);
     camera.y = artificialCameraOffsetY + Math.min(this.finalCameraY + 300, cameraFollowBox.y - (screen.height - cameraFollowBox.height) / 2);
   }
 
@@ -456,9 +478,12 @@ class Game extends Scene {
 
     const cameraCutSceneSpeed = 0.05;
     const finalCameraX = this.getFinalCameraX();
+    const finalCameraY = this.getFinalCameraY();
     camera.x = Math.min(camera.x + elapsedTime * cameraCutSceneSpeed, finalCameraX);
 
-    camera.y = -(screen.height * 0.6 - (numberOfTilesInTheFloorY / 2) * GameplayGraphics.tileSize.h);
+    // camera.y = -(screen.height * 0.6 - (numberOfTilesInTheFloorY / 2) * GameplayGraphics.tileSize.h);
+    camera.y = finalCameraY;
+
     this.finalCameraY = camera.y;
 
     if (camera.x === finalCameraX) {

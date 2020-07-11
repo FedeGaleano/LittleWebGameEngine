@@ -450,7 +450,7 @@ export default function startEngine() {
 
   // window.addEventListener('orientationchange', handleOrientationChange);
 
-  window.addEventListener('resize', () => scene.init());
+  window.addEventListener('resize', () => scene.onScreenResize());
 
   window.onload = start;
 }
