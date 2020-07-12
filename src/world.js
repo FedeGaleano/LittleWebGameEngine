@@ -2,6 +2,8 @@ import { GameplayGraphics } from '../engine/rendering.js';
 import TileMark from '../engine/TileMark.js';
 import FexMath from '../engine/utils/FexMath.js';
 
+const renderingOptimizationLevel = 2;
+
 const defaultFriction = 0.00015;
 const tileFriction = tileValue => ({
   1: 0.00015,
@@ -27,13 +29,20 @@ class Zone {
 
     const { width: screeenWidth, height: screeenHeight } = GameplayGraphics.screen;
 
-    if (x > screeenWidth || x + this.width < 0 || y > screeenHeight || y + this.height < 0) return;
+    if (renderingOptimizationLevel > 0
+      && (x > screeenWidth || x + this.width < 0 || y > screeenHeight || y + this.height < 0)
+    ) return;
 
     const { scanline, data } = this.tileMap;
     const { w, h } = GameplayGraphics.tileSize;
     for (let i = 0; i < data.length; ++i) {
       const finalX = (i % scanline) * w + x;
       const finalY = Math.floor(i / scanline) * h + y;
+
+      if (renderingOptimizationLevel > 1
+        && (finalX > screeenWidth || finalX + w < 0 || finalY > screeenHeight || finalY + h < 0)
+      ) continue;
+
       this.tileSet.render(data[i], finalX, finalY);
     }
   }

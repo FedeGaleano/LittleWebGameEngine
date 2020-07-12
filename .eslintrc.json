@@ -18,6 +18,7 @@
         "no-multi-assign": "off",
         "import/extensions": "off",
         "no-plusplus": "off",
-        "no-param-reassign": "off"
+        "no-param-reassign": "off",
+        "no-continue": "off"
     }
 }
