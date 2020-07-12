@@ -41,7 +41,10 @@ const tileMaps = {
   zone3: 'zone3.json',
   zone4: 'zone4.json',
 };
-const tilesets = {};
+
+const tilesets = {
+  world: 'tileset-engine-demo.json',
+};
 
 function loadFonts() {
   FexDebug.logOnConsole('loading fonts');
@@ -64,8 +67,16 @@ function loadTileMaps() {
 
 function createTileSets() {
   FexDebug.logOnConsole('creating tilesets');
-  tilesets.world = new TileSet(
-    resources.tileset, GameplayGraphics.tileSize.w, GameplayGraphics.tileSize.h,
+
+  const createTileSetFromJsonPath = tilesetName => fetch(`tileMaps/${tilesets[tilesetName]}`)
+    .then(res => res.json())
+    .then((metadata) => {
+      tilesets[tilesetName] = new TileSet(metadata, resources);
+    });
+
+  return Promise.all(
+    Object.keys(tilesets)
+      .map(createTileSetFromJsonPath),
   );
 }
 

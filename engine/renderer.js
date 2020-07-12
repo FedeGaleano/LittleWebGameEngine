@@ -45,19 +45,25 @@ class Renderer {
       }
     }
 
-    this.strokeStyle = 'cyan';
     for (let i = 0; i < world.zones.length; ++i) {
       const zone = world.zones[i];
       const x0 = zone.x;
       const y0 = zone.y;
       const w = zone.width;
       const h = zone.height;
+
+      this.strokeStyle = '#555555';
       for (let x = x0 - camera.x; x <= x0 + w - camera.x; x += tileSize.w) {
         renderingContext2D.strokeRect(x * scale, (y0 - camera.y) * scale, 0, h * scale);
       }
       for (let y = y0 - camera.y; y <= y0 + h - camera.y; y += tileSize.h) {
         renderingContext2D.strokeRect((x0 - camera.x) * scale, y * scale, w * scale, 0);
       }
+
+      this.strokeStyle = 'cyan';
+      renderingContext2D.strokeRect(
+        (x0 - camera.x) * scale, (y0 - camera.y) * scale, w * scale, h * scale,
+      );
     }
   }
 

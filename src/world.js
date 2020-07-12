@@ -1,8 +1,11 @@
 import { GameplayGraphics } from '../engine/rendering.js';
 import TileMark from '../engine/TileMark.js';
 import FexMath from '../engine/utils/FexMath.js';
+import FexDebug from '../engine/debug.js';
 
-const renderingOptimizationLevel = 2;
+let renderingOptimizationLevel = 2;
+
+FexDebug.createGlobal('setOptLevel', (val) => { renderingOptimizationLevel = val; });
 
 const defaultFriction = 0.00015;
 const tileFriction = tileValue => ({

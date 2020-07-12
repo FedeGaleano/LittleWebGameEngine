@@ -1,11 +1,11 @@
 import { GameplayGraphics } from './rendering.js';
 
 class TileSet {
-  constructor(bitmap, tileWidth, tileHieght) {
-    this.bitmap = bitmap;
-    this.tileWidth = tileWidth;
-    this.tileHieght = tileHieght;
-    this.tileScanline = Math.floor(bitmap.width / tileWidth);
+  constructor(metadata, resources) {
+    this.bitmap = resources[metadata.name];
+    this.tileWidth = metadata.tilewidth;
+    this.tileHieght = metadata.tileheight;
+    this.tileScanline = Math.floor(this.bitmap.width / this.tileWidth);
     this.render = this.render.bind(this);
   }
 

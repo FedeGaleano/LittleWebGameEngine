@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable no-console */
 const version = '0.0.7';
 const debugInfo = { };
@@ -81,6 +82,11 @@ ___________________
   getChangedOrigin() {
     return changedOrigin;
   },
+  createGlobal(name, value) {
+    window.__fexEngineGlobals__[name] = value;
+  },
 };
+
+window.__fexEngineGlobals__ = {};
 
 export default FexDebug;
