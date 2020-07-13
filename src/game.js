@@ -330,7 +330,10 @@ class Game extends Scene {
       }
     }
 
+
+    GameplayGraphics.renderingContext2D.globalCompositeOperation = 'source-over';
     this.demoWorld.render(camera);
+    GameplayGraphics.renderingContext2D.globalCompositeOperation = 'source-over';
 
     // TOCACHE
     this.speech.render(camera);
@@ -344,12 +347,16 @@ class Game extends Scene {
     GameplayRenderer.renderFullRectangle(0, screen.height - curtainHeight, screen.width, curtainHeight);
 
     // GameplayRenderer.fillStyle = 'black';
-    // GameplayRenderer.alpha = 0.5;
+    // GameplayRenderer.alpha = 0.75;
     // GameplayRenderer.renderFullRectangle();
     // GameplayRenderer.alpha = 1;
 
     this.boss.render(camera);
+
+    GameplayGraphics.renderingContext2D.globalCompositeOperation = 'lighter';
     this.light.render(camera);
+    GameplayGraphics.renderingContext2D.globalCompositeOperation = 'source-over';
+
     // this.lights.forEach(l => l.render(camera));
 
     this.renderLogic();
@@ -384,7 +391,7 @@ class Game extends Scene {
     // FexDebug.logOnScreen('hitbox pos from cam y', this.character.hitbox.getAbsoluteY() - camera.y);
 
     // FexDebug.logOnScreen('hitbox pos x', FexMath.precision(this.character.hitbox.getAbsoluteX() + this.character.hitbox.absoluteWidth));
-    // FexDebug.logOnScreen('hitbox pos y', FexMath.precision(this.character.hitbox.getAbsoluteY() + this.character.hitbox.absoluteHieght));
+    // FexDebug.logOnScreen('hitbox pos y', FexMath.precision(this.character.hitbox.getAbsoluteY() + this.character.hitbox.absoluteHeight));
   }
 
   postUpdate() {

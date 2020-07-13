@@ -1,4 +1,6 @@
 import Font from './font.js';
+import Bound from './Bound.js';
+import TileMark from './TileMark.js';
 
 const chooseMarkColor = {
   1: '#0000FF',
@@ -29,22 +31,38 @@ class Renderer {
       screen, renderingContext2D, scale, tileSize,
     } = this.graphics;
 
+    // Render Collision Detection
     for (let a = 0; a < collisionInfo.length; ++a) {
       const { tilesInfo, validZone } = collisionInfo[a];
 
       if (validZone) {
         for (let i = 0; i < tilesInfo.length; ++i) {
-          const { x, y, tileMark } = tilesInfo[i];
+          const {
+            x, y, tileMark, tileHitboxAbsoluteBound,
+          } = tilesInfo[i];
           if (tileMark) {
+            this.fillStyle = 'cyan';
+            this.alpha = '0.25';
+            renderingContext2D.fillRect((x - camera.x) * scale, (y - camera.y) * scale, tileSize.w * scale, tileSize.h * scale);
+
             this.fillStyle = chooseMarkColor[tileMark];
             renderingContext2D.globalAlpha = 0.5;
-            renderingContext2D.fillRect((x - camera.x) * scale, (y - camera.y) * scale, tileSize.w * scale, tileSize.h * scale);
+            if (tileMark !== TileMark.Empty) {
+              renderingContext2D.fillRect(
+                ((x + tileHitboxAbsoluteBound.x) - camera.x) * scale,
+                ((y + tileHitboxAbsoluteBound.y) - camera.y) * scale,
+                (tileHitboxAbsoluteBound.width) * scale,
+                (tileHitboxAbsoluteBound.height) * scale,
+              );
+            }
+
             renderingContext2D.globalAlpha = 1;
           }
         }
       }
     }
 
+    // Render Zones and Tiles
     for (let i = 0; i < world.zones.length; ++i) {
       const zone = world.zones[i];
       const x0 = zone.x;

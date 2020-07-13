@@ -14,10 +14,7 @@ class HitBox {
     this.xOffset = Math.floor(this.x0 * this.entity.width);
     this.yOffset = Math.floor(this.y0 * this.entity.height);
     this.absoluteWidth = FexMath.precision(this.relativeWidth * this.entity.width);
-    this.absoluteHieght = FexMath.precision(this.relativeHeight * this.entity.height);
-
-    FexDebug.logOnConsole('this.absoluteWidth: ', this.absoluteWidth);
-    FexDebug.logOnConsole('this.absoluteHieght: ', this.absoluteHieght);
+    this.absoluteHeight = FexMath.precision(this.relativeHeight * this.entity.height);
 
     this.minkowskiDifference = {
       x: null, y: null, width: null, height: null,
@@ -41,14 +38,14 @@ class HitBox {
     this.minkowskiDifference.x = FexMath.precision(this.getAbsoluteX() + mirroredShapeX);
     this.minkowskiDifference.y = FexMath.precision(this.getAbsoluteY() + mirroredShapeY);
     this.minkowskiDifference.width = FexMath.precision(width + this.absoluteWidth);
-    this.minkowskiDifference.height = FexMath.precision(height + this.absoluteHieght);
+    this.minkowskiDifference.height = FexMath.precision(height + this.absoluteHeight);
   }
 
   render(camera, collide) {
     const x = this.getAbsoluteX();
     const y = this.getAbsoluteY();
     GameplayRenderer.strokeStyle = collide ? '#FF0000' : '#00FF00';
-    GameplayRenderer.renderEmptyRectangle(x - camera.x, y - camera.y, this.absoluteWidth, this.absoluteHieght);
+    GameplayRenderer.renderEmptyRectangle(x - camera.x, y - camera.y, this.absoluteWidth, this.absoluteHeight);
   }
 
   getAbsoluteX() {

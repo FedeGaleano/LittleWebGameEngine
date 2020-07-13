@@ -2,6 +2,7 @@ import { GameplayGraphics } from '../engine/rendering.js';
 import TileMark from '../engine/TileMark.js';
 import FexMath from '../engine/utils/FexMath.js';
 import FexDebug from '../engine/debug.js';
+import Bound from '../engine/Bound.js';
 
 let renderingOptimizationLevel = 2;
 
@@ -74,7 +75,9 @@ class World {
       friction: this.airFriction,
       map: Array(2).fill().map(() => ({
         validZone: false,
-        tilesInfo: Array(this.collisionCheckAreaInTiles.area).fill().map(() => ({ x: null, y: null, tileMark: TileMark.Skipped })),
+        tilesInfo: Array(this.collisionCheckAreaInTiles.area).fill().map(() => ({
+          x: null, y: null, tileMark: TileMark.Skipped, tileHitboxAbsoluteBound: new Bound(),
+        })),
       })),
     };
 
@@ -127,12 +130,15 @@ class World {
         map[i].tilesInfo[j].x = null;
         map[i].tilesInfo[j].y = null;
         map[i].tilesInfo[j].tileMark = 0;
+        map[i].tilesInfo[j].tileIndex = null;
+        map[i].tilesInfo[j].tileSet = null;
+        Bound.clear(map[i].tilesInfo[j].tileHitboxAbsoluteBound);
       }
     }
   }
 
   setCollisionInfo(entity, elapsedTime) {
-    const { hitbox, velocity } = entity;
+    const { hitbox: characterHitbox, velocity } = entity;
     const { tileSize } = GameplayGraphics;
 
     // TOCACHE (probably I don't need to do this everytime)
@@ -140,7 +146,7 @@ class World {
 
     const { map } = this.collisionInfo;
 
-    this.setZoneIndexes(hitbox);
+    this.setZoneIndexes(characterHitbox);
 
     for (let a = 0; a < this.zoneIndexes.length; ++a) {
       const zoneIndex = this.zoneIndexes[a];
@@ -150,11 +156,11 @@ class World {
         map[a].validZone = true;
 
         const {
-          x: xZone, y: yZone, tilesInX, tilesInY,
+          x: xZone, y: yZone, tilesInX, tilesInY, tileSet,
         } = this.zones[zoneIndex];
 
-        const xOffset = hitbox.getAbsoluteX() - xZone;
-        const yOffset = hitbox.getAbsoluteY() - yZone;
+        const xOffset = characterHitbox.getAbsoluteX() - xZone;
+        const yOffset = characterHitbox.getAbsoluteY() - yZone;
         const xBaseTileIndex = Math.floor(xOffset / tileSize.w);
         const yBaseTileIndex = Math.floor(yOffset / tileSize.h);
         const { tileMap } = this.zones[zoneIndex];
@@ -174,8 +180,6 @@ class World {
             if (xTileIndex >= 0 && yTileIndex >= 0 && xTileIndex < tilesInX && yTileIndex < tilesInY) {
               const tileBoundX = FexMath.precision(xZone + xTileIndex * tileSize.w);
               const tileBoundY = FexMath.precision(yZone + yTileIndex * tileSize.h);
-              const tileBoundWidth = tileSize.w;
-              const tileBoundHeight = tileSize.h;
 
               const yRasterPos = yTileIndex - yBaseTileIndex;
               const xRasterPos = xTileIndex - xBaseTileIndex;
@@ -189,10 +193,25 @@ class World {
               map[a].tilesInfo[rasterPos].tileMark = TileMark.Empty;
               if (tileValue > 0) {
                 map[a].tilesInfo[rasterPos].tileMark = TileMark.Occupied;
+                map[a].tilesInfo[rasterPos].tileIndex = tileValue - 1;
+                map[a].tilesInfo[rasterPos].tileSet = tileSet;
 
-                if (hitbox.collidesWithBound(tileBoundX, tileBoundY, tileBoundWidth, tileBoundHeight)) {
-                  const penetrationDepthY = hitbox.minkowskiDifference.y + (velocity.y > 0 && hitbox.minkowskiDifference.height);
-                  const penetrationDepthX = hitbox.minkowskiDifference.x + (velocity.x > 0 && hitbox.minkowskiDifference.width);
+                const { tileHitboxAbsoluteBound } = map[a].tilesInfo[rasterPos];
+                tileSet.fillHitboxAbsoluteBound(tileValue - 1, tileHitboxAbsoluteBound);
+
+                // use custom hitbox for tile 2 (third tile) when comming from above
+                if ((tileValue === 1 || tileValue === 3) && characterHitbox.getAbsoluteY() < tileBoundY && velocity.y > 0) {
+                  tileHitboxAbsoluteBound.x = 0;
+                  tileHitboxAbsoluteBound.y = 0;
+                  tileHitboxAbsoluteBound.width = tileSize.w;
+                  tileHitboxAbsoluteBound.height = tileSize.h;
+                }
+
+                if (characterHitbox.collidesWithBound(
+                  tileBoundX + tileHitboxAbsoluteBound.x, tileBoundY + tileHitboxAbsoluteBound.y, tileHitboxAbsoluteBound.width, tileHitboxAbsoluteBound.height,
+                )) {
+                  const penetrationDepthY = characterHitbox.minkowskiDifference.y + (velocity.y > 0 && characterHitbox.minkowskiDifference.height);
+                  const penetrationDepthX = characterHitbox.minkowskiDifference.x + (velocity.x > 0 && characterHitbox.minkowskiDifference.width);
 
                   const factorToReachYAxis = Math.abs(penetrationDepthX / velocity.x);
                   const factorToReachXAxis = Math.abs(penetrationDepthY / velocity.y);
