@@ -25,6 +25,18 @@ class Menu extends Scene {
     this.starsVelocity = 0.025;
   }
 
+  placePlayButton() {
+    this.playButtonX = GameplayGraphics.screen.width / 2 - resources.playButton.width / 2;
+    this.playButtonY = GameplayGraphics.screen.height * 0.6 - resources.playButton.height / 2;
+
+    this.registerVolatileTouchScreenArea(
+      new TouchScreenArea(
+        this.playButtonX, this.playButtonY, resources.playButton.width, resources.playButton.height, GameplayGraphics,
+        'play',
+      ),
+    );
+  }
+
   init() {
     FexDebug.logOnConsole('menu init()');
 
@@ -35,16 +47,7 @@ class Menu extends Scene {
     for (let index = 0; index < this.xTimes; ++index) {
       this.starPanels.push(screen.width - resources.stars.width * (1 + index));
     }
-
-    this.playButtonX = GameplayGraphics.screen.width / 2 - resources.playButton.width / 2;
-    this.playButtonY = GameplayGraphics.screen.height * 0.6 - resources.playButton.height / 2;
-
-    this.registerVolatileTouchScreenArea(
-      new TouchScreenArea(
-        this.playButtonX, this.playButtonY, resources.playButton.width, resources.playButton.height, GameplayGraphics,
-        'play',
-      ),
-    );
+    this.placePlayButton();
   }
 
   update(elapsedTime) {
@@ -89,6 +92,10 @@ class Menu extends Scene {
     const x0 = GameplayGraphics.screen.width / 2 - resources.playButton.width / 2;
     const y0 = GameplayGraphics.screen.height / 2 - resources.playButton.height / 2;
     FexDebug.logOnScreen('cursor relative', `(${x}, ${y})`);
+  }
+
+  onScreenResize() {
+    this.placePlayButton();
   }
 }
 
