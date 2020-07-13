@@ -94,7 +94,6 @@ class Renderer {
 
   renderBitmap(image, x, y, w, h) {
     const { renderingContext2D, scale } = this.graphics;
-    // const render
     renderingContext2D.drawImage(
       image,
       Math.floor(x * scale),

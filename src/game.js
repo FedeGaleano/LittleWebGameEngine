@@ -136,6 +136,19 @@ class Game extends Scene {
 
     this.jumpButton.position.x = screen.width - 10 - this.uiButtonSize;
     this.jumpButton.position.y = screen.height - 10 - this.uiButtonSize;
+
+
+    this.leftButtonTouchScreenArea.upperLeftCornerX = this.leftButton.position.x - 5;
+    this.leftButtonTouchScreenArea.upperLeftCornerY = this.leftButton.position.y - 5;
+
+    this.rightButtonTouchScreenArea.upperLeftCornerX = this.rightButton.position.x - 5;
+    this.rightButtonTouchScreenArea.upperLeftCornerY = this.rightButton.position.y - 5;
+
+    this.jumpButtonTouchScreenArea.upperLeftCornerX = this.jumpButton.position.x - 5;
+    this.jumpButtonTouchScreenArea.upperLeftCornerY = this.jumpButton.position.y - 5;
+
+    this.anyTouchScreenArea.width = GameplayGraphics.screen.width;
+    this.anyTouchScreenArea.height = GameplayGraphics.screen.height;
   }
 
   init() {
@@ -170,13 +183,13 @@ class Game extends Scene {
     );
 
     this.leftButtonTouchScreenArea = new TouchScreenArea(
-      this.leftButton.position.x, this.leftButton.position.y, this.leftButton.width, this.leftButton.height, GameplayGraphics, 'left',
+      this.leftButton.position.x - 5, this.leftButton.position.y - 5, this.leftButton.width + 10, this.leftButton.height + 10, GameplayGraphics, 'left',
     );
     this.rightButtonTouchScreenArea = new TouchScreenArea(
-      this.rightButton.position.x, this.rightButton.position.y, this.rightButton.width, this.rightButton.height, GameplayGraphics, 'right',
+      this.rightButton.position.x - 5, this.rightButton.position.y - 5, this.rightButton.width + 10, this.rightButton.height + 10, GameplayGraphics, 'right',
     );
     this.jumpButtonTouchScreenArea = new TouchScreenArea(
-      this.jumpButton.position.x, this.jumpButton.position.y, this.jumpButton.width, this.jumpButton.height, GameplayGraphics, 'jump',
+      this.jumpButton.position.x - 5, this.jumpButton.position.y - 5, this.jumpButton.width + 10, this.jumpButton.height + 10, GameplayGraphics, 'jump',
     );
 
     this.anyTouchScreenArea = new TouchScreenArea(
@@ -330,10 +343,7 @@ class Game extends Scene {
       }
     }
 
-
-    GameplayGraphics.renderingContext2D.globalCompositeOperation = 'source-over';
     this.demoWorld.render(camera);
-    GameplayGraphics.renderingContext2D.globalCompositeOperation = 'source-over';
 
     // TOCACHE
     this.speech.render(camera);
@@ -353,9 +363,7 @@ class Game extends Scene {
 
     this.boss.render(camera);
 
-    GameplayGraphics.renderingContext2D.globalCompositeOperation = 'lighter';
     this.light.render(camera);
-    GameplayGraphics.renderingContext2D.globalCompositeOperation = 'source-over';
 
     // this.lights.forEach(l => l.render(camera));
 

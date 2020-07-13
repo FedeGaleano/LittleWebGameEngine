@@ -11,6 +11,7 @@ import InputBuffer from './engine/InputBuffer.js';
 import RotatePhoneScene from './src/rotatePhoneScene.js';
 import FexMath from './engine/utils/FexMath.js';
 import Lambda from './engine/utils/Lambda.js';
+import TouchScreenArea from './engine/TouchScreenArea.js';
 
 let debug = false;
 let focus = true;
@@ -62,6 +63,7 @@ function toggleFullscreen() {
 }
 
 let debugCamera = false;
+let debugTouchScreen = false;
 let playerScale = null;
 
 function manageDebugCamera() {
@@ -286,10 +288,6 @@ export default function startEngine() {
       fpsTimer -= 1000;
     }
 
-    // WORKAROUND (FIXME)
-    // if (fps < 50) adjust();
-    // END WORKAROUND
-
     if (debug) {
       info.fps = fps;
       FexDebug.setGeneralInfo(info);
@@ -307,6 +305,22 @@ export default function startEngine() {
       currentGraphics.renderingContext2D.fillText(`x: ${FexMath.precision(Game.camera.x)}`, 0 + resources.camera.width + 15, -resources.camera.height / 2 - 12, 250);
       currentGraphics.renderingContext2D.fillText(`y: ${FexMath.precision(Game.camera.y)}`, 0 + resources.camera.width + 15, -resources.camera.height / 2, 250);
       Game.cameraFollowBox.render(Game.camera);
+    }
+    if (debugTouchScreen) {
+      const areas = InputBuffer.getRegisteredTouchScreenAreas();
+      for (const areaName in areas) {
+        // eslint-disable-next-line no-prototype-builtins
+        if (areas.hasOwnProperty(areaName)) {
+          const area = areas[areaName];
+          // currentGraphics.renderer.renderFullRectangle(
+          //   area.upperLeftCornerX, area.upperLeftCornerY, area.width, area.height, 'green'/* 'argb(0, 255, 255, 0.5)' */,
+          // );
+          currentGraphics.renderer.alpha = 1;
+          currentGraphics.renderer.renderEmptyRectangle(
+            area.upperLeftCornerX, area.upperLeftCornerY, area.width, area.height, 'blue',
+          );
+        }
+      }
     }
 
     window.requestAnimationFrame(loop);
@@ -338,6 +352,7 @@ export default function startEngine() {
     if (code === 'KeyF') toggleFullscreen();
     if (code === 'Escape') exitFullScreen();
     if (code === 'KeyL') { debug = !debug; }
+    if (code === 'KeyT') { debugTouchScreen = !debugTouchScreen; }
     if (code === 'KeyX') manageDebugCamera();
     if (code === 'KeyM') recreate();
   });

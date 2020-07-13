@@ -1,4 +1,4 @@
-import { GameplayRenderer } from './rendering.js';
+import { GameplayRenderer, GameplayGraphics } from './rendering.js';
 
 class Light {
   constructor(x, y, radius, r, g, b, intensity) {
@@ -14,7 +14,10 @@ class Light {
 
   render(camera) {
     this.setScreenPosition(camera);
+
+    GameplayGraphics.renderingContext2D.globalCompositeOperation = 'lighter';
     GameplayRenderer.renderLightSource(this.lightSource);
+    GameplayGraphics.renderingContext2D.globalCompositeOperation = 'source-over';
   }
 
   setScreenPosition(camera) {
