@@ -156,6 +156,19 @@ class Renderer {
     renderingContext2D.strokeStyle = prevColor;
   }
 
+  renderFullCircle(x, y, radius, color) {
+    const { renderingContext2D, scale } = this.graphics;
+    const prevColor = renderingContext2D.fillStyle;
+    renderingContext2D.fillStyle = color || prevColor;
+    renderingContext2D.fillStyle = color;
+    renderingContext2D.beginPath();
+    renderingContext2D.arc(
+      x * scale, y * scale, radius * scale, 0, 2 * Math.PI,
+    );
+    renderingContext2D.fill();
+    renderingContext2D.fillStyle = prevColor;
+  }
+
   renderLetter(letter, x, y, font) {
     const index = Font.getLetterIndex(letter);
     const { renderingContext2D, scale } = this.graphics;

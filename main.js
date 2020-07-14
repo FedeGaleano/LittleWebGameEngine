@@ -325,12 +325,12 @@ export default function startEngine() {
     }
 
     if (!focus) {
-      currentGraphics.renderer.fillStyle = 'black';
-      currentGraphics.renderer.alpha = 0.75;
+      GameplayGraphics.renderer.fillStyle = 'black';
+      GameplayGraphics.renderer.alpha = 0.75;
       // focusAlertAlpha = (focusAlertAlpha + 0.1) % 1;
       // currentGraphics.renderer.alpha = focusAlertAlpha;
-      currentGraphics.renderer.renderFullRectangle();
-      currentGraphics.renderer.alpha = 1;
+      GameplayGraphics.renderer.renderFullRectangle();
+      GameplayGraphics.renderer.alpha = 1;
       GameplayGraphics.renderer.renderBitmapCentered(resources.focusAlertWindow);
     }
 

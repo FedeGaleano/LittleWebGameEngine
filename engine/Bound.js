@@ -6,6 +6,14 @@ class Bound {
     bound.height = null;
   }
 
+  static getXCenter(bound) {
+    return bound.x + bound.width / 2;
+  }
+
+  static getYCenter(bound) {
+    return bound.y + bound.height / 2;
+  }
+
   constructor() {
     this.x = null;
     this.y = null;

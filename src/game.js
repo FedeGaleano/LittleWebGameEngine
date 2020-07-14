@@ -12,6 +12,7 @@ import Physics from '../engine/physics/Physics.js';
 import TouchScreenArea from '../engine/TouchScreenArea.js';
 import FexMath from '../engine/utils/FexMath.js';
 import Light from '../engine/light.js';
+import Bound from '../engine/Bound.js';
 
 const ArrayNewFunctionalities = {
   removeIf(condition) {
@@ -273,8 +274,11 @@ class Game extends Scene {
     curtainSpeed = 0.003;
     this.speechClosed = true;
 
+    const boundForLightPosition = new Bound();
+    this.demoWorld.copyTileCoordsInBound(0, 29, 22, boundForLightPosition);
     this.light = new Light(
-      this.character.position.x + this.character.width / 2, this.character.position.y + this.character.height / 2,
+      boundForLightPosition.x, boundForLightPosition.y,
+      // this.character.position.x + this.character.width / 2, this.character.position.y + this.character.height / 2,
       this.character.width / 2 + 35,
       255, 0, 255,
       1,
@@ -363,7 +367,10 @@ class Game extends Scene {
 
     this.boss.render(camera);
 
+
     this.light.render(camera);
+    // GameplayRenderer.renderFullRectangle((this.light.x - camera.x) - 10, (this.light.y - camera.y) - 10, 20, 20, 'white');
+    GameplayRenderer.renderFullCircle(this.light.x - camera.x, this.light.y - camera.y, 5, 'white');
 
     // this.lights.forEach(l => l.render(camera));
 
@@ -456,8 +463,9 @@ class Game extends Scene {
         this.character.velocity.x = newRapidness * Math.sign(this.character.velocity.x);
       }
 
-      this.light.x = this.character.position.x + this.character.width / 2;
-      this.light.y = this.character.position.y + this.character.height / 2;
+      // light update
+      // this.light.x = this.character.position.x + this.character.width / 2;
+      // this.light.y = this.character.position.y + this.character.height / 2;
 
       // this.lights.forEach((l, i) => {
       //   l.x = this.character.position.x + this.character.width / 2 + 10 * i;
