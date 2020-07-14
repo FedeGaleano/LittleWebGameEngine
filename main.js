@@ -1,7 +1,7 @@
 /* eslint-disable guard-for-in */
 /* eslint-disable no-restricted-syntax */
 import Game from './src/game.js';
-import { setEnvironment, resources } from './engine/resources.js';
+import { setEnvironment, resources, fonts } from './engine/resources.js';
 import { GameplayGraphics, AskForRotationGraphics, recreate } from './engine/rendering.js';
 import Sprite from './engine/sprite.js';
 import FexDebug from './engine/debug.js';
@@ -15,6 +15,7 @@ import TouchScreenArea from './engine/TouchScreenArea.js';
 
 let debug = false;
 let focus = true;
+const focusAlertAlpha = 0;
 let orientation = null;
 let previousOrientation = null;
 
@@ -321,6 +322,16 @@ export default function startEngine() {
           );
         }
       }
+    }
+
+    if (!focus) {
+      currentGraphics.renderer.fillStyle = 'black';
+      currentGraphics.renderer.alpha = 0.75;
+      // focusAlertAlpha = (focusAlertAlpha + 0.1) % 1;
+      // currentGraphics.renderer.alpha = focusAlertAlpha;
+      currentGraphics.renderer.renderFullRectangle();
+      currentGraphics.renderer.alpha = 1;
+      GameplayGraphics.renderer.renderBitmapCentered(resources.focusAlertWindow);
     }
 
     window.requestAnimationFrame(loop);

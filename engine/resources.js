@@ -29,6 +29,7 @@ const resourceLoadingData = [
   { path: 'fex-engine-camera.png', resourceName: 'camera' },
   { path: 'tileset-engine-demo.png', resourceName: 'tileset' },
   { path: 'boss.png', resourceName: 'boss' },
+  { path: 'engine-demo-focus-alert-window.png', resourceName: 'focusAlertWindow' },
 ];
 
 const resources = {};
