@@ -22,7 +22,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":4,
              "name":"",
              "objects":[
                     {
@@ -48,7 +47,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
@@ -74,7 +72,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
@@ -100,11 +97,10 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
-                     "height":16,
+                     "height":26,
                      "id":1,
                      "name":"",
                      "rotation":0,
@@ -112,7 +108,7 @@
                      "visible":true,
                      "width":10,
                      "x":6,
-                     "y":0
+                     "y":-5
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -126,7 +122,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
@@ -156,7 +151,7 @@
              "name":"",
              "objects":[
                     {
-                     "height":16,
+                     "height":26,
                      "id":1,
                      "name":"",
                      "rotation":0,
@@ -164,7 +159,7 @@
                      "visible":true,
                      "width":10,
                      "x":0,
-                     "y":0
+                     "y":-5
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -182,15 +177,15 @@
              "name":"",
              "objects":[
                     {
-                     "height":16,
+                     "height":21,
                      "id":1,
                      "name":"",
                      "rotation":0,
                      "type":"",
                      "visible":true,
-                     "width":10,
+                     "width":15,
                      "x":6,
-                     "y":0
+                     "y":-5
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -214,8 +209,8 @@
                      "rotation":0,
                      "type":"",
                      "visible":true,
-                     "width":16,
-                     "x":0,
+                     "width":26,
+                     "x":-5,
                      "y":0
                     }],
              "opacity":1,
@@ -234,15 +229,15 @@
              "name":"",
              "objects":[
                     {
-                     "height":16,
+                     "height":21,
                      "id":1,
                      "name":"",
                      "rotation":0,
                      "type":"",
                      "visible":true,
-                     "width":10,
-                     "x":0,
-                     "y":0
+                     "width":15,
+                     "x":-5,
+                     "y":-5
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -256,7 +251,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
@@ -282,7 +276,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
@@ -308,7 +301,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
@@ -334,7 +326,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {

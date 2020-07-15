@@ -4,13 +4,16 @@ import { resources } from '../engine/resources.js';
 import FexDebug from '../engine/debug.js';
 import InputBuffer from '../engine/InputBuffer.js';
 import TouchScreenArea from '../engine/TouchScreenArea.js';
+import Entity from '../engine/entity.js';
+import Sprite from '../engine/sprite.js';
+import Bound from '../engine/Bound.js';
 
 class Intro extends Scene {
   constructor() {
     super();
 
     this.fade = 0;
-    this.fadeSpeed = 0.005;
+    this.fadeSpeed = 0.0005;
 
     this.fired.Enter = () => this.finish();
     this.fired.touchScreen.any = () => this.finish();
@@ -18,37 +21,45 @@ class Intro extends Scene {
 
   init() {
     FexDebug.logOnConsole('intro init');
+    const { screen } = GameplayGraphics;
+
+    const logoSprite = new Sprite(
+      resources.fexIntro, 13,
+      [3500, ...Array(12).fill(25)], GameplayGraphics,
+    );
+
+    this.logo = new Entity({ normal: logoSprite }, { startingSpriteKey: 'normal' },
+      (screen.width - logoSprite.width) / 2, (screen.height - logoSprite.height) / 2);
 
     this.fade = 0;
     this.registerVolatileTouchScreenArea(
       new TouchScreenArea(
-        0, 0, GameplayGraphics.screen.width, GameplayGraphics.screen.height, GameplayGraphics,
+        0, 0, screen.width, screen.height, GameplayGraphics,
         'any',
       ),
     );
   }
 
-  update() {
-    this.fade += this.fadeSpeed;
-    if (this.fade >= 1.25) {
-      this.fadeSpeed = -0.01;
+  update(elapsedTime) {
+    this.fade += this.fadeSpeed * elapsedTime;
+    if (this.fade >= 1.75) {
+      this.fadeSpeed = -0.001;
     }
     if (this.fade < 0) {
       this.finish();
     }
+    this.logo.update(elapsedTime);
   }
 
   render() {
-    const { screen } = GameplayGraphics;
-    // GameplayGraphics.renderer.clearScreen();
-    GameplayGraphics.renderer.fillStyle = 'black';
+    GameplayRenderer.fillStyle = 'black';
     GameplayRenderer.renderFullRectangle();
 
-    const prevOpacity = GameplayGraphics.renderingContext2D.globalAlpha;
+    const prevOpacity = GameplayRenderer.alpha;
 
-    GameplayGraphics.renderer.alpha = this.fade;
-    GameplayGraphics.renderer.renderBitmapCentered(resources.fexLogo);
-    GameplayGraphics.renderer.alpha = prevOpacity;
+    GameplayRenderer.alpha = this.fade;
+    this.logo.render();
+    GameplayRenderer.alpha = prevOpacity;
   }
 }
 

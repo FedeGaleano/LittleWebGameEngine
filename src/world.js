@@ -148,6 +148,9 @@ class World {
 
     this.setZoneIndexes(characterHitbox);
 
+    const lockVelocityX = false;
+    const lockVelocityY = false;
+
     for (let a = 0; a < this.zoneIndexes.length; ++a) {
       const zoneIndex = this.zoneIndexes[a];
       const validZone = zoneIndex !== null;

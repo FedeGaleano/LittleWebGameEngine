@@ -30,6 +30,7 @@ const resourceLoadingData = [
   { path: 'tileset-engine-demo.png', resourceName: 'tileset' },
   { path: 'boss.png', resourceName: 'boss' },
   { path: 'engine-demo-focus-alert-window.png', resourceName: 'focusAlertWindow' },
+  { path: 'engine-demo-intro.png', resourceName: 'fexIntro' },
 ];
 
 const resources = {};
