@@ -17,6 +17,11 @@ class Intro extends Scene {
 
     this.fired.Enter = () => this.finish();
     this.fired.touchScreen.any = () => this.finish();
+
+    this.audio = new Audio('res/noise-short.wav');
+
+    this.timePassed = 0;
+    this.audioPlayed = false;
   }
 
   init() {
@@ -48,6 +53,13 @@ class Intro extends Scene {
   }
 
   update(elapsedTime) {
+    this.timePassed += elapsedTime;
+
+    if (this.timePassed > 3500 && !this.audioPlayed) {
+      this.audio.play();
+      this.audioPlayed = true;
+    }
+
     this.fade += this.fadeSpeed * elapsedTime;
     if (this.fade >= 1.75) {
       this.fadeSpeed = -0.001;
