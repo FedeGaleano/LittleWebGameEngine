@@ -34,10 +34,16 @@ class Intro extends Scene {
     this.fade = 0;
     this.registerVolatileTouchScreenArea(
       new TouchScreenArea(
-        0, 0, screen.width, screen.height, GameplayGraphics,
+        20, 20, screen.width - 40, screen.height - 40, GameplayGraphics,
         'any',
       ),
     );
+  }
+
+  onScreenResize() {
+    const { screen } = GameplayGraphics;
+    this.logo.x = (screen.width - this.logo.width) / 2;
+    this.logo.y = (screen.height - this.logo.height) / 2;
   }
 
   update(elapsedTime) {
