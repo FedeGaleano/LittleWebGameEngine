@@ -41,9 +41,10 @@ class Intro extends Scene {
   }
 
   onScreenResize() {
+    FexDebug.logOnConsole('Intro::onScreenResize() called');
     const { screen } = GameplayGraphics;
-    this.logo.x = (screen.width - this.logo.width) / 2;
-    this.logo.y = (screen.height - this.logo.height) / 2;
+    this.logo.position.x = (screen.width - this.logo.width) / 2;
+    this.logo.position.y = (screen.height - this.logo.height) / 2;
   }
 
   update(elapsedTime) {
