@@ -10,19 +10,22 @@ class Light {
     this.g = g;
     this.b = b;
     this.intensity = intensity;
+    this.absoluteX = null;
+    this.absoluteY = null;
   }
 
   render(camera) {
     this.setScreenPosition(camera);
-
     GameplayGraphics.renderingContext2D.globalCompositeOperation = 'lighter';
-    GameplayRenderer.renderLightSource(this.lightSource);
+    GameplayRenderer.renderLightSource(this.lightSource, this.absoluteX, this.absoluteY, this.radius);
     GameplayGraphics.renderingContext2D.globalCompositeOperation = 'source-over';
   }
 
   setScreenPosition(camera) {
+    this.absoluteX = this.x - camera.x;
+    this.absoluteY = this.y - camera.y;
     this.lightSource = GameplayRenderer.createLightSource(
-      this.x - camera.x, this.y - camera.y, this.radius, this.r, this.g, this.b, this.intensity,
+      this.absoluteX, this.absoluteY, this.radius, this.r, this.g, this.b, this.intensity,
     );
   }
 

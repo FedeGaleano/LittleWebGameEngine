@@ -72,8 +72,8 @@ const cameraFollowBox = {
 const jumpMovement = Physics.buildJumpMovement(5, 0.01);
 const jumpMovement2 = Physics.buildJumpMovement2(5);
 
-const characterTilePositionX = 21;
-const characterTilePositionY = 45;
+const characterTilePositionX = 32;
+const characterTilePositionY = 65;
 
 class Game extends Scene {
   static get camera() {
@@ -154,6 +154,7 @@ class Game extends Scene {
 
     this.timeInAir = 0;
     this.wasInAir = false;
+    this.isInAir = false;
     this.hasJumped = false;
   }
 
@@ -261,7 +262,7 @@ class Game extends Scene {
 
     this.demoWorld = new World(
       // [tileMaps.zone1, tileMaps.try, tileMaps.try2],
-      [tileMaps.cave3],
+      [tileMaps.cave5],
       tilesets.world,
       0, 0,
     );
@@ -465,19 +466,6 @@ class Game extends Scene {
       this.character.velocity.y += gravity * elapsedTime;
       this.character.update(elapsedTime);
 
-      if (this.wasInAir) {
-        this.timeInAir += elapsedTime;
-      } else {
-        this.timeInAir = 0;
-      }
-      this.wasInAir = this.demoWorld.collisionInfo.isInAir;
-
-      const { friction } = this.demoWorld.collisionInfo;
-      if (this.character.velocity.x !== 0) {
-        const newRapidness = Math.max(0, Math.abs(this.character.velocity.x) - friction * elapsedTime);
-        this.character.velocity.x = newRapidness * Math.sign(this.character.velocity.x);
-      }
-
       // light update
       // this.light.x = this.character.position.x + this.character.width / 2;
       // this.light.y = this.character.position.y + this.character.height / 2;
@@ -496,6 +484,20 @@ class Game extends Scene {
 
       this.zoneIndex = this.demoWorld.getZoneIndex(this.character.hitbox);
       this.demoWorld.setCollisionInfo(this.character, elapsedTime);
+
+      this.isInAir = this.demoWorld.collisionInfo.isInAir;
+      if (this.isInAir) {
+        this.timeInAir += elapsedTime;
+      } else {
+        this.timeInAir = 0;
+        this.hasJumped = false;
+      }
+
+      const { friction } = this.demoWorld.collisionInfo;
+      if (this.character.velocity.x !== 0) {
+        const newRapidness = Math.max(0, Math.abs(this.character.velocity.x) - friction * elapsedTime);
+        this.character.velocity.x = newRapidness * Math.sign(this.character.velocity.x);
+      }
 
       this.speech.setBottomLeftCorner(this.character.position.x + 14, this.character.position.y);
       this.speech.update(elapsedTime);
@@ -609,7 +611,7 @@ class Game extends Scene {
     this.pressed.ArrowRight = (x, y, elapsedTime) => this.moveRight(elapsedTime);
     this.pressed.ArrowLeft = (x, y, elapsedTime) => this.moveLeft(elapsedTime);
     // this.pressed.Space = (x, y, elapsedTime) => this.jumpAlongTime(elapsedTime);
-    this.fired.Space = this.fired.touchScreen.jump = this.jumpFreely;
+    this.fired.Space = this.fired.touchScreen.jump = this.jumpInstantly;
     // this.fired.Space = this.fired.touchScreen.jump = this.jumpInstantly;
     this.fired.KeyJ = this.jumpFreely;
 
@@ -667,6 +669,7 @@ class Game extends Scene {
   jumpInstantly() {
     if (!this.hasJumped && this.timeInAir < 100) {
       this.character.velocity.y = -maxJumpVelocity;
+      this.hasJumped = true;
     }
   }
 

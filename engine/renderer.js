@@ -1,6 +1,7 @@
 import Font from './font.js';
 import Bound from './Bound.js';
 import TileMark from './TileMark.js';
+import { GameplayGraphics } from './rendering.js';
 
 const chooseMarkColor = {
   1: '#0000FF',
@@ -248,9 +249,11 @@ class Renderer {
     return gradient;
   }
 
-  renderLightSource(lightSource) {
+  renderLightSource(lightSource, x, y, radius) {
+    const { scale } = this.graphics;
     this.fillStyle = lightSource;
-    this.renderFullRectangle();
+    // this.renderFullRectangle();
+    this.renderFullCircle(x, y, radius);
   }
 }
 
