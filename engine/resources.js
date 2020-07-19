@@ -42,6 +42,9 @@ const tileMaps = {
   zone2: 'zone2.json',
   zone3: 'zone3.json',
   zone4: 'zone4.json',
+  cave: 'cave.json',
+  cave2: 'cave2.json',
+  cave3: 'cave3.json',
 };
 
 const tilesets = {

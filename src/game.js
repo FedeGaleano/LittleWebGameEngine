@@ -72,8 +72,8 @@ const cameraFollowBox = {
 const jumpMovement = Physics.buildJumpMovement(5, 0.01);
 const jumpMovement2 = Physics.buildJumpMovement2(5);
 
-const characterTilePositionX = 16;
-const characterTilePositionY = 22;
+const characterTilePositionX = 21;
+const characterTilePositionY = 45;
 
 class Game extends Scene {
   static get camera() {
@@ -94,6 +94,7 @@ class Game extends Scene {
     this.moveLeft = this.moveLeft.bind(this);
     this.jump = this.jumpAlongTime.bind(this);
     this.jumpInstantly = this.jumpInstantly.bind(this);
+    this.jumpFreely = this.jumpFreely.bind(this);
     this.moveLeftDebug = this.moveLeftDebug.bind(this);
     this.moveDownDebug = this.moveDownDebug.bind(this);
     this.moveRightDebug = this.moveRightDebug.bind(this);
@@ -150,6 +151,10 @@ class Game extends Scene {
 
     this.anyTouchScreenArea.width = GameplayGraphics.screen.width;
     this.anyTouchScreenArea.height = GameplayGraphics.screen.height;
+
+    this.timeInAir = 0;
+    this.wasInAir = false;
+    this.hasJumped = false;
   }
 
   init() {
@@ -255,7 +260,8 @@ class Game extends Scene {
     ], dialogSpeed);
 
     this.demoWorld = new World(
-      [tileMaps.zone1, tileMaps.try, tileMaps.try2],
+      // [tileMaps.zone1, tileMaps.try, tileMaps.try2],
+      [tileMaps.cave3],
       tilesets.world,
       0, 0,
     );
@@ -331,21 +337,22 @@ class Game extends Scene {
     // TOCACHE
 
     // GameplayGraphics.renderer.renderBitmap(resources.background, 0, 0, screen.width, screen.height);
-    GameplayRenderer.fillStyle = this.back;
+    // GameplayRenderer.fillStyle = this.back;
+    GameplayRenderer.fillStyle = 'black';
     GameplayRenderer.renderFullRectangle();
 
     // Render stars
     // TOCACHE
-    const xTimes = Math.ceil(screen.width / resources.stars.width);
-    const yTimes = Math.ceil(screen.height / resources.stars.height);
+    // const xTimes = Math.ceil(screen.width / resources.stars.width);
+    // const yTimes = Math.ceil(screen.height / resources.stars.height);
 
-    for (let j = 0; j < yTimes; ++j) {
-      for (let i = 0; i < xTimes; ++i) {
-        GameplayGraphics.renderer.renderBitmap(
-          resources.stars, resources.stars.width * i - camera.x * starsParallax, resources.stars.height * j - camera.y * starsParallax,
-        );
-      }
-    }
+    // for (let j = 0; j < yTimes; ++j) {
+    //   for (let i = 0; i < xTimes; ++i) {
+    //     GameplayGraphics.renderer.renderBitmap(
+    //       resources.stars, resources.stars.width * i - camera.x * starsParallax, resources.stars.height * j - camera.y * starsParallax,
+    //     );
+    //   }
+    // }
 
     this.demoWorld.render(camera);
 
@@ -451,11 +458,19 @@ class Game extends Scene {
 
   normalUpdate(elapsedTime) {
     // FexDebug.chargeHeavily();
+    FexDebug.logOnScreen('this.timeInAir', this.timeInAir);
     if (!pause) {
       curtain = Math.max(0, Math.min(1, curtain + curtainSpeed * elapsedTime));
 
       this.character.velocity.y += gravity * elapsedTime;
       this.character.update(elapsedTime);
+
+      if (this.wasInAir) {
+        this.timeInAir += elapsedTime;
+      } else {
+        this.timeInAir = 0;
+      }
+      this.wasInAir = this.demoWorld.collisionInfo.isInAir;
 
       const { friction } = this.demoWorld.collisionInfo;
       if (this.character.velocity.x !== 0) {
@@ -489,7 +504,7 @@ class Game extends Scene {
     }
 
     camera.x = artificialCameraOffsetX + Math.max(0, cameraFollowBox.x - (screen.width - cameraFollowBox.width) / 2);
-    camera.y = artificialCameraOffsetY + Math.min(this.finalCameraY + 300, cameraFollowBox.y - (screen.height - cameraFollowBox.height) / 2);
+    camera.y = artificialCameraOffsetY + Math.min(this.finalCameraY + 700, cameraFollowBox.y - (screen.height - cameraFollowBox.height) / 2);
   }
 
   idleUpdate(elapsedTime) {
@@ -594,7 +609,9 @@ class Game extends Scene {
     this.pressed.ArrowRight = (x, y, elapsedTime) => this.moveRight(elapsedTime);
     this.pressed.ArrowLeft = (x, y, elapsedTime) => this.moveLeft(elapsedTime);
     // this.pressed.Space = (x, y, elapsedTime) => this.jumpAlongTime(elapsedTime);
-    this.fired.Space = this.fired.touchScreen.jump = this.jumpInstantly;
+    this.fired.Space = this.fired.touchScreen.jump = this.jumpFreely;
+    // this.fired.Space = this.fired.touchScreen.jump = this.jumpInstantly;
+    this.fired.KeyJ = this.jumpFreely;
 
     this.released.Space = this.released.touchScreen.jump = () => {
       timeImpusingJumping = 0;
@@ -648,6 +665,12 @@ class Game extends Scene {
   }
 
   jumpInstantly() {
+    if (!this.hasJumped && this.timeInAir < 100) {
+      this.character.velocity.y = -maxJumpVelocity;
+    }
+  }
+
+  jumpFreely() {
     this.character.velocity.y = -maxJumpVelocity;
   }
 
