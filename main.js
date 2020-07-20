@@ -154,7 +154,7 @@ function tryToExecute(func, ...args) {
   // (func || Lambda.Empty)(...args);
 }
 
-function handleInput(elapsedTime) {
+function handleInput(elapsedTime, virtualTime) {
   function iterateOverState(state, logic) {
     // eslint-disable-next-line no-restricted-syntax
     for (const key in state) {
@@ -165,34 +165,34 @@ function handleInput(elapsedTime) {
     }
   }
 
-  const x = Math.floor(cursor.x / currentGraphics.scale);
-  const y = Math.floor(cursor.y / currentGraphics.scale);
+  // const x = Math.floor(cursor.x / currentGraphics.scale);
+  // const y = Math.floor(cursor.y / currentGraphics.scale);
 
   iterateOverState(isPressed.keyboard, (key) => {
-    tryToExecute(scene.pressed[key], x, y, elapsedTime);
+    tryToExecute(scene.pressed[key], elapsedTime, virtualTime);
   });
 
   iterateOverState(isPressed.touchScreen, (key) => {
-    tryToExecute(scene.pressed.touchScreen[key], x, y, elapsedTime);
+    tryToExecute(scene.pressed.touchScreen[key], elapsedTime, virtualTime);
   });
 
   iterateOverState(isFired.keyboard, (key) => {
-    tryToExecute(scene.fired[key], x, y, elapsedTime);
+    tryToExecute(scene.fired[key], elapsedTime, virtualTime);
     isFired.keyboard[key] = false;
   });
 
   iterateOverState(isFired.touchScreen, (key) => {
-    tryToExecute(scene.fired.touchScreen[key], x, y, elapsedTime);
+    tryToExecute(scene.fired.touchScreen[key], elapsedTime, virtualTime);
     isFired.touchScreen[key] = false;
   });
 
   iterateOverState(isReleased.keyboard, (key) => {
-    tryToExecute(scene.released[key], x, y, elapsedTime);
+    tryToExecute(scene.released[key], elapsedTime, virtualTime);
     isReleased.keyboard[key] = false;
   });
 
   iterateOverState(isReleased.touchScreen, (key) => {
-    tryToExecute(scene.released.touchScreen[key], x, y, elapsedTime);
+    tryToExecute(scene.released.touchScreen[key], elapsedTime, virtualTime);
     isReleased.touchScreen[key] = false;
   });
 
@@ -274,8 +274,9 @@ export default function startEngine() {
 
     if (deltaTime > targetMillisForOneFrame) {
       while (deltaTime > targetMillisForOneFrame) {
-        handleInput(targetMillisForOneFrame);
-        scene.update(targetMillisForOneFrame);
+        const virtualTime = now - deltaTime;
+        handleInput(targetMillisForOneFrame, virtualTime);
+        scene.update(targetMillisForOneFrame, virtualTime);
         deltaTime -= targetMillisForOneFrame;
       }
       renderScene();

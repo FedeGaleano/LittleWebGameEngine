@@ -26,7 +26,7 @@ class Scene {
     throw new Error('Scene::init() method not implemented');
   }
 
-  update() {
+  update(elapsedTime, now) {
     throw new Error('Scene::update() method not implemented');
   }
 

@@ -92,9 +92,9 @@ class Game extends Scene {
     this.cutSceneInput = this.cutSceneInput.bind(this);
     this.moveRight = this.moveRight.bind(this);
     this.moveLeft = this.moveLeft.bind(this);
-    this.jump = this.jumpAlongTime.bind(this);
-    this.jumpInstantly = this.jumpInstantly.bind(this);
-    this.jumpFreely = this.jumpFreely.bind(this);
+    this.jumpAlongTime = this.jumpAlongTime.bind(this);
+    this.tryToJump = this.tryToJump.bind(this);
+    this.jump = this.jump.bind(this);
     this.moveLeftDebug = this.moveLeftDebug.bind(this);
     this.moveDownDebug = this.moveDownDebug.bind(this);
     this.moveRightDebug = this.moveRightDebug.bind(this);
@@ -156,6 +156,7 @@ class Game extends Scene {
     this.wasInAir = false;
     this.isInAir = false;
     this.hasJumped = false;
+    this.jumpRequestTime = null;
   }
 
   init() {
@@ -323,9 +324,9 @@ class Game extends Scene {
     this.back.addColorStop(1, '#333366');
   }
 
-  update(elapsedTime) {
+  update(elapsedTime, now) {
     if (!pause) {
-      this.updateLogic(elapsedTime);
+      this.updateLogic(elapsedTime, now);
     }
   }
 
@@ -457,7 +458,7 @@ class Game extends Scene {
     }
   }
 
-  normalUpdate(elapsedTime) {
+  normalUpdate(elapsedTime, now) {
     // FexDebug.chargeHeavily();
     FexDebug.logOnScreen('this.timeInAir', this.timeInAir);
     if (!pause) {
@@ -491,6 +492,10 @@ class Game extends Scene {
       } else {
         this.timeInAir = 0;
         this.hasJumped = false;
+        if (now - this.jumpRequestTime < 100) {
+          this.jump();
+          this.jumpRequestTime = null;
+        }
       }
 
       const { friction } = this.demoWorld.collisionInfo;
@@ -594,12 +599,8 @@ class Game extends Scene {
       this.speech.next();
     };
 
-    this.pressed.touchScreen.left = (x, y, elapsedTime) => {
-      this.moveLeft(elapsedTime);
-    };
-    this.pressed.touchScreen.right = (x, y, elapsedTime) => {
-      this.moveRight(elapsedTime);
-    };
+    this.pressed.touchScreen.left = this.moveLeft;
+    this.pressed.touchScreen.right = this.moveRight;
 
     this.fired.KeyC = () => {
       if (curtainSpeed === 0) {
@@ -608,12 +609,12 @@ class Game extends Scene {
         curtainSpeed *= -1;
       }
     };
-    this.pressed.ArrowRight = (x, y, elapsedTime) => this.moveRight(elapsedTime);
-    this.pressed.ArrowLeft = (x, y, elapsedTime) => this.moveLeft(elapsedTime);
-    // this.pressed.Space = (x, y, elapsedTime) => this.jumpAlongTime(elapsedTime);
-    this.fired.Space = this.fired.touchScreen.jump = this.jumpInstantly;
+    this.pressed.ArrowRight = this.moveRight;
+    this.pressed.ArrowLeft = this.moveLeft;
+    // this.pressed.Space = this.jumpAlongTime;
+    this.fired.Space = this.fired.touchScreen.jump = this.tryToJump;
     // this.fired.Space = this.fired.touchScreen.jump = this.jumpInstantly;
-    this.fired.KeyJ = this.jumpFreely;
+    this.fired.KeyJ = this.jump;
 
     this.released.Space = this.released.touchScreen.jump = () => {
       timeImpusingJumping = 0;
@@ -666,15 +667,17 @@ class Game extends Scene {
     timeImpusingJumping += elapsedTime;
   }
 
-  jumpInstantly() {
+  tryToJump(_, now) {
     if (!this.hasJumped && this.timeInAir < 100) {
-      this.character.velocity.y = -maxJumpVelocity;
-      this.hasJumped = true;
+      this.jump();
+    } else {
+      this.jumpRequestTime = now;
     }
   }
 
-  jumpFreely() {
+  jump() {
     this.character.velocity.y = -maxJumpVelocity;
+    this.hasJumped = true;
   }
 
   moveLeftDebug(elapsedTime) {
