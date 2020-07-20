@@ -221,7 +221,9 @@ class World {
                   if (factorToReachXAxis <= factorToReachYAxis) { // TODO: considerate equality case separatly and resolve in both axes
                     entity.position.y -= penetrationDepthY;
                     entity.velocity.y = 0;
-                    this.collisionInfo.isInAir = false;
+
+                    if (penetrationDepthY > 0) this.collisionInfo.isInAir = false;
+
                     this.collisionInfo.friction = tileFriction(tileValue);
                   } else if (factorToReachXAxis > factorToReachYAxis) {
                     entity.position.x -= penetrationDepthX;
