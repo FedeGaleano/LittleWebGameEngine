@@ -478,11 +478,6 @@ class Game extends Scene {
 
       this.createBackground();
 
-      // if (this.character.position.y > this.yFloor + GameplayGraphics.tileSize.h) {
-      //   this.character.position.y = this.yFloor + GameplayGraphics.tileSize.h;
-      //   this.character.resetAutomaticMovement();
-      // }
-
       this.zoneIndex = this.demoWorld.getZoneIndex(this.character.hitbox);
       this.demoWorld.setCollisionInfo(this.character, elapsedTime);
 
