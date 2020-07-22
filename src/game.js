@@ -53,8 +53,6 @@ const maxJumpVelocity = 0.35;
 const minJumpVelocity = 0.05;
 const jumpAcceleration = 0.004;
 const gravity = 0.001;
-const maxTimeImpusingJumping = 100;
-let timeImpusingJumping = 0;
 
 const cameraFollowBox = {
   x: 0,
@@ -92,9 +90,9 @@ class Game extends Scene {
     this.cutSceneInput = this.cutSceneInput.bind(this);
     this.moveRight = this.moveRight.bind(this);
     this.moveLeft = this.moveLeft.bind(this);
-    this.jumpAlongTime = this.jumpAlongTime.bind(this);
     this.tryToJump = this.tryToJump.bind(this);
     this.jump = this.jump.bind(this);
+    this.interruptJumpingAcceleration = this.interruptJumpingAcceleration.bind(this);
     this.moveLeftDebug = this.moveLeftDebug.bind(this);
     this.moveDownDebug = this.moveDownDebug.bind(this);
     this.moveRightDebug = this.moveRightDebug.bind(this);
@@ -606,14 +604,12 @@ class Game extends Scene {
     };
     this.pressed.ArrowRight = this.moveRight;
     this.pressed.ArrowLeft = this.moveLeft;
-    // this.pressed.Space = this.jumpAlongTime;
+
     this.fired.Space = this.fired.touchScreen.jump = this.tryToJump;
-    // this.fired.Space = this.fired.touchScreen.jump = this.jumpInstantly;
+
     this.fired.KeyJ = this.jump;
 
-    this.released.Space = this.released.touchScreen.jump = () => {
-      timeImpusingJumping = 0;
-    };
+    this.released.Space = this.released.touchScreen.jump = this.interruptJumpingAcceleration;
 
     this.fired.KeyB = () => {
       cameraFollowBox.x = 354.7199999999988;
@@ -655,13 +651,6 @@ class Game extends Scene {
     );
   }
 
-  jumpAlongTime(elapsedTime) {
-    const timeLeft = Math.max(0, maxTimeImpusingJumping - timeImpusingJumping);
-    const deltaTime = Math.min(elapsedTime, timeLeft);
-    this.character.velocity.y = Math.min(-minJumpVelocity, this.character.velocity.y - jumpAcceleration * deltaTime);
-    timeImpusingJumping += elapsedTime;
-  }
-
   tryToJump(_, now) {
     if (!this.hasJumped && this.timeInAir < 100) {
       this.jump();
@@ -673,6 +662,11 @@ class Game extends Scene {
   jump() {
     this.character.velocity.y = -maxJumpVelocity;
     this.hasJumped = true;
+  }
+
+  interruptJumpingAcceleration() {
+    // this.character.velocity.y = Math.max(this.character.velocity.y * 0.5, this.character.velocity.y);
+    this.character.velocity.y = Math.max(-maxJumpVelocity * 0.6, this.character.velocity.y);
   }
 
   moveLeftDebug(elapsedTime) {
