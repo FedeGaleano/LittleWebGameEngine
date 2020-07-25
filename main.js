@@ -407,7 +407,9 @@ export default function startEngine() {
         }
       }
       isPressed.touchScreen[areaName] = covered;
-      isReleased.touchScreen[areaName] = !covered;
+      if (areaName !== 'jump') {
+        isReleased.touchScreen[areaName] = !covered;
+      }
     }
   });
 
