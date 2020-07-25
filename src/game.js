@@ -141,14 +141,14 @@ class Game extends Scene {
     this.jumpButton.position.y = screen.height - 10 - this.uiButtonSize;
 
 
-    this.leftButtonTouchScreenArea.upperLeftCornerX = this.leftButton.position.x - 5;
-    this.leftButtonTouchScreenArea.upperLeftCornerY = this.leftButton.position.y - 5;
+    this.leftButtonTouchScreenArea.upperLeftCornerX = this.leftButton.position.x - 10;
+    this.leftButtonTouchScreenArea.upperLeftCornerY = this.leftButton.position.y - 10;
 
     this.rightButtonTouchScreenArea.upperLeftCornerX = this.rightButton.position.x - 5;
-    this.rightButtonTouchScreenArea.upperLeftCornerY = this.rightButton.position.y - 5;
+    this.rightButtonTouchScreenArea.upperLeftCornerY = this.rightButton.position.y - 10;
 
-    this.jumpButtonTouchScreenArea.upperLeftCornerX = this.jumpButton.position.x - 5;
-    this.jumpButtonTouchScreenArea.upperLeftCornerY = this.jumpButton.position.y - 5;
+    this.jumpButtonTouchScreenArea.upperLeftCornerX = this.jumpButton.position.x - 15;
+    this.jumpButtonTouchScreenArea.upperLeftCornerY = this.jumpButton.position.y - 10;
 
     this.anyTouchScreenArea.width = GameplayGraphics.screen.width;
     this.anyTouchScreenArea.height = GameplayGraphics.screen.height;
@@ -192,13 +192,13 @@ class Game extends Scene {
     );
 
     this.leftButtonTouchScreenArea = new TouchScreenArea(
-      this.leftButton.position.x - 5, this.leftButton.position.y - 5, this.leftButton.width + 10, this.leftButton.height + 10, GameplayGraphics, 'left',
+      this.leftButton.position.x - 5, this.leftButton.position.y - 5, this.leftButton.width + 15, this.leftButton.height + 20, GameplayGraphics, 'left',
     );
     this.rightButtonTouchScreenArea = new TouchScreenArea(
-      this.rightButton.position.x - 5, this.rightButton.position.y - 5, this.rightButton.width + 10, this.rightButton.height + 10, GameplayGraphics, 'right',
+      this.rightButton.position.x - 5, this.rightButton.position.y - 5, this.rightButton.width + 15, this.rightButton.height + 20, GameplayGraphics, 'right',
     );
     this.jumpButtonTouchScreenArea = new TouchScreenArea(
-      this.jumpButton.position.x - 5, this.jumpButton.position.y - 5, this.jumpButton.width + 10, this.jumpButton.height + 10, GameplayGraphics, 'jump',
+      this.jumpButton.position.x - 5, this.jumpButton.position.y - 5, this.jumpButton.width + 25, this.jumpButton.height + 20, GameplayGraphics, 'jump',
     );
 
     this.anyTouchScreenArea = new TouchScreenArea(
@@ -206,10 +206,10 @@ class Game extends Scene {
     );
 
 
+    this.registerVolatileTouchScreenArea(this.jumpButtonTouchScreenArea);
     this.registerVolatileTouchScreenArea(this.anyTouchScreenArea);
     this.registerVolatileTouchScreenArea(this.leftButtonTouchScreenArea);
     this.registerVolatileTouchScreenArea(this.rightButtonTouchScreenArea);
-    this.registerVolatileTouchScreenArea(this.jumpButtonTouchScreenArea);
 
     this.xFloor = GameplayGraphics.tileSize.w * characterTilePositionX;
     this.yFloor = GameplayGraphics.tileSize.h * characterTilePositionY - this.spriteSlimeIdle.height;
@@ -324,6 +324,7 @@ class Game extends Scene {
     );
 
     this.init = () => {};
+    this.onScreenResize();
   }
 
   createBackground() {

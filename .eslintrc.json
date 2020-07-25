@@ -19,6 +19,7 @@
         "import/extensions": "off",
         "no-plusplus": "off",
         "no-param-reassign": "off",
-        "no-continue": "off"
+        "no-continue": "off",
+        "no-labels": "off"
     }
 }
