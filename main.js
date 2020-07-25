@@ -402,14 +402,16 @@ export default function startEngine() {
 
         if (areas[areaName].covers(x, y)) {
           covered = true;
+
           if (!isPressed.touchScreen[areaName]) isFired.touchScreen[areaName] = true;
+
           break;
         }
       }
       isPressed.touchScreen[areaName] = covered;
-      if (areaName !== 'jump') {
-        isReleased.touchScreen[areaName] = !covered;
-      }
+      // if (areaName !== 'jump') {
+      isReleased.touchScreen[areaName] = !covered;
+      // }
     }
   });
 

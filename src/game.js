@@ -46,13 +46,13 @@ let curtainSpeed = 0;
 
 let pause = false;
 
-const characterSpeed = 0.12;
-const moveAcceleration = max => (max ? 0.001 : 0.0003);
-const maxMoveVelocity = 0.1;
+// const getMoveAcceleration = max => (max ? 0.01 : 0.0006);
+const getMoveAcceleration = () => 0.0007;
+const maxMoveVelocity = 0.12;
 const maxJumpVelocity = 0.35;
-const minJumpVelocity = 0.05;
-const jumpAcceleration = 0.004;
 const gravity = 0.001;
+// const maxJumpVelocity = 0.25;
+// const gravity = 0.0005;
 
 const cameraFollowBox = {
   x: 0,
@@ -104,6 +104,7 @@ class Game extends Scene {
     this.normalUpdate = this.normalUpdate.bind(this);
 
     this.createBackground = this.createBackground.bind(this);
+    this.decideGravity = this.modifyGravity.bind(this);
 
     this.spriteSlimeIdle = null;
     this.spriteSlimeRunning = null;
@@ -475,13 +476,20 @@ class Game extends Scene {
     }
   }
 
+  modifyGravity(standardGravity) {
+    const yRapidness = Math.abs(this.character.velocity.y);
+    const factor = FexMath.precision((yRapidness / maxJumpVelocity) ** 0.25) || 1;
+    return standardGravity * factor;
+  }
+
   normalUpdate(elapsedTime, now) {
     // FexDebug.chargeHeavily();
     FexDebug.logOnScreen('this.timeInAir', this.timeInAir);
     if (!pause) {
       curtain = Math.max(0, Math.min(1, curtain + curtainSpeed * elapsedTime));
 
-      this.character.velocity.y += gravity * elapsedTime;
+
+      this.character.velocity.y += this.modifyGravity(gravity) * elapsedTime;
       this.character.update(elapsedTime);
 
       // light update
@@ -659,10 +667,10 @@ class Game extends Scene {
 
   moveRight(elapsedTime) {
     const { isInAir } = this.demoWorld.collisionInfo;
-    const goMax = isInAir && this.character.velocity.x < 0;
+    const useMaxAcceleration = isInAir && this.character.velocity.x < 0;
     this.character.changeSpriteTo('run');
     this.character.velocity.x = Math.min(
-      maxMoveVelocity, this.character.velocity.x + moveAcceleration(goMax) * elapsedTime,
+      maxMoveVelocity, this.character.velocity.x + getMoveAcceleration(useMaxAcceleration) * elapsedTime,
     );
   }
 
@@ -671,7 +679,7 @@ class Game extends Scene {
     const goMax = isInAir && this.character.velocity.x > 0;
     this.character.changeSpriteTo('runInverse');
     this.character.velocity.x = Math.max(
-      -maxMoveVelocity, this.character.velocity.x - moveAcceleration(goMax) * elapsedTime,
+      -maxMoveVelocity, this.character.velocity.x - getMoveAcceleration(goMax) * elapsedTime,
     );
   }
 
@@ -690,7 +698,6 @@ class Game extends Scene {
 
   interruptJumpingAcceleration() {
     this.character.velocity.y = Math.max(this.character.velocity.y * 0.4, this.character.velocity.y);
-    // this.character.velocity.y = Math.max(-maxJumpVelocity * 0.6, this.character.velocity.y);
   }
 
   moveLeftDebug(elapsedTime) {

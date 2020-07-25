@@ -8,11 +8,11 @@ let renderingOptimizationLevel = 2;
 
 FexDebug.createGlobal('setOptLevel', (val) => { renderingOptimizationLevel = val; });
 
-const defaultFriction = 0.00015;
+const defaultFriction = 0.0005;
 const tileFriction = tileValue => ({
-  1: 0.00015,
-  2: 0.00015,
-  3: 0.00015,
+  1: defaultFriction,
+  2: defaultFriction,
+  3: defaultFriction,
 }[tileValue]) || defaultFriction;
 
 class Zone {
@@ -69,7 +69,8 @@ class World {
 
     this.collisionCheckAreaInTiles = { width: 2, height: 2 };
     this.collisionCheckAreaInTiles.area = this.collisionCheckAreaInTiles.width * this.collisionCheckAreaInTiles.height;
-    this.airFriction = 0.00005;
+    // this.airFriction = 0.00005;
+    this.airFriction = defaultFriction;
     this.collisionInfo = {
       isInAir: false,
       friction: this.airFriction,
