@@ -73,6 +73,7 @@ class World {
     this.collisionInfo = {
       isInAir: false,
       friction: this.airFriction,
+      dead: false,
       map: Array(2).fill().map(() => ({
         validZone: false,
         tilesInfo: Array(this.collisionCheckAreaInTiles.area).fill().map(() => ({
@@ -123,6 +124,7 @@ class World {
   clearCollisionMap() {
     this.collisionInfo.isInAir = true;
     this.collisionInfo.friction = this.airFriction;
+    this.collisionInfo.dead = false;
     const { map } = this.collisionInfo;
     for (let i = 0; i < map.length; ++i) {
       map[i].validZone = false;
@@ -213,6 +215,14 @@ class World {
                 if (characterHitbox.collidesWithBound(
                   tileBoundX + tileHitboxAbsoluteBound.x, tileBoundY + tileHitboxAbsoluteBound.y, tileHitboxAbsoluteBound.width, tileHitboxAbsoluteBound.height,
                 )) {
+                  map[a].tilesInfo[rasterPos].tileMark = TileMark.Collided;
+
+                  const tileIdx = tileValue - 1;
+                  if (tileIdx === 24 || tileIdx === 25 || tileIdx === 26 || tileIdx === 29) {
+                    this.collisionInfo.dead = true;
+                    return;
+                  }
+
                   const penetrationDepthY = characterHitbox.minkowskiDifference.y + (velocity.y > 0 && characterHitbox.minkowskiDifference.height);
                   const penetrationDepthX = characterHitbox.minkowskiDifference.x + (velocity.x > 0 && characterHitbox.minkowskiDifference.width);
 
@@ -229,8 +239,6 @@ class World {
                     entity.position.x -= penetrationDepthX;
                     entity.velocity.x = 0;
                   }
-
-                  map[a].tilesInfo[rasterPos].tileMark = TileMark.Collided;
                 }
               }
             }

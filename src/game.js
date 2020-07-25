@@ -71,7 +71,7 @@ const jumpMovement = Physics.buildJumpMovement(5, 0.01);
 const jumpMovement2 = Physics.buildJumpMovement2(5);
 
 const characterTilePositionX = 32;
-const characterTilePositionY = 65;
+const characterTilePositionY = 66;
 
 class Game extends Scene {
   static get camera() {
@@ -125,6 +125,9 @@ class Game extends Scene {
     // this.getFinalCameraX = () => -(screen.width / 2 - (numberOfTilesInTheFloorX / 2) * GameplayGraphics.tileSize.w);
     this.getFinalCameraX = () => cameraFollowBox.x - (screen.width - cameraFollowBox.width) / 2;
     this.getFinalCameraY = () => cameraFollowBox.y - (screen.height - cameraFollowBox.height) / 2;
+
+    this.resetAlpha = 0;
+    this.resetAlphaSpeed = 0.05;
   }
 
   onScreenResize() {
@@ -219,6 +222,13 @@ class Game extends Scene {
       this.xFloor, this.yFloor,
     );
     this.character.addHitbox(0.25, 0.3, 0.5, 0.7);
+
+    this.character.die = () => {
+      this.character.position.x = GameplayGraphics.tileSize.w * characterTilePositionX;
+      this.character.position.y = GameplayGraphics.tileSize.h * characterTilePositionY - this.spriteSlimeIdle.height;
+      this.character.velocity.x = this.character.velocity.y = 0;
+      this.resetAlpha = 1;
+    };
 
     cameraFollowBox.x = this.character.position.x - (cameraFollowBox.width - this.character.width) / 2;
     cameraFollowBox.y = this.character.position.y - (cameraFollowBox.height - this.character.height);
@@ -399,6 +409,14 @@ class Game extends Scene {
       GameplayGraphics.renderer.renderString('PAUSE', (screen.width / 2) - ('pause'.length / 2) * 6, screen.height / 2 - 2.5, fonts.normal);
     }
 
+    if (this.resetAlpha > 0) {
+      GameplayRenderer.fillStyle = 'black';
+      GameplayRenderer.alpha = this.resetAlpha;
+      GameplayRenderer.renderFullRectangle();
+      this.resetAlpha -= this.resetAlphaSpeed;
+      GameplayRenderer.alpha = 1;
+    }
+
     FexDebug.logOnScreen('zone indexes', JSON.stringify(this.demoWorld.zoneIndexes));
     FexDebug.logOnScreen('character velocity x', FexMath.precision(this.character.velocity.x));
     FexDebug.logOnScreen('character velocity y', FexMath.precision(this.character.velocity.y));
@@ -478,6 +496,11 @@ class Game extends Scene {
 
       this.zoneIndex = this.demoWorld.getZoneIndex(this.character.hitbox);
       this.demoWorld.setCollisionInfo(this.character, elapsedTime);
+
+      if (this.demoWorld.collisionInfo.dead) {
+        this.character.die();
+        return;
+      }
 
       this.isInAir = this.demoWorld.collisionInfo.isInAir;
       if (this.isInAir) {
@@ -665,8 +688,8 @@ class Game extends Scene {
   }
 
   interruptJumpingAcceleration() {
-    // this.character.velocity.y = Math.max(this.character.velocity.y * 0.5, this.character.velocity.y);
-    this.character.velocity.y = Math.max(-maxJumpVelocity * 0.6, this.character.velocity.y);
+    this.character.velocity.y = Math.max(this.character.velocity.y * 0.4, this.character.velocity.y);
+    // this.character.velocity.y = Math.max(-maxJumpVelocity * 0.6, this.character.velocity.y);
   }
 
   moveLeftDebug(elapsedTime) {
