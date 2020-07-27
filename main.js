@@ -172,8 +172,8 @@ function handleInput(elapsedTime, virtualTime) {
     tryToExecute(scene.pressed[key], elapsedTime, virtualTime);
   });
 
-  iterateOverState(isPressed.touchScreen, (key) => {
-    tryToExecute(scene.pressed.touchScreen[key], elapsedTime, virtualTime);
+  iterateOverState(isPressed.touchScreen, (area) => {
+    tryToExecute(scene.pressed.touchScreen[area], elapsedTime, virtualTime);
   });
 
   iterateOverState(isFired.keyboard, (key) => {
@@ -181,9 +181,9 @@ function handleInput(elapsedTime, virtualTime) {
     isFired.keyboard[key] = false;
   });
 
-  iterateOverState(isFired.touchScreen, (key) => {
-    tryToExecute(scene.fired.touchScreen[key], elapsedTime, virtualTime);
-    isFired.touchScreen[key] = false;
+  iterateOverState(isFired.touchScreen, (area) => {
+    tryToExecute(scene.fired.touchScreen[area], elapsedTime, virtualTime);
+    isFired.touchScreen[area] = false;
   });
 
   iterateOverState(isReleased.keyboard, (key) => {
@@ -191,9 +191,9 @@ function handleInput(elapsedTime, virtualTime) {
     isReleased.keyboard[key] = false;
   });
 
-  iterateOverState(isReleased.touchScreen, (key) => {
-    tryToExecute(scene.released.touchScreen[key], elapsedTime, virtualTime);
-    isReleased.touchScreen[key] = false;
+  iterateOverState(isReleased.touchScreen, (area) => {
+    tryToExecute(scene.released.touchScreen[area], elapsedTime, virtualTime);
+    isReleased.touchScreen[area] = false;
   });
 
   // scene.mouseOver(x, y, elapsedTime);
@@ -408,10 +408,9 @@ export default function startEngine() {
           break;
         }
       }
+
+      isReleased.touchScreen[areaName] = !covered && isPressed.touchScreen[areaName];
       isPressed.touchScreen[areaName] = covered;
-      // if (areaName !== 'jump') {
-      isReleased.touchScreen[areaName] = !covered;
-      // }
     }
   });
 
