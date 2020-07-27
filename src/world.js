@@ -70,7 +70,7 @@ class World {
     this.collisionCheckAreaInTiles = { width: 2, height: 2 };
     this.collisionCheckAreaInTiles.area = this.collisionCheckAreaInTiles.width * this.collisionCheckAreaInTiles.height;
     // this.airFriction = 0.00005;
-    this.airFriction = defaultFriction;
+    this.airFriction = defaultFriction / 2;
     this.collisionInfo = {
       isInAir: false,
       friction: this.airFriction,

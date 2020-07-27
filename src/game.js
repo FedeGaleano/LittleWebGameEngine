@@ -37,9 +37,6 @@ const artificialCameraOffsetX = 0;
 let artificialCameraOffsetY = 0;
 const starsParallax = 0.25;
 
-const numberOfTilesInTheFloorX = 7;
-const numberOfTilesInTheFloorY = 1;
-
 let curtain = 0;
 const curtainHeightFactor = 0.15;
 let curtainSpeed = 0;
@@ -47,12 +44,13 @@ let curtainSpeed = 0;
 let pause = false;
 
 // const getMoveAcceleration = max => (max ? 0.01 : 0.0006);
+// const getMoveAcceleration = () => 0.0007;
+const maxMoveVelocity = 0.1;
 const getMoveAcceleration = () => 0.0007;
-const maxMoveVelocity = 0.12;
-const maxJumpVelocity = 0.35;
+const maxJumpVelocity = 0.32;
 const gravity = 0.001;
-// const maxJumpVelocity = 0.25;
-// const gravity = 0.0005;
+// const maxJumpVelocity = 0.5;
+// const gravity = 0.002;
 
 const cameraFollowBox = {
   x: 0,
@@ -479,7 +477,7 @@ class Game extends Scene {
   modifyGravity(standardGravity) {
     const yRapidness = Math.abs(this.character.velocity.y);
     const factor = FexMath.precision((yRapidness / maxJumpVelocity) ** 0.25) || 1;
-    return standardGravity * factor;
+    return standardGravity * Math.max(0.5, factor);
   }
 
   normalUpdate(elapsedTime, now) {
@@ -667,7 +665,8 @@ class Game extends Scene {
 
   moveRight(elapsedTime) {
     const { isInAir } = this.demoWorld.collisionInfo;
-    const useMaxAcceleration = isInAir && this.character.velocity.x < 0;
+    // const useMaxAcceleration = isInAir && this.character.velocity.x < 0;
+    const useMaxAcceleration = isInAir;
     this.character.changeSpriteTo('run');
     this.character.velocity.x = Math.min(
       maxMoveVelocity, this.character.velocity.x + getMoveAcceleration(useMaxAcceleration) * elapsedTime,
@@ -676,10 +675,11 @@ class Game extends Scene {
 
   moveLeft(elapsedTime) {
     const { isInAir } = this.demoWorld.collisionInfo;
-    const goMax = isInAir && this.character.velocity.x > 0;
+    // const goMax = isInAir && this.character.velocity.x > 0;
+    const useMaxAcceleration = isInAir;
     this.character.changeSpriteTo('runInverse');
     this.character.velocity.x = Math.max(
-      -maxMoveVelocity, this.character.velocity.x - getMoveAcceleration(goMax) * elapsedTime,
+      -maxMoveVelocity, this.character.velocity.x - getMoveAcceleration(useMaxAcceleration) * elapsedTime,
     );
   }
 
