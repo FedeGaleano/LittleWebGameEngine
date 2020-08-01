@@ -108,8 +108,11 @@ class Game extends Scene {
     this.spriteSlimeIdle = null;
     this.spriteSlimeRunning = null;
     this.leftButtonSprite = null;
+    this.leftButtonPressedSprite = null;
     this.rightButtonSprite = null;
+    this.rightButtonPressedSprite = null;
     this.jumpButtonSprite = null;
+    this.jumpButtonPressedSprite = null;
 
     this.character = null;
     this.leftButton = null;
@@ -171,22 +174,25 @@ class Game extends Scene {
     this.spriteSlimeRunningInverse = new Sprite(resources.characterRunningInverse, 4, [100, 100, 150, 100], GameplayGraphics);
 
     this.leftButtonSprite = new Sprite(resources.uiButtonLeft, 1, [1], GameplayGraphics);
+    this.leftButtonPressedSprite = new Sprite(resources.uiButtonLeftPressed, 1, [1], GameplayGraphics);
     this.leftButton = new Entity(
-      { normal: this.leftButtonSprite },
+      { normal: this.leftButtonSprite, pressed: this.leftButtonPressedSprite },
       { startingSpriteKey: 'normal' },
       10, screen.height - 10 - this.uiButtonSize,
     );
 
     this.rightButtonSprite = new Sprite(resources.uiButtonRight, 1, [1], GameplayGraphics);
+    this.rightButtonPressedSprite = new Sprite(resources.uiButtonRightPressed, 1, [1], GameplayGraphics);
     this.rightButton = new Entity(
-      { normal: this.rightButtonSprite },
+      { normal: this.rightButtonSprite, pressed: this.rightButtonPressedSprite },
       { startingSpriteKey: 'normal' },
       10 + this.uiButtonSize + 10, screen.height - 10 - this.uiButtonSize,
     );
 
     this.jumpButtonSprite = new Sprite(resources.uiButtonAction, 1, [1], GameplayGraphics);
+    this.jumpButtonPressedSprite = new Sprite(resources.uiButtonActionPressed, 1, [1], GameplayGraphics);
     this.jumpButton = new Entity(
-      { normal: this.jumpButtonSprite },
+      { normal: this.jumpButtonSprite, pressed: this.jumpButtonPressedSprite },
       { startingSpriteKey: 'normal' },
       screen.width - 10 - this.uiButtonSize, screen.height - 10 - this.uiButtonSize,
     );
@@ -627,6 +633,20 @@ class Game extends Scene {
     this.pressed.touchScreen.left = this.moveLeft;
     this.pressed.touchScreen.right = this.moveRight;
 
+    this.fired.touchScreen.left = () => {
+      this.leftButton.changeSpriteTo('pressed');
+    };
+    this.fired.touchScreen.right = () => {
+      this.rightButton.changeSpriteTo('pressed');
+    };
+
+    this.released.touchScreen.left = () => {
+      this.leftButton.changeSpriteTo('normal');
+    };
+    this.released.touchScreen.right = () => {
+      this.rightButton.changeSpriteTo('normal');
+    };
+
     this.fired.KeyC = () => {
       if (curtainSpeed === 0) {
         curtainSpeed = 0.003;
@@ -637,11 +657,19 @@ class Game extends Scene {
     this.pressed.ArrowRight = this.moveRight;
     this.pressed.ArrowLeft = this.moveLeft;
 
-    this.fired.Space = this.fired.touchScreen.jump = this.tryToJump;
+    this.fired.Space = this.tryToJump;
+    this.fired.touchScreen.jump = () => {
+      this.jumpButton.changeSpriteTo('pressed');
+      this.tryToJump();
+    };
 
     this.fired.KeyJ = this.jump;
 
-    this.released.Space = this.released.touchScreen.jump = this.interruptJumpingAcceleration;
+    this.released.Space = this.interruptJumpingAcceleration;
+    this.released.touchScreen.jump = () => {
+      this.jumpButton.changeSpriteTo('normal');
+      this.interruptJumpingAcceleration();
+    };
 
     this.fired.KeyB = () => {
       cameraFollowBox.x = 354.7199999999988;
