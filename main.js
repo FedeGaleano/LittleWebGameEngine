@@ -10,7 +10,6 @@ import Menu from './src/menu.js';
 import InputBuffer from './engine/InputBuffer.js';
 import RotatePhoneScene from './src/rotatePhoneScene.js';
 import FexMath from './engine/utils/FexMath.js';
-import Lambda from './engine/utils/Lambda.js';
 import TouchScreenArea from './engine/TouchScreenArea.js';
 
 let debug = false;
@@ -151,7 +150,6 @@ menu.onFinish(() => {
 
 function tryToExecute(func, ...args) {
   if (func) func(...args);
-  // (func || Lambda.Empty)(...args);
 }
 
 function handleInput(elapsedTime, virtualTime) {

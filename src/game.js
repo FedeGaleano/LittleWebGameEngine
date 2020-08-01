@@ -13,6 +13,7 @@ import TouchScreenArea from '../engine/TouchScreenArea.js';
 import FexMath from '../engine/utils/FexMath.js';
 import Light from '../engine/light.js';
 import Bound from '../engine/Bound.js';
+import FexUtils from '../engine/utils/FexUtils.js';
 
 const ArrayNewFunctionalities = {
   removeIf(condition) {
@@ -566,12 +567,13 @@ class Game extends Scene {
 
       this.speech.update(elapsedTime);
 
-
       if (this.speech.complete) {
         curtainSpeed *= -1;
         this.updateLogic = this.normalUpdate;
         this.normalInput();
-        this.renderLogic = this.renderUI;
+        if (FexUtils.deviceHasTouch()) {
+          this.renderLogic = this.renderUI;
+        }
       }
     }
   }
