@@ -71,6 +71,8 @@ const jumpMovement2 = Physics.buildJumpMovement2(5);
 
 const characterTilePositionX = 32;
 const characterTilePositionY = 66;
+const keyTilePositionX = 28;
+const keyTilePositionY = 51;
 
 class Game extends Scene {
   static get camera() {
@@ -115,6 +117,7 @@ class Game extends Scene {
     this.jumpButtonPressedSprite = null;
 
     this.character = null;
+    this.key = null;
     this.leftButton = null;
     this.rightButton = null;
     this.jumpButton = null;
@@ -236,6 +239,14 @@ class Game extends Scene {
       this.resetAlpha = 1;
     };
 
+    this.keySprite = new Sprite(resources.key, 1, [1], GameplayGraphics);
+    this.key = new Entity(
+      { normal: this.keySprite },
+      { startingSpriteKey: 'normal' },
+      GameplayGraphics.tileSize.w * keyTilePositionX + Math.round((GameplayGraphics.tileSize.w - this.keySprite.width) / 2),
+      GameplayGraphics.tileSize.h * keyTilePositionY - this.keySprite.height - 1,
+    );
+
     cameraFollowBox.x = this.character.position.x - (cameraFollowBox.width - this.character.width) / 2;
     cameraFollowBox.y = this.character.position.y - (cameraFollowBox.height - this.character.height);
 
@@ -299,9 +310,11 @@ class Game extends Scene {
     const boundForLightPosition = new Bound();
     this.demoWorld.copyTileCoordsInBound(0, 29, 22, boundForLightPosition);
     this.light = new Light(
-      boundForLightPosition.x, boundForLightPosition.y,
+      this.key.position.x + this.key.width / 2, this.key.position.y + this.key.height / 2,
+      // boundForLightPosition.x, boundForLightPosition.y,
       // this.character.position.x + this.character.width / 2, this.character.position.y + this.character.height / 2,
-      this.character.width / 2 + 35,
+      // this.character.width / 2 + 35,
+      this.key.height / 2 + 10,
       255, 0, 255,
       1,
     );
@@ -392,9 +405,10 @@ class Game extends Scene {
     this.boss.render(camera);
 
 
+    this.key.render(camera);
     this.light.render(camera);
     // GameplayRenderer.renderFullRectangle((this.light.x - camera.x) - 10, (this.light.y - camera.y) - 10, 20, 20, 'white');
-    GameplayRenderer.renderFullCircle(this.light.x - camera.x, this.light.y - camera.y, 5, 'white');
+    // GameplayRenderer.renderFullCircle(this.light.x - camera.x, this.light.y - camera.y, 5, 'white');
 
     // this.lights.forEach(l => l.render(camera));
 
