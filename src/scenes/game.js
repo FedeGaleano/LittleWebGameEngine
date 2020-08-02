@@ -509,9 +509,7 @@ class Game extends Scene {
     pause = true;
 
     const previousInput = { fired: this.fired, pressed: this.pressed, released: this.released };
-    this.fired = Scene.createEmptyInputState();
-    this.pressed = Scene.createEmptyInputState();
-    this.released = Scene.createEmptyInputState();
+    this.clearInputState();
 
     this.fired.keyboard.KeyP = this.fired.touchScreen.any = () => this.unpause(previousInput);
   }
@@ -661,9 +659,7 @@ class Game extends Scene {
   }
 
   idleInput() {
-    this.pressed = Scene.createEmptyInputState();
-    this.released = Scene.createEmptyInputState();
-    this.fired = Scene.createEmptyInputState();
+    this.clearInputState();
 
     this.fired.keyboard.Enter = this.fired.touchScreen.any = () => {
       curtainSpeed = 0.003;
@@ -674,17 +670,13 @@ class Game extends Scene {
   }
 
   cutSceneInput() {
-    this.pressed = Scene.createEmptyInputState();
-    this.released = Scene.createEmptyInputState();
-    this.fired = Scene.createEmptyInputState();
+    this.clearInputState();
     this.fired.keyboard.KeyP = this.onFocusLost;
     this.fired.keyboard.Enter = this.fired.touchScreen.any = () => { camera.x = this.getFinalCameraX(); };
   }
 
   normalInput() {
-    this.pressed = Scene.createEmptyInputState();
-    this.released = Scene.createEmptyInputState();
-    this.fired = Scene.createEmptyInputState();
+    this.clearInputState();
     this.fired.keyboard.KeyP = this.onFocusLost;
 
     // this.pressed.virtualButton('up');

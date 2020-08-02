@@ -8,9 +8,7 @@ import FexDebug from './debug.js';
 class Scene {
   constructor() {
     this.finish = () => {};
-    this.pressed = Scene.createEmptyInputState();
-    this.fired = Scene.createEmptyInputState();
-    this.released = Scene.createEmptyInputState();
+    this.clearInputState();
     this.volatileTouchScreenAreas = [];
     this.init = this.init.bind(this);
     this.update = this.update.bind(this);

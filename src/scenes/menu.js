@@ -10,29 +10,19 @@ class Menu extends Scene {
   constructor() {
     super();
     this.audio = new Audio('res/select2.wav');
-    const finishScene = () => {
-      try {
-        this.audio.play();
-      } catch (error) {
-        FexDebug.logOnConsole('Error from menu audio.play()', error);
-      }
-      this.finish();
-    };
-    this.fired.keyboard.Enter = finishScene;
-    this.fired.touchScreen.play = finishScene;
     this.starPanels = [];
     this.xTimes = 0;
     this.starsVelocity = 0.025;
   }
 
-  placePlayButton() {
+  placePlayUIButton() {
     this.playButtonX = GameplayGraphics.screen.width / 2 - resources.playButton.width / 2;
     this.playButtonY = GameplayGraphics.screen.height * 0.6 - resources.playButton.height / 2;
 
     this.registerVolatileTouchScreenArea(
       new TouchScreenArea(
         this.playButtonX, this.playButtonY, resources.playButton.width, resources.playButton.height, GameplayGraphics,
-        'play',
+        'playUIButton',
       ),
     );
   }
@@ -47,7 +37,22 @@ class Menu extends Scene {
     for (let index = 0; index < this.xTimes; ++index) {
       this.starPanels.push(screen.width - resources.stars.width * (1 + index));
     }
-    this.placePlayButton();
+
+    this.placePlayUIButton();
+
+    const finishScene = () => {
+      try {
+        this.audio.play();
+      } catch (error) {
+        FexDebug.logOnConsole('Error from menu audio.play()', error);
+      }
+      this.finish();
+    };
+    this.createVirtualButton('startGame', {
+      keys: ['Enter'],
+      touchScreenAreas: ['playUIButton'],
+    });
+    this.onFired('startGame', finishScene);
   }
 
   update(elapsedTime) {
@@ -95,7 +100,7 @@ class Menu extends Scene {
   }
 
   onScreenResize() {
-    this.placePlayButton();
+    this.placePlayUIButton();
   }
 }
 
