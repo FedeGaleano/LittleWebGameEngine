@@ -1,10 +1,10 @@
 /* eslint-disable class-methods-use-this */
-import Scene from '../engine/scene.js';
-import { GameplayRenderer, GameplayGraphics } from '../engine/rendering.js';
-import { resources } from '../engine/resources.js';
-import FexDebug from '../engine/debug.js';
-import InputBuffer from '../engine/InputBuffer.js';
-import TouchScreenArea from '../engine/TouchScreenArea.js';
+import Scene from '../../engine/scene.js';
+import { GameplayRenderer, GameplayGraphics } from '../../engine/rendering.js';
+import { resources } from '../../engine/resources.js';
+import FexDebug from '../../engine/debug.js';
+import InputBuffer from '../../engine/InputBuffer.js';
+import TouchScreenArea from '../../engine/TouchScreenArea.js';
 
 class Menu extends Scene {
   constructor() {
@@ -18,7 +18,7 @@ class Menu extends Scene {
       }
       this.finish();
     };
-    this.fired.Enter = finishScene;
+    this.fired.keyboard.Enter = finishScene;
     this.fired.touchScreen.play = finishScene;
     this.starPanels = [];
     this.xTimes = 0;

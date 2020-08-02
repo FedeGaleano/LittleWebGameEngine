@@ -7,9 +7,9 @@ import TouchScreenArea from './TouchScreenArea.js';
 class Scene {
   constructor() {
     this.finish = () => {};
-    this.pressed = Scene.emptyInputState();
-    this.fired = Scene.emptyInputState();
-    this.released = Scene.emptyInputState();
+    this.pressed = Scene.createEmptyInputState();
+    this.fired = Scene.createEmptyInputState();
+    this.released = Scene.createEmptyInputState();
     this.volatileTouchScreenAreas = [];
     this.init = this.init.bind(this);
     this.update = this.update.bind(this);
@@ -73,8 +73,8 @@ class Scene {
     });
   }
 
-  static emptyInputState() {
-    return { touchScreen: {} };
+  static createEmptyInputState() {
+    return { keyboard: {}, touchScreen: {} };
   }
 }
 

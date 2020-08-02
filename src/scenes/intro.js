@@ -1,12 +1,12 @@
-import Scene from '../engine/scene.js';
-import { GameplayGraphics, GameplayRenderer } from '../engine/rendering.js';
-import { resources } from '../engine/resources.js';
-import FexDebug from '../engine/debug.js';
-import InputBuffer from '../engine/InputBuffer.js';
-import TouchScreenArea from '../engine/TouchScreenArea.js';
-import Entity from '../engine/entity.js';
-import Sprite from '../engine/sprite.js';
-import Bound from '../engine/Bound.js';
+import Scene from '../../engine/scene.js';
+import { GameplayGraphics, GameplayRenderer } from '../../engine/rendering.js';
+import { resources } from '../../engine/resources.js';
+import FexDebug from '../../engine/debug.js';
+import InputBuffer from '../../engine/InputBuffer.js';
+import TouchScreenArea from '../../engine/TouchScreenArea.js';
+import Entity from '../../engine/entity.js';
+import Sprite from '../../engine/sprite.js';
+import Bound from '../../engine/Bound.js';
 
 class Intro extends Scene {
   constructor() {
@@ -15,7 +15,7 @@ class Intro extends Scene {
     this.fade = 0;
     this.fadeSpeed = 0.0005;
 
-    this.fired.Enter = () => this.finish();
+    this.fired.keyboard.Enter = () => this.finish();
     this.fired.touchScreen.any = () => this.finish();
 
     this.audio = new Audio('res/noise-short.wav');

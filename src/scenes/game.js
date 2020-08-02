@@ -1,19 +1,19 @@
-import { GameplayGraphics, GameplayRenderer } from '../engine/rendering.js';
-import Sprite from '../engine/sprite.js';
+import { GameplayGraphics, GameplayRenderer } from '../../engine/rendering.js';
+import Sprite from '../../engine/sprite.js';
 import {
   resources, fonts, tileMaps, tilesets,
-} from '../engine/resources.js';
-import FexDebug from '../engine/debug.js';
-import { World } from './world.js';
-import Entity from '../engine/entity.js';
-import Speech from '../engine/speech.js';
-import Scene from '../engine/scene.js';
-import Physics from '../engine/physics/Physics.js';
-import TouchScreenArea from '../engine/TouchScreenArea.js';
-import FexMath from '../engine/utils/FexMath.js';
-import Light from '../engine/light.js';
-import Bound from '../engine/Bound.js';
-import FexUtils from '../engine/utils/FexUtils.js';
+} from '../../engine/resources.js';
+import FexDebug from '../../engine/debug.js';
+import { World } from '../world.js';
+import Entity from '../../engine/entity.js';
+import Speech from '../../engine/speech.js';
+import Scene from '../../engine/scene.js';
+import Physics from '../../engine/physics/Physics.js';
+import TouchScreenArea from '../../engine/TouchScreenArea.js';
+import FexMath from '../../engine/utils/FexMath.js';
+import Light from '../../engine/light.js';
+import Bound from '../../engine/Bound.js';
+import FexUtils from '../../engine/utils/FexUtils.js';
 
 const ArrayNewFunctionalities = {
   removeIf(condition) {
@@ -509,11 +509,11 @@ class Game extends Scene {
     pause = true;
 
     const previousInput = { fired: this.fired, pressed: this.pressed, released: this.released };
-    this.fired = Scene.emptyInputState();
-    this.pressed = Scene.emptyInputState();
-    this.released = Scene.emptyInputState();
+    this.fired = Scene.createEmptyInputState();
+    this.pressed = Scene.createEmptyInputState();
+    this.released = Scene.createEmptyInputState();
 
-    this.fired.KeyP = this.fired.touchScreen.any = () => this.unpause(previousInput);
+    this.fired.keyboard.KeyP = this.fired.touchScreen.any = () => this.unpause(previousInput);
   }
 
   renderUI() {
@@ -634,7 +634,7 @@ class Game extends Scene {
       this.finalCameraX = finalCameraX;
       if (this.speechClosed) {
         this.speech.next();
-        this.fired.Enter = this.fired.touchScreen.any = () => {
+        this.fired.keyboard.Enter = this.fired.touchScreen.any = () => {
           this.speech.next();
         };
         this.speechClosed = false;
@@ -661,11 +661,11 @@ class Game extends Scene {
   }
 
   idleInput() {
-    this.pressed = Scene.emptyInputState();
-    this.released = Scene.emptyInputState();
-    this.fired = Scene.emptyInputState();
+    this.pressed = Scene.createEmptyInputState();
+    this.released = Scene.createEmptyInputState();
+    this.fired = Scene.createEmptyInputState();
 
-    this.fired.Enter = this.fired.touchScreen.any = () => {
+    this.fired.keyboard.Enter = this.fired.touchScreen.any = () => {
       curtainSpeed = 0.003;
       this.speech.next();
       this.updateLogic = this.initialCutSceneUpdate;
@@ -674,28 +674,33 @@ class Game extends Scene {
   }
 
   cutSceneInput() {
-    this.pressed = Scene.emptyInputState();
-    this.released = Scene.emptyInputState();
-    this.fired = Scene.emptyInputState();
-    this.fired.KeyP = this.onFocusLost;
-    this.fired.Enter = this.fired.touchScreen.any = () => { camera.x = this.getFinalCameraX(); };
+    this.pressed = Scene.createEmptyInputState();
+    this.released = Scene.createEmptyInputState();
+    this.fired = Scene.createEmptyInputState();
+    this.fired.keyboard.KeyP = this.onFocusLost;
+    this.fired.keyboard.Enter = this.fired.touchScreen.any = () => { camera.x = this.getFinalCameraX(); };
   }
 
   normalInput() {
-    this.pressed = Scene.emptyInputState();
-    this.released = Scene.emptyInputState();
-    this.fired = Scene.emptyInputState();
-    this.fired.KeyP = this.onFocusLost;
-    this.pressed.ArrowUp = () => {
+    this.pressed = Scene.createEmptyInputState();
+    this.released = Scene.createEmptyInputState();
+    this.fired = Scene.createEmptyInputState();
+    this.fired.keyboard.KeyP = this.onFocusLost;
+
+    // this.pressed.virtualButton('up');
+    // this.onVirtualPressed('up');
+    // this.onPressed('up');
+
+    this.pressed.keyboard.ArrowUp = () => {
       artificialCameraOffsetY -= 1;
     };
-    this.pressed.ArrowDown = () => {
+    this.pressed.keyboard.ArrowDown = () => {
       artificialCameraOffsetY += 1;
     };
-    this.fired.KeyG = () => {
+    this.fired.keyboard.KeyG = () => {
       showGrid = !showGrid;
     };
-    this.fired.KeyK = () => {
+    this.fired.keyboard.KeyK = () => {
       this.speech.next();
     };
 
@@ -716,44 +721,44 @@ class Game extends Scene {
       this.rightButton.changeSpriteTo('normal');
     };
 
-    this.fired.KeyC = () => {
+    this.fired.keyboard.KeyC = () => {
       if (curtainSpeed === 0) {
         curtainSpeed = 0.003;
       } else {
         curtainSpeed *= -1;
       }
     };
-    this.pressed.ArrowRight = this.moveRight;
-    this.pressed.ArrowLeft = this.moveLeft;
+    this.pressed.keyboard.ArrowRight = this.moveRight;
+    this.pressed.keyboard.ArrowLeft = this.moveLeft;
 
-    this.fired.Space = this.tryToJump;
+    this.fired.keyboard.Space = this.tryToJump;
     this.fired.touchScreen.jump = () => {
       this.jumpButton.changeSpriteTo('pressed');
       this.tryToJump();
     };
 
-    this.fired.KeyJ = this.jump;
+    this.fired.keyboard.KeyJ = this.jump;
 
-    this.released.Space = this.interruptJumpingAcceleration;
+    this.released.keyboard.Space = this.interruptJumpingAcceleration;
     this.released.touchScreen.jump = () => {
       this.jumpButton.changeSpriteTo('normal');
       this.interruptJumpingAcceleration();
     };
 
-    this.fired.KeyB = () => {
+    this.fired.keyboard.KeyB = () => {
       cameraFollowBox.x = 354.7199999999988;
       this.character.position.x = 373.19000000000057;
     };
-    this.fired.KeyA = () => {
+    this.fired.keyboard.KeyA = () => {
       this.character.position.x -= 0.02;
     };
-    this.fired.KeyD = () => {
+    this.fired.keyboard.KeyD = () => {
       this.character.position.x += 0.02;
     };
-    this.fired.KeyQ = () => {
+    this.fired.keyboard.KeyQ = () => {
       cameraFollowBox.x -= 0.02;
     };
-    this.fired.KeyE = () => {
+    this.fired.keyboard.KeyE = () => {
       cameraFollowBox.x += 0.02;
     };
   }

@@ -1,12 +1,12 @@
 /* eslint-disable guard-for-in */
 /* eslint-disable no-restricted-syntax */
-import Game from './src/game.js';
+import Intro from './src/scenes/intro.js';
+import Menu from './src/scenes/menu.js';
+import Game from './src/scenes/game.js';
 import { setEnvironment, resources, fonts } from './engine/resources.js';
 import { GameplayGraphics, AskForRotationGraphics, recreate } from './engine/rendering.js';
 import Sprite from './engine/sprite.js';
 import FexDebug from './engine/debug.js';
-import Intro from './src/intro.js';
-import Menu from './src/menu.js';
 import InputBuffer from './engine/InputBuffer.js';
 import RotatePhoneScene from './src/rotatePhoneScene.js';
 import FexMath from './engine/utils/FexMath.js';
@@ -167,7 +167,7 @@ function handleInput(elapsedTime, virtualTime) {
   // const y = Math.floor(cursor.y / currentGraphics.scale);
 
   iterateOverState(isPressed.keyboard, (key) => {
-    tryToExecute(scene.pressed[key], elapsedTime, virtualTime);
+    tryToExecute(scene.pressed.keyboard[key], elapsedTime, virtualTime);
   });
 
   iterateOverState(isPressed.touchScreen, (area) => {
@@ -175,7 +175,7 @@ function handleInput(elapsedTime, virtualTime) {
   });
 
   iterateOverState(isFired.keyboard, (key) => {
-    tryToExecute(scene.fired[key], elapsedTime, virtualTime);
+    tryToExecute(scene.fired.keyboard[key], elapsedTime, virtualTime);
     isFired.keyboard[key] = false;
   });
 
@@ -185,7 +185,7 @@ function handleInput(elapsedTime, virtualTime) {
   });
 
   iterateOverState(isReleased.keyboard, (key) => {
-    tryToExecute(scene.released[key], elapsedTime, virtualTime);
+    tryToExecute(scene.released.keyboard[key], elapsedTime, virtualTime);
     isReleased.keyboard[key] = false;
   });
 
