@@ -3,6 +3,7 @@
 
 import InputBuffer from './InputBuffer.js';
 import TouchScreenArea from './TouchScreenArea.js';
+import FexDebug from './debug.js';
 
 class Scene {
   constructor() {
@@ -20,6 +21,7 @@ class Scene {
     this.onFocusRecovered = this.onFocusRecovered.bind(this);
     this.clicked = this.clicked.bind(this);
     this.mouseOver = this.mouseOver.bind(this);
+    this.virtualButtons = {};
   }
 
   init() {
@@ -76,6 +78,53 @@ class Scene {
   static createEmptyInputState() {
     return { keyboard: {}, touchScreen: {} };
   }
+
+  clearInputState() {
+    this.fired = Scene.createEmptyInputState();
+    this.pressed = Scene.createEmptyInputState();
+    this.released = Scene.createEmptyInputState();
+  }
+
+  createVirtualButton(virtualButtonName, { keys, touchScreenAreas }) {
+    this.virtualButtons[virtualButtonName] = { keys, touchScreenAreas };
+  }
+
+  on(state, virtualButtonName, action) {
+    if (state !== 'fired' && state !== 'pressed' && state !== 'released') throw new Error(`virtual button state: "${state}" not recognized`);
+    const virtualButton = this.virtualButtons[virtualButtonName];
+    virtualButton.keys.forEach((keyName) => {
+      this[state].keyboard[keyName] = action;
+    });
+    virtualButton.touchScreenAreas.forEach((touchScreenAreaName) => {
+      this[state].touchScreen[touchScreenAreaName] = action;
+    });
+  }
+
+  onFired(virtualButtonName, action) {
+    this.on('fired', virtualButtonName, action);
+  }
+
+  onPressed(virtualButtonName, action) {
+    this.on('pressed', virtualButtonName, action);
+  }
+
+  onReleased(virtualButtonName, action) {
+    this.on('released', virtualButtonName, action);
+  }
+
+  // asd() {
+  //   this.registerVirtualButton('jump', {
+  //     keys: ['Space', 'ArrowUp'],
+  //     touchScreenAreas: ['jumpArea'],
+  //   });
+
+  //   this.on('pressed', 'jump', () => {
+
+  //   });
+  //   this.onPressed('jump', () => {
+
+  //   });
+  // }
 }
 
 export default Scene;

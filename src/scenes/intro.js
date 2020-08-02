@@ -15,9 +15,6 @@ class Intro extends Scene {
     this.fade = 0;
     this.fadeSpeed = 0.0005;
 
-    this.fired.keyboard.Enter = () => this.finish();
-    this.fired.touchScreen.any = () => this.finish();
-
     this.audio = new Audio('res/noise-short.wav');
 
     this.timePassed = 0;
@@ -37,12 +34,20 @@ class Intro extends Scene {
       (screen.width - logoSprite.width) / 2, (screen.height - logoSprite.height) / 2);
 
     this.fade = 0;
+
     this.registerVolatileTouchScreenArea(
       new TouchScreenArea(
         20, 20, screen.width - 40, screen.height - 40, GameplayGraphics,
         'any',
       ),
     );
+
+    this.createVirtualButton('skip', {
+      keys: ['Enter'],
+      touchScreenAreas: ['any'],
+    });
+
+    this.onFired('skip', this.finish);
   }
 
   onScreenResize() {
