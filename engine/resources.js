@@ -35,6 +35,7 @@ const resourceLoadingData = [
   { path: 'engine-demo-focus-alert-window.png', resourceName: 'focusAlertWindow' },
   { path: 'engine-demo-intro.png', resourceName: 'fexIntro' },
   { path: 'engine-demo-key.png', resourceName: 'key' },
+  { path: 'engine-demo-flag.png', resourceName: 'flag' },
 ];
 
 const resources = {};
@@ -51,6 +52,7 @@ const tileMaps = {
   cave3: 'cave3.json',
   cave4: 'cave4.json',
   cave5: 'cave5.json',
+  test: 'test.json',
 };
 
 const tilesets = {

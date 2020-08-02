@@ -254,8 +254,8 @@ class World {
   copyTileCoordsInBound(zoneIndex, xTile, yTile, bound) {
     bound.x = this.zones[zoneIndex].x + xTile * GameplayGraphics.tileSize.w;
     bound.y = this.zones[zoneIndex].y + yTile * GameplayGraphics.tileSize.h;
-    bound.width = GameplayGraphics.tileSize.w;
-    bound.height = GameplayGraphics.tileSize.h;
+    bound.width = bound.width && GameplayGraphics.tileSize.w;
+    bound.height = bound.height && GameplayGraphics.tileSize.h;
   }
 }
 

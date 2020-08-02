@@ -69,10 +69,12 @@ const cameraFollowBox = {
 const jumpMovement = Physics.buildJumpMovement(5, 0.01);
 const jumpMovement2 = Physics.buildJumpMovement2(5);
 
-const characterTilePositionX = 32;
-const characterTilePositionY = 66;
+const characterTilePositionX = 19;
+const characterTilePositionY = 57;
 const keyTilePositionX = 28;
 const keyTilePositionY = 51;
+const flagTilePositionX = 27;
+const flagTilePositionY = 0;
 
 class Game extends Scene {
   static get camera() {
@@ -116,11 +118,18 @@ class Game extends Scene {
     this.jumpButtonSprite = null;
     this.jumpButtonPressedSprite = null;
 
+    // Entities
     this.character = null;
     this.key = null;
+    this.flag = null;
+    this.lava = null;
+
+    // UI
     this.leftButton = null;
     this.rightButton = null;
     this.jumpButton = null;
+
+    // Others
     this.speech = null;
     this.demoWorld = null;
     this.starPanels = [];
@@ -164,6 +173,14 @@ class Game extends Scene {
     this.isInAir = false;
     this.hasJumped = false;
     this.jumpRequestTime = null;
+  }
+
+  placeEntityOverTile(entity, xTile, yTile, zoneIndex = 0) {
+    this.demoWorld.copyTileCoordsInBound(
+      zoneIndex, xTile, yTile, entity.position,
+    );
+    entity.position.y -= entity.height;
+    entity.position.x += Math.round((GameplayGraphics.tileSize.w - entity.width) / 2);
   }
 
   init() {
@@ -220,21 +237,30 @@ class Game extends Scene {
     this.registerVolatileTouchScreenArea(this.leftButtonTouchScreenArea);
     this.registerVolatileTouchScreenArea(this.rightButtonTouchScreenArea);
 
-    this.xFloor = GameplayGraphics.tileSize.w * characterTilePositionX;
-    this.yFloor = GameplayGraphics.tileSize.h * characterTilePositionY - this.spriteSlimeIdle.height;
+    // Init World
+    this.demoWorld = new World(
+      // [tileMaps.zone1, tileMaps.try, tileMaps.try2],
+      [tileMaps.test],
+      tilesets.world,
+      0, 0,
+    );
+
+    // Init Entities
+
+    // this.xFloor = GameplayGraphics.tileSize.w * characterTilePositionX;
+    // this.yFloor = GameplayGraphics.tileSize.h * characterTilePositionY - this.spriteSlimeIdle.height;
     this.character = new Entity(
       {
         idle: this.spriteSlimeIdle,
         run: this.spriteSlimeRunning,
         runInverse: this.spriteSlimeRunningInverse,
       }, { startingSpriteKey: 'idle' },
-      this.xFloor, this.yFloor,
     );
+    this.placeEntityOverTile(this.character, characterTilePositionX, characterTilePositionY);
     this.character.addHitbox(0.25, 0.3, 0.5, 0.7);
 
     this.character.die = () => {
-      this.character.position.x = GameplayGraphics.tileSize.w * characterTilePositionX;
-      this.character.position.y = GameplayGraphics.tileSize.h * characterTilePositionY - this.spriteSlimeIdle.height;
+      this.placeEntityOverTile(this.character, characterTilePositionX, characterTilePositionY);
       this.character.velocity.x = this.character.velocity.y = 0;
       this.resetAlpha = 1;
     };
@@ -243,13 +269,38 @@ class Game extends Scene {
     this.key = new Entity(
       { normal: this.keySprite },
       { startingSpriteKey: 'normal' },
-      GameplayGraphics.tileSize.w * keyTilePositionX + Math.round((GameplayGraphics.tileSize.w - this.keySprite.width) / 2),
-      GameplayGraphics.tileSize.h * keyTilePositionY - this.keySprite.height - 1,
     );
+    this.placeEntityOverTile(this.key, keyTilePositionX, keyTilePositionY);
+
+    this.flagSprite = new Sprite(resources.flag, 1, [1], GameplayGraphics);
+    this.flag = new Entity(
+      { normal: this.flagSprite },
+      { startingSpriteKey: 'normal' },
+    );
+    this.placeEntityOverTile(this.flag, flagTilePositionX, flagTilePositionY);
+
+    this.lava = new (class {
+      constructor() {
+        this.position = { x: 0, y: 0 };
+        this.velocity = { x: 0, y: 0.7 };
+      }
+
+      render(customCamera) {
+        GameplayRenderer.renderFullRectangle(
+          0, this.position.y - customCamera.y,
+          GameplayGraphics.screen.width, GameplayGraphics.screen.height, 'rgba(255, 0, 0, 0.5)',
+        );
+      }
+    })();
+
+    // _, 58
+    this.resetLava = () => this.demoWorld.copyTileCoordsInBound(0, 0, 58, this.lava.position);
+    this.resetLava();
 
     cameraFollowBox.x = this.character.position.x - (cameraFollowBox.width - this.character.width) / 2;
     cameraFollowBox.y = this.character.position.y - (cameraFollowBox.height - this.character.height);
 
+    // camera init
     camera.x = -screen.width;
 
     const dialogPoint = { x: this.character.position.x + 14, y: this.character.position.y };
@@ -285,14 +336,6 @@ class Game extends Scene {
         '<3',
       ],
     ], dialogSpeed);
-
-    this.demoWorld = new World(
-      // [tileMaps.zone1, tileMaps.try, tileMaps.try2],
-      [tileMaps.cave5],
-      tilesets.world,
-      0, 0,
-    );
-
 
     // to start idle
     // this.updateLogic = this.idleUpdate;
@@ -366,23 +409,23 @@ class Game extends Scene {
     // Render background
     // TOCACHE
 
-    // GameplayGraphics.renderer.renderBitmap(resources.background, 0, 0, screen.width, screen.height);
-    // GameplayRenderer.fillStyle = this.back;
-    GameplayRenderer.fillStyle = 'black';
-    GameplayRenderer.renderFullRectangle();
+    GameplayGraphics.renderer.renderBitmap(resources.background, 0, 0, screen.width, screen.height);
+    GameplayRenderer.fillStyle = this.back;
+    // GameplayRenderer.fillStyle = 'black';
+    // GameplayRenderer.renderFullRectangle();
 
     // Render stars
     // TOCACHE
-    // const xTimes = Math.ceil(screen.width / resources.stars.width);
-    // const yTimes = Math.ceil(screen.height / resources.stars.height);
+    const xTimes = Math.ceil(screen.width / resources.stars.width);
+    const yTimes = Math.ceil(screen.height / resources.stars.height);
 
-    // for (let j = 0; j < yTimes; ++j) {
-    //   for (let i = 0; i < xTimes; ++i) {
-    //     GameplayGraphics.renderer.renderBitmap(
-    //       resources.stars, resources.stars.width * i - camera.x * starsParallax, resources.stars.height * j - camera.y * starsParallax,
-    //     );
-    //   }
-    // }
+    for (let j = 0; j < yTimes; ++j) {
+      for (let i = 0; i < xTimes; ++i) {
+        GameplayGraphics.renderer.renderBitmap(
+          resources.stars, resources.stars.width * i - camera.x * starsParallax, resources.stars.height * j - camera.y * starsParallax,
+        );
+      }
+    }
 
     this.demoWorld.render(camera);
 
@@ -406,13 +449,12 @@ class Game extends Scene {
 
 
     this.key.render(camera);
+    this.flag.render(camera);
     this.light.render(camera);
     // GameplayRenderer.renderFullRectangle((this.light.x - camera.x) - 10, (this.light.y - camera.y) - 10, 20, 20, 'white');
     // GameplayRenderer.renderFullCircle(this.light.x - camera.x, this.light.y - camera.y, 5, 'white');
 
     // this.lights.forEach(l => l.render(camera));
-
-    this.renderLogic();
 
     if (showGrid) {
       renderer.renderWorldTileGrid(this.demoWorld, camera, this.demoWorld.collisionInfo.map);
@@ -421,6 +463,9 @@ class Game extends Scene {
     } else {
       this.character.render(camera);
     }
+    this.lava.render(camera);
+
+    this.renderLogic();
 
     if (pause) {
       GameplayGraphics.renderingContext2D.globalAlpha = 0.75;
@@ -507,6 +552,9 @@ class Game extends Scene {
     if (!pause) {
       curtain = Math.max(0, Math.min(1, curtain + curtainSpeed * elapsedTime));
 
+      if (this.lava.position.y > GameplayGraphics.tileSize.h) {
+        this.lava.position.y -= this.lava.velocity.y;
+      }
 
       this.character.velocity.y += this.modifyGravity(gravity) * elapsedTime;
       this.character.update(elapsedTime);
@@ -527,6 +575,13 @@ class Game extends Scene {
 
       if (this.demoWorld.collisionInfo.dead) {
         this.character.die();
+        this.resetLava();
+        return;
+      }
+
+      if (this.character.position.y + this.character.height > this.lava.position.y) {
+        this.character.die();
+        this.resetLava();
         return;
       }
 
