@@ -257,13 +257,25 @@ class Game extends Scene {
     this.registerVolatileTouchScreenArea(this.pauseButtonTouchScreenArea);
     this.registerVolatileTouchScreenArea(this.anyTouchScreenArea);
 
-    this.createVirtualButton('unpause', {
+    this.createVirtualButton('pause', {
       keys: ['KeyP'],
       touchScreenAreas: ['pause'],
     });
-    this.createVirtualButton('nextDialog', {
+    this.createVirtualButton('continue', {
       keys: ['Enter'],
       touchScreenAreas: ['any'],
+    });
+    this.createVirtualButton('left', {
+      keys: ['ArrowLeft', 'KeyA'],
+      touchScreenAreas: ['left'],
+    });
+    this.createVirtualButton('right', {
+      keys: ['ArrowRight', 'KeyD'],
+      touchScreenAreas: ['right'],
+    });
+    this.createVirtualButton('jump', {
+      keys: ['Space'],
+      touchScreenAreas: ['jump'],
     });
 
     // Init World
@@ -311,7 +323,7 @@ class Game extends Scene {
     this.lava = new (class {
       constructor() {
         this.position = { x: 0, y: 0 };
-        this.velocity = { x: 0, y: 0.7 };
+        this.velocity = { x: 0, y: /* 0.7 */ 0 };
       }
 
       render(customCamera) {
@@ -568,7 +580,7 @@ class Game extends Scene {
     this.rightButton.changeSpriteTo('normal');
     this.jumpButton.changeSpriteTo('normal');
 
-    this.onFired('unpause', () => this.unpause(previousInput));
+    this.onFired('pause', () => this.unpause(previousInput));
   }
 
   renderUI() {
@@ -692,7 +704,7 @@ class Game extends Scene {
       this.finalCameraX = finalCameraX;
       if (this.speechClosed) {
         this.speech.next();
-        this.onFired('nextDialog', () => {
+        this.onFired('continue', () => {
           this.speech.next();
         });
         this.speechClosed = false;
@@ -720,18 +732,18 @@ class Game extends Scene {
   idleInput() {
     this.clearInputState();
 
-    this.fired.keyboard.Enter = this.fired.touchScreen.any = () => {
+    this.onFired('continue', () => {
       curtainSpeed = 0.003;
       this.speech.next();
       this.updateLogic = this.initialCutSceneUpdate;
       this.cutSceneInput();
-    };
+    });
   }
 
   cutSceneInput() {
     this.clearInputState();
-    this.fired.keyboard.KeyP = this.fired.touchScreen.pause = this.onFocusLost;
-    this.fired.keyboard.Enter = this.fired.touchScreen.any = () => { camera.x = this.getFinalCameraX(); };
+    this.onFired('pause', this.onFocusLost);
+    this.onFired('continue', () => { camera.x = this.getFinalCameraX(); });
   }
 
   normalInput() {
@@ -741,11 +753,7 @@ class Game extends Scene {
     this.registerVolatileTouchScreenArea(this.jumpButtonTouchScreenArea);
 
     this.clearInputState();
-    this.fired.keyboard.KeyP = this.fired.touchScreen.pause = this.onFocusLost;
-
-    // this.pressed.virtualButton('up');
-    // this.onVirtualPressed('up');
-    // this.onPressed('up');
+    this.onFired('pause', this.onFocusLost);
 
     this.pressed.keyboard.ArrowUp = () => {
       artificialCameraOffsetY -= 1;
@@ -760,24 +768,23 @@ class Game extends Scene {
       this.speech.next();
     };
 
-    this.pressed.touchScreen.left = this.moveLeft;
-    this.pressed.touchScreen.right = this.moveRight;
+    this.onPressed('left', this.moveLeft);
+    this.onPressed('right', this.moveRight);
 
-    this.fired.touchScreen.left = () => {
+    this.onFired('left', () => {
       this.leftButton.changeSpriteTo('pressed');
-    };
-    this.fired.touchScreen.right = () => {
+    });
+    this.onFired('right', () => {
       this.rightButton.changeSpriteTo('pressed');
-    };
-
-    this.released.keyboard.ArrowLeft = this.released.touchScreen.left = () => {
+    });
+    this.onReleased('left', () => {
       this.character.changeSpriteTo('idle');
       this.leftButton.changeSpriteTo('normal');
-    };
-    this.released.keyboard.ArrowRight = this.released.touchScreen.right = () => {
+    });
+    this.onReleased('right', () => {
       this.character.changeSpriteTo('idle');
       this.rightButton.changeSpriteTo('normal');
-    };
+    });
 
     this.fired.keyboard.KeyC = () => {
       if (curtainSpeed === 0) {
@@ -786,39 +793,18 @@ class Game extends Scene {
         curtainSpeed *= -1;
       }
     };
-    this.pressed.keyboard.ArrowRight = this.moveRight;
-    this.pressed.keyboard.ArrowLeft = this.moveLeft;
 
-    this.fired.keyboard.Space = this.tryToJump;
-    this.fired.touchScreen.jump = () => {
+    this.onFired('jump', () => {
       this.jumpButton.changeSpriteTo('pressed');
       this.tryToJump();
-    };
+    });
 
     this.fired.keyboard.KeyJ = this.jump;
 
-    this.released.keyboard.Space = this.interruptJumpingAcceleration;
-    this.released.touchScreen.jump = () => {
+    this.onReleased('jump', () => {
       this.jumpButton.changeSpriteTo('normal');
       this.interruptJumpingAcceleration();
-    };
-
-    this.fired.keyboard.KeyB = () => {
-      cameraFollowBox.x = 354.7199999999988;
-      this.character.position.x = 373.19000000000057;
-    };
-    this.fired.keyboard.KeyA = () => {
-      this.character.position.x -= 0.02;
-    };
-    this.fired.keyboard.KeyD = () => {
-      this.character.position.x += 0.02;
-    };
-    this.fired.keyboard.KeyQ = () => {
-      cameraFollowBox.x -= 0.02;
-    };
-    this.fired.keyboard.KeyE = () => {
-      cameraFollowBox.x += 0.02;
-    };
+    });
   }
 
   isInUIRegion(x, y, x0, y0) {
