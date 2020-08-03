@@ -501,7 +501,9 @@ class Game extends Scene {
       GameplayGraphics.renderer.renderString('PAUSE', (screen.width / 2) - ('pause'.length / 2) * 6, screen.height / 2 - 2.5, fonts.normal);
     }
 
-    this.pauseButton.render();
+    if (FexUtils.deviceHasTouch()) {
+      this.pauseButton.render();
+    }
 
     if (this.resetAlpha > 0) {
       GameplayRenderer.fillStyle = 'black';
@@ -702,7 +704,7 @@ class Game extends Scene {
         curtainSpeed *= -1;
         this.updateLogic = this.normalUpdate;
         this.normalInput();
-        if (true || FexUtils.deviceHasTouch()) {
+        if (FexUtils.deviceHasTouch()) {
           this.renderLogic = this.renderUI;
         }
       }
