@@ -14,6 +14,7 @@ import FexMath from '../../engine/utils/FexMath.js';
 import Light from '../../engine/light.js';
 import Bound from '../../engine/Bound.js';
 import FexUtils from '../../engine/utils/FexUtils.js';
+import InputBuffer from '../../engine/InputBuffer.js';
 
 const ArrayNewFunctionalities = {
   removeIf(condition) {
@@ -253,9 +254,6 @@ class Game extends Scene {
     );
 
     this.registerVolatileTouchScreenArea(this.pauseButtonTouchScreenArea);
-    this.registerVolatileTouchScreenArea(this.leftButtonTouchScreenArea);
-    this.registerVolatileTouchScreenArea(this.rightButtonTouchScreenArea);
-    this.registerVolatileTouchScreenArea(this.jumpButtonTouchScreenArea);
     this.registerVolatileTouchScreenArea(this.anyTouchScreenArea);
 
     this.createVirtualButton('unpause', {
@@ -734,6 +732,11 @@ class Game extends Scene {
   }
 
   normalInput() {
+    InputBuffer.deleteTouchScreenArea('any');
+    this.registerVolatileTouchScreenArea(this.leftButtonTouchScreenArea);
+    this.registerVolatileTouchScreenArea(this.rightButtonTouchScreenArea);
+    this.registerVolatileTouchScreenArea(this.jumpButtonTouchScreenArea);
+
     this.clearInputState();
     this.fired.keyboard.KeyP = this.fired.touchScreen.pause = this.onFocusLost;
 
