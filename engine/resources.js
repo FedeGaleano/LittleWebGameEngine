@@ -27,6 +27,7 @@ const resourceLoadingData = [
   { path: 'engine-demo-button-right.png', resourceName: 'uiButtonRight' },
   { path: 'engine-demo-button-action.png', resourceName: 'uiButtonAction' },
   { path: 'engine-demo-button-pause.png', resourceName: 'uiButtonPause' },
+  { path: 'engine-demo-button-unpause.png', resourceName: 'uiButtonUnpause' },
   { path: 'engine-demo-button-left-pressed.png', resourceName: 'uiButtonLeftPressed' },
   { path: 'engine-demo-button-right-pressed.png', resourceName: 'uiButtonRightPressed' },
   { path: 'engine-demo-button-jump-pressed.png', resourceName: 'uiButtonActionPressed' },

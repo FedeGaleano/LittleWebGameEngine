@@ -228,9 +228,10 @@ class Game extends Scene {
     );
 
     this.pauseButtonSprite = new Sprite(resources.uiButtonPause, 1, [1], GameplayGraphics);
+    this.unpauseButtonSprite = new Sprite(resources.uiButtonUnpause, 1, [1], GameplayGraphics);
     this.pauseButton = new Entity(
-      { normal: this.pauseButtonSprite },
-      { startingSpriteKey: 'normal' },
+      { pause: this.pauseButtonSprite, unpause: this.unpauseButtonSprite },
+      { startingSpriteKey: 'pause' },
       screen.width - 10 - this.uiButtonSize, screen.height - 10 - this.uiButtonSize,
     );
 
@@ -558,6 +559,7 @@ class Game extends Scene {
   onFocusLost() {
     if (pause) return;
     pause = true;
+    this.pauseButton.changeSpriteTo('unpause');
 
     const previousInput = { fired: this.fired, pressed: this.pressed, released: this.released };
     this.clearInputState();
@@ -712,6 +714,7 @@ class Game extends Scene {
   unpause(previousInput) {
     this.inputRecovery = previousInput;
     pause = false;
+    this.pauseButton.changeSpriteTo('pause');
   }
 
   idleInput() {
