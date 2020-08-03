@@ -76,7 +76,7 @@ const keyTilePositionY = 51;
 const flagTilePositionX = 27;
 const flagTilePositionY = 0;
 
-const touchMargin = 20;
+const touchMargin = 10;
 
 class Game extends Scene {
   static get camera() {
