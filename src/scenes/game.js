@@ -312,7 +312,7 @@ class Game extends Scene {
     this.lava = new (class {
       constructor() {
         this.position = { x: 0, y: 0 };
-        this.velocity = { x: 0, y: /* 0.7 */ 0 };
+        this.velocity = { x: 0, y: 0.7 };
       }
 
       render(customCamera) {
