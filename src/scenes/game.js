@@ -76,6 +76,8 @@ const keyTilePositionY = 51;
 const flagTilePositionX = 27;
 const flagTilePositionY = 0;
 
+const touchMargin = 20;
+
 class Game extends Scene {
   static get camera() {
     return camera;
@@ -128,6 +130,7 @@ class Game extends Scene {
     this.leftButton = null;
     this.rightButton = null;
     this.jumpButton = null;
+    this.pauseButton = null;
 
     // Others
     this.speech = null;
@@ -155,6 +158,9 @@ class Game extends Scene {
     this.jumpButton.position.x = screen.width - 10 - this.uiButtonSize;
     this.jumpButton.position.y = screen.height - 10 - this.uiButtonSize;
 
+    this.pauseButton.position.x = screen.width - 10 - this.pauseButton.width;
+    this.pauseButton.position.y = 10;
+
 
     this.leftButtonTouchScreenArea.upperLeftCornerX = this.leftButton.position.x - 10;
     this.leftButtonTouchScreenArea.upperLeftCornerY = this.leftButton.position.y - 10;
@@ -165,8 +171,11 @@ class Game extends Scene {
     this.jumpButtonTouchScreenArea.upperLeftCornerX = this.jumpButton.position.x - 15;
     this.jumpButtonTouchScreenArea.upperLeftCornerY = this.jumpButton.position.y - 10;
 
-    this.anyTouchScreenArea.width = GameplayGraphics.screen.width;
-    this.anyTouchScreenArea.height = GameplayGraphics.screen.height;
+    this.pauseButtonTouchScreenArea.upperLeftCornerX = this.pauseButton.position.x - 15;
+    this.pauseButtonTouchScreenArea.upperLeftCornerY = this.pauseButton.position.y - 10;
+
+    this.anyTouchScreenArea.width = GameplayGraphics.screen.width - touchMargin * 2;
+    this.anyTouchScreenArea.height = GameplayGraphics.screen.height - touchMargin * 2;
 
     this.timeInAir = 0;
     this.wasInAir = false;
@@ -217,6 +226,13 @@ class Game extends Scene {
       screen.width - 10 - this.uiButtonSize, screen.height - 10 - this.uiButtonSize,
     );
 
+    this.pauseButtonSprite = new Sprite(resources.uiButtonPause, 1, [1], GameplayGraphics);
+    this.pauseButton = new Entity(
+      { normal: this.pauseButtonSprite },
+      { startingSpriteKey: 'normal' },
+      screen.width - 10 - this.uiButtonSize, screen.height - 10 - this.uiButtonSize,
+    );
+
     this.leftButtonTouchScreenArea = new TouchScreenArea(
       this.leftButton.position.x - 5, this.leftButton.position.y - 5, this.leftButton.width + 15, this.leftButton.height + 20, GameplayGraphics, 'left',
     );
@@ -226,16 +242,30 @@ class Game extends Scene {
     this.jumpButtonTouchScreenArea = new TouchScreenArea(
       this.jumpButton.position.x - 5, this.jumpButton.position.y - 5, this.jumpButton.width + 25, this.jumpButton.height + 20, GameplayGraphics, 'jump',
     );
-
-    this.anyTouchScreenArea = new TouchScreenArea(
-      0, 0, GameplayGraphics.screen.width, GameplayGraphics.screen.height, GameplayGraphics, 'any',
+    this.pauseButtonTouchScreenArea = new TouchScreenArea(
+      this.pauseButton.position.x - 5, this.pauseButton.position.y - 5, this.pauseButton.width + 25, this.pauseButton.height + 20, GameplayGraphics, 'pause',
     );
 
+    this.anyTouchScreenArea = new TouchScreenArea(
+      touchMargin, touchMargin,
+      GameplayGraphics.screen.width - touchMargin * 2, GameplayGraphics.screen.height - touchMargin * 2,
+      GameplayGraphics, 'any',
+    );
 
-    this.registerVolatileTouchScreenArea(this.jumpButtonTouchScreenArea);
-    this.registerVolatileTouchScreenArea(this.anyTouchScreenArea);
+    this.registerVolatileTouchScreenArea(this.pauseButtonTouchScreenArea);
     this.registerVolatileTouchScreenArea(this.leftButtonTouchScreenArea);
     this.registerVolatileTouchScreenArea(this.rightButtonTouchScreenArea);
+    this.registerVolatileTouchScreenArea(this.jumpButtonTouchScreenArea);
+    this.registerVolatileTouchScreenArea(this.anyTouchScreenArea);
+
+    this.createVirtualButton('unpause', {
+      keys: ['KeyP'],
+      touchScreenAreas: ['pause'],
+    });
+    this.createVirtualButton('nextDialog', {
+      keys: ['Enter'],
+      touchScreenAreas: ['any'],
+    });
 
     // Init World
     this.demoWorld = new World(
@@ -282,7 +312,7 @@ class Game extends Scene {
     this.lava = new (class {
       constructor() {
         this.position = { x: 0, y: 0 };
-        this.velocity = { x: 0, y: 0.7 };
+        this.velocity = { x: 0, y: /* 0.7 */ 0 };
       }
 
       render(customCamera) {
@@ -433,18 +463,6 @@ class Game extends Scene {
     this.speech.render(camera);
     // cameraFollowBox.render(camera);
 
-    // Curtain
-    // TOCACHE
-    const curtainHeight = screen.height * curtainHeightFactor * curtain;
-    GameplayRenderer.fillStyle = 'black';
-    GameplayRenderer.renderFullRectangle(0, 0, screen.width, curtainHeight);
-    GameplayRenderer.renderFullRectangle(0, screen.height - curtainHeight, screen.width, curtainHeight);
-
-    // GameplayRenderer.fillStyle = 'black';
-    // GameplayRenderer.alpha = 0.75;
-    // GameplayRenderer.renderFullRectangle();
-    // GameplayRenderer.alpha = 1;
-
     this.boss.render(camera);
 
 
@@ -463,7 +481,15 @@ class Game extends Scene {
     } else {
       this.character.render(camera);
     }
+
     this.lava.render(camera);
+
+    // Render Curtain
+    // TOCACHE
+    const curtainHeight = screen.height * curtainHeightFactor * curtain;
+    GameplayRenderer.fillStyle = 'black';
+    GameplayRenderer.renderFullRectangle(0, 0, screen.width, curtainHeight);
+    GameplayRenderer.renderFullRectangle(0, screen.height - curtainHeight, screen.width, curtainHeight);
 
     this.renderLogic();
 
@@ -474,6 +500,8 @@ class Game extends Scene {
       GameplayGraphics.renderingContext2D.globalAlpha = 1;
       GameplayGraphics.renderer.renderString('PAUSE', (screen.width / 2) - ('pause'.length / 2) * 6, screen.height / 2 - 2.5, fonts.normal);
     }
+
+    this.pauseButton.render();
 
     if (this.resetAlpha > 0) {
       GameplayRenderer.fillStyle = 'black';
@@ -501,7 +529,30 @@ class Game extends Scene {
   }
 
   postUpdate() {
-    this.character.changeSpriteTo('idle');
+    if (this.inputRecovery) {
+      this.fired = this.inputRecovery.fired;
+      this.pressed = this.inputRecovery.pressed;
+      this.released = this.inputRecovery.released;
+
+
+      // eslint-disable-next-line no-restricted-syntax
+      for (const key in this.released.keyboard) {
+        // eslint-disable-next-line no-prototype-builtins
+        if (this.released.keyboard.hasOwnProperty(key)) {
+          this.released.keyboard[key]();
+        }
+      }
+
+      // eslint-disable-next-line no-restricted-syntax
+      for (const area in this.released.touchScreen) {
+        // eslint-disable-next-line no-prototype-builtins
+        if (this.released.touchScreen.hasOwnProperty(area)) {
+          this.released.touchScreen[area]();
+        }
+      }
+
+      this.inputRecovery = null;
+    }
   }
 
   onFocusLost() {
@@ -511,13 +562,20 @@ class Game extends Scene {
     const previousInput = { fired: this.fired, pressed: this.pressed, released: this.released };
     this.clearInputState();
 
-    this.fired.keyboard.KeyP = this.fired.touchScreen.any = () => this.unpause(previousInput);
+    this.leftButton.changeSpriteTo('normal');
+    this.rightButton.changeSpriteTo('normal');
+    this.jumpButton.changeSpriteTo('normal');
+
+    this.onFired('unpause', () => this.unpause(previousInput));
   }
 
   renderUI() {
     this.leftButton.render();
     this.rightButton.render();
     this.jumpButton.render();
+
+    FexDebug.logOnScreen('pauseButton.y', this.pauseButton.position.y);
+    FexDebug.logOnScreen('jumpButton.y', this.jumpButton.position.y);
   }
 
   updateCameraFollowBox() {
@@ -632,9 +690,9 @@ class Game extends Scene {
       this.finalCameraX = finalCameraX;
       if (this.speechClosed) {
         this.speech.next();
-        this.fired.keyboard.Enter = this.fired.touchScreen.any = () => {
+        this.onFired('nextDialog', () => {
           this.speech.next();
-        };
+        });
         this.speechClosed = false;
       }
 
@@ -644,7 +702,7 @@ class Game extends Scene {
         curtainSpeed *= -1;
         this.updateLogic = this.normalUpdate;
         this.normalInput();
-        if (FexUtils.deviceHasTouch()) {
+        if (true || FexUtils.deviceHasTouch()) {
           this.renderLogic = this.renderUI;
         }
       }
@@ -652,9 +710,7 @@ class Game extends Scene {
   }
 
   unpause(previousInput) {
-    this.fired = previousInput.fired;
-    this.pressed = previousInput.pressed;
-    this.released = previousInput.released;
+    this.inputRecovery = previousInput;
     pause = false;
   }
 
@@ -671,13 +727,13 @@ class Game extends Scene {
 
   cutSceneInput() {
     this.clearInputState();
-    this.fired.keyboard.KeyP = this.onFocusLost;
+    this.fired.keyboard.KeyP = this.fired.touchScreen.pause = this.onFocusLost;
     this.fired.keyboard.Enter = this.fired.touchScreen.any = () => { camera.x = this.getFinalCameraX(); };
   }
 
   normalInput() {
     this.clearInputState();
-    this.fired.keyboard.KeyP = this.onFocusLost;
+    this.fired.keyboard.KeyP = this.fired.touchScreen.pause = this.onFocusLost;
 
     // this.pressed.virtualButton('up');
     // this.onVirtualPressed('up');
@@ -706,10 +762,12 @@ class Game extends Scene {
       this.rightButton.changeSpriteTo('pressed');
     };
 
-    this.released.touchScreen.left = () => {
+    this.released.keyboard.ArrowLeft = this.released.touchScreen.left = () => {
+      this.character.changeSpriteTo('idle');
       this.leftButton.changeSpriteTo('normal');
     };
-    this.released.touchScreen.right = () => {
+    this.released.keyboard.ArrowRight = this.released.touchScreen.right = () => {
+      this.character.changeSpriteTo('idle');
       this.rightButton.changeSpriteTo('normal');
     };
 

@@ -9,8 +9,15 @@
     <link rel="icon" href="favicon.ico">
 </head>
 <body>
-    <div id="fullScreenButton"> <img id="fullScreenImage" src="res/goFullScreen.png" alt="goFullScreen.png"> </div>
-    <div id="debugButton"></div>
+    <div id="buttons">
+        <div id="fullScreenButton">
+            <img id="fullScreenImage" src="res/goFullScreen.png" alt="goFullScreen.png">
+        </div>
+        <div id="debugButton">
+            <img id="debugImage" src="res/debug.png" alt="debug.png">
+        </div>
+        <div id="empty"></div>
+    </div>
     <script type="module" src="index.js"></script>
 </body>
 <style>
@@ -20,10 +27,14 @@
     html {
         background-color: #1E1E1E;
     }
-    #fullScreenButton {
+    #buttons {
         position: absolute;
-        top: 10px;
-        left: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    #fullScreenButton {
+        margin: 10px;
         border-radius: 100%;
         width: 26px;
         height: 26px;
@@ -40,15 +51,28 @@
         max-height: 70%;
     }
     #debugButton {
-        position: absolute;
-        top: 10px;
-        left: 96%;
+        display: flex;
+        justify-self: center;
+        margin: 10px;
         border-radius: 100%;
         width: 26px;
         height: 26px;
         border: 1px white solid;
         background-color: white;
         opacity: 0.3;
+    }
+    #debugImage {
+        position: relative;
+        top: 4px;
+        left: 4px;
+        display: block;
+        max-width: 70%;
+        max-height: 70%;
+    }
+    #empty {
+        margin: 10px;
+        width: 26px;
+        height: 26px;
     }
 </style>
 </html>

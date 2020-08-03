@@ -379,6 +379,7 @@ export default function startEngine() {
         if (areas[areaName].covers(x, y)) {
           if (!isPressed.touchScreen[areaName]) isFired.touchScreen[areaName] = true;
           isPressed.touchScreen[areaName] = true;
+          break;
         }
       }
     }

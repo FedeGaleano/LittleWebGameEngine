@@ -9,6 +9,7 @@ class Scene {
   constructor() {
     this.finish = () => {};
     this.clearInputState();
+    this.inputRecovery = null;
     this.volatileTouchScreenAreas = [];
     this.init = this.init.bind(this);
     this.update = this.update.bind(this);
