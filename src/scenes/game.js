@@ -53,6 +53,9 @@ const maxJumpVelocity = 0.32;
 const gravity = 0.001;
 // const maxJumpVelocity = 0.5;
 // const gravity = 0.002;
+const coyoteTime = 100;
+const prematureJumpTolerance = 100;
+const lavaVelocity = 0.7;
 
 const cameraFollowBox = {
   x: 0,
@@ -70,12 +73,23 @@ const cameraFollowBox = {
 const jumpMovement = Physics.buildJumpMovement(5, 0.01);
 const jumpMovement2 = Physics.buildJumpMovement2(5);
 
-const characterTilePositionX = 19;
-const characterTilePositionY = 57;
+const characterTilePositionX = 27;
+const characterTilePositionY = 63;
 const keyTilePositionX = 28;
 const keyTilePositionY = 51;
 const flagTilePositionX = 27;
 const flagTilePositionY = 0;
+const lavaTilePositionX = 0;
+const lavaTilePositionY = 64;
+const triggerZoneCoords = {
+  // less than
+  xTile: 20,
+  yTile: 57,
+
+  // these two are set in Game.init after world creation using the tile coords above
+  x: null,
+  y: null,
+};
 
 const touchMargin = 10;
 
@@ -286,6 +300,8 @@ class Game extends Scene {
       0, 0,
     );
 
+    this.demoWorld.copyTileCoordsInBound(0, triggerZoneCoords.xTile, triggerZoneCoords.yTile, triggerZoneCoords);
+
     // Init Entities
 
     // this.xFloor = GameplayGraphics.tileSize.w * characterTilePositionX;
@@ -323,7 +339,7 @@ class Game extends Scene {
     this.lava = new (class {
       constructor() {
         this.position = { x: 0, y: 0 };
-        this.velocity = { x: 0, y: /* 0.7 */ 0 };
+        this.velocity = { x: 0, y: 0 };
       }
 
       render(customCamera) {
@@ -335,7 +351,10 @@ class Game extends Scene {
     })();
 
     // _, 58
-    this.resetLava = () => this.demoWorld.copyTileCoordsInBound(0, 0, 58, this.lava.position);
+    this.resetLava = () => {
+      this.demoWorld.copyTileCoordsInBound(0, lavaTilePositionX, lavaTilePositionY, this.lava.position);
+      this.lava.velocity.y = 0;
+    };
     this.resetLava();
 
     cameraFollowBox.x = this.character.position.x - (cameraFollowBox.width - this.character.width) / 2;
@@ -629,6 +648,13 @@ class Game extends Scene {
       this.character.velocity.y += this.modifyGravity(gravity) * elapsedTime;
       this.character.update(elapsedTime);
 
+      // start moving lava (trigger)
+      if (this.lava.velocity.y === 0
+        && this.character.position.x < triggerZoneCoords.x
+        && this.character.position.y < triggerZoneCoords.y) {
+        this.lava.velocity.y = lavaVelocity;
+      }
+
       // light update
       // this.light.x = this.character.position.x + this.character.width / 2;
       // this.light.y = this.character.position.y + this.character.height / 2;
@@ -661,11 +687,14 @@ class Game extends Scene {
       } else {
         this.timeInAir = 0;
         this.hasJumped = false;
-        if (now - this.jumpRequestTime < 100) {
+        if (now - this.jumpRequestTime < prematureJumpTolerance) {
           this.jump();
           this.jumpRequestTime = null;
         }
       }
+
+      FexDebug.logOnScreen('coyoteTime', `${coyoteTime}ms`);
+      FexDebug.logOnScreen('prematureJumpTolerance', `${prematureJumpTolerance}ms`);
 
       const { friction } = this.demoWorld.collisionInfo;
       if (this.character.velocity.x !== 0) {
@@ -794,9 +823,9 @@ class Game extends Scene {
       }
     };
 
-    this.onFired('jump', () => {
+    this.onFired('jump', (deltaTime, now) => {
       this.jumpButton.changeSpriteTo('pressed');
-      this.tryToJump();
+      this.tryToJump(deltaTime, now);
     });
 
     this.fired.keyboard.KeyJ = this.jump;
@@ -832,7 +861,7 @@ class Game extends Scene {
   }
 
   tryToJump(_, now) {
-    if (!this.hasJumped && this.timeInAir < 100) {
+    if (!this.hasJumped && this.timeInAir < coyoteTime) {
       this.jump();
     } else {
       this.jumpRequestTime = now;
