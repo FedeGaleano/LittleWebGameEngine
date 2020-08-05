@@ -16,8 +16,8 @@ class Menu extends Scene {
   }
 
   placePlayUIButton() {
-    this.playButtonX = GameplayGraphics.screen.width / 2 - resources.playButton.width / 2;
-    this.playButtonY = GameplayGraphics.screen.height * 0.6 - resources.playButton.height / 2;
+    this.playButtonX = (GameplayGraphics.screen.width - resources.playButton.width) / 2;
+    this.playButtonY = (GameplayGraphics.screen.height / 3) * 2 - resources.playButton.height / 2;
 
     this.registerVolatileTouchScreenArea(
       new TouchScreenArea(
