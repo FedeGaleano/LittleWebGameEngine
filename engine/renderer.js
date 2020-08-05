@@ -93,6 +93,14 @@ class Renderer {
     renderingContext2D.stroke();
   }
 
+  renderLineAlignedToXAxis(x0, y0, width) {
+    this.renderEmptyRectangle(x0, y0, width, 0);
+  }
+
+  renderLineAlignedToYAxis(x0, y0, height) {
+    this.renderEmptyRectangle(x0, y0, 0, height);
+  }
+
   renderBitmap(image, x, y, w, h) {
     const { renderingContext2D, scale } = this.graphics;
     renderingContext2D.drawImage(
