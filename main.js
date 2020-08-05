@@ -317,7 +317,7 @@ export default function startEngine() {
           // );
           currentGraphics.renderer.alpha = 1;
           currentGraphics.renderer.renderEmptyRectangle(
-            area.upperLeftCornerX, area.upperLeftCornerY, area.width, area.height, 'blue',
+            area.upperLeftCornerX, area.upperLeftCornerY, area.width, area.height, '#00FF00',
           );
         }
       }
