@@ -1,7 +1,6 @@
 import Font from './font.js';
-import Bound from './Bound.js';
 import TileMark from './TileMark.js';
-import { GameplayGraphics } from './rendering.js';
+import FexDebug from './debug.js';
 
 const chooseMarkColor = {
   1: '#0000FF',
@@ -199,9 +198,53 @@ class Renderer {
     }
   }
 
+  renderLetterOffScreen(letter, x, y, font) {
+    const index = Font.getLetterIndex(letter);
+    const {
+      scale, offScreenRenderingContext2D,
+    } = this.graphics;
+    offScreenRenderingContext2D.drawImage(
+      font.bitmap,
+      index * 6, 0,
+      5, 8,
+      x * scale, y * scale,
+      5 * scale, 8 * scale,
+    );
+  }
+
+  renderStringColored(string, x, y, font, color) {
+    this.clearOffScreen();
+    for (let index = 0,
+      cursor = 0; index < string.length;
+      cursor += font.kerningData[Font.getLetterIndex(string[index++])] + 1
+    ) {
+      this.renderLetterOffScreen(string[index], x + cursor, y, font);
+    }
+    this.compositeOffScreenColor(color);
+    this.blitFromOffScreen();
+  }
+
   clearScreen() {
     const { renderingContext2D, canvasWidth, canvasHeight } = this.graphics;
     renderingContext2D.clearRect(0, 0, canvasWidth, canvasHeight);
+  }
+
+  clearOffScreen() {
+    const { offScreenRenderingContext2D, canvasWidth, canvasHeight } = this.graphics;
+    offScreenRenderingContext2D.clearRect(0, 0, canvasWidth, canvasHeight);
+  }
+
+  compositeOffScreenColor(color) {
+    const { offScreenRenderingContext2D, canvasWidth, canvasHeight } = this.graphics;
+    offScreenRenderingContext2D.fillStyle = color;
+    offScreenRenderingContext2D.globalCompositeOperation = 'source-in';
+    offScreenRenderingContext2D.fillRect(0, 0, canvasWidth, canvasHeight);
+    offScreenRenderingContext2D.globalCompositeOperation = 'source-over';
+  }
+
+  blitFromOffScreen() {
+    const { renderingContext2D, offScreenCanvas } = this.graphics;
+    renderingContext2D.drawImage(offScreenCanvas, 0, 0);
   }
 
   get fillStyle() {

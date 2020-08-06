@@ -80,16 +80,22 @@ class Menu extends Scene {
       this.starPanels.push(this.starPanels[this.starPanels.length - 1] - resources.stars.width);
     }
 
-    this.blink = Math.round((now / blinkTimeInMillis)) % 2 === 0;
+    this.blink = Math.round((now / blinkTimeInMillis)) % 4 === 0;
     this.fexi.update(elapsedTime);
   }
 
   renderPressStart() {
     const { screen } = GameplayGraphics;
-    if (this.blink) {
-      GameplayRenderer.renderString(pressEnterText,
-        (screen.width - this.textLength) / 2, screen.height * (2 / 3) - this.textHeight / 2,
-        fonts.normal);
+    if (!this.blink) {
+      const x = (screen.width - this.textLength) / 2;
+      const y = screen.height * (2 / 3) - this.textHeight / 2;
+      GameplayRenderer.fillStyle = 'black';
+      GameplayRenderer.alpha = 0.5;
+      GameplayRenderer.renderFullRectangle(x - 1, y - 1, fonts.normal.measureText(pressEnterText) + 1, fonts.normal.cellHeight - 1);
+      GameplayRenderer.alpha = 1;
+      GameplayRenderer.renderStringColored(pressEnterText,
+        x, y,
+        fonts.normal, 'grey');
     }
   }
 
