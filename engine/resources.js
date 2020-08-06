@@ -22,7 +22,7 @@ const resourceLoadingData = [
   { path: 'fill.png', resourceName: 'fill' },
   { path: 'fex-logo.png', resourceName: 'fexLogo' },
   { path: 'engine-demo-2-playButton.png', resourceName: 'playButton' },
-  { path: 'engine-demo-2-title.png', resourceName: 'title' },
+  { path: 'engine-demo-2-title-2.png', resourceName: 'title' },
   { path: 'engine-demo-button-left.png', resourceName: 'uiButtonLeft' },
   { path: 'engine-demo-button-right.png', resourceName: 'uiButtonRight' },
   { path: 'engine-demo-button-action.png', resourceName: 'uiButtonAction' },

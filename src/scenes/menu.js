@@ -1,10 +1,15 @@
 /* eslint-disable class-methods-use-this */
 import Scene from '../../engine/scene.js';
 import { GameplayRenderer, GameplayGraphics } from '../../engine/rendering.js';
-import { resources } from '../../engine/resources.js';
+import { resources, fonts } from '../../engine/resources.js';
 import FexDebug from '../../engine/debug.js';
 import InputBuffer from '../../engine/InputBuffer.js';
 import TouchScreenArea from '../../engine/TouchScreenArea.js';
+import FexUtils from '../../engine/utils/FexUtils.js';
+import Fexi from '../Fexi.js';
+
+const pressEnterText = 'PRESS ENTER TO START';
+const blinkTimeInMillis = 500;
 
 class Menu extends Scene {
   constructor() {
@@ -13,6 +18,10 @@ class Menu extends Scene {
     this.starPanels = [];
     this.xTimes = 0;
     this.starsVelocity = 0.025;
+    this.blink = true;
+    this.fexi = null;
+    this.titleX = null;
+    this.titleY = null;
   }
 
   placePlayUIButton() {
@@ -38,7 +47,9 @@ class Menu extends Scene {
       this.starPanels.push(screen.width - resources.stars.width * (1 + index));
     }
 
-    this.placePlayUIButton();
+    this.fexi = new Fexi();
+
+    this.onScreenResize();
 
     const finishScene = () => {
       try {
@@ -53,9 +64,11 @@ class Menu extends Scene {
       touchScreenAreas: ['playUIButton'],
     });
     this.onFired('startGame', finishScene);
+    this.textLength = fonts.normal.measureText(pressEnterText);
+    this.textHeight = fonts.normal.cellHeight;
   }
 
-  update(elapsedTime) {
+  update(elapsedTime, now) {
     const { screen } = GameplayGraphics;
     for (let index = 0; index < this.starPanels.length; ++index) {
       this.starPanels[index] += this.starsVelocity * elapsedTime;
@@ -67,10 +80,27 @@ class Menu extends Scene {
       this.starPanels.push(this.starPanels[this.starPanels.length - 1] - resources.stars.width);
     }
 
-    FexDebug.logOnScreen('panels', this.starPanels.length);
+    this.blink = Math.round((now / blinkTimeInMillis)) % 2 === 0;
+    this.fexi.update(elapsedTime);
   }
 
-  render(camera) {
+  renderPressStart() {
+    const { screen } = GameplayGraphics;
+    if (this.blink) {
+      GameplayRenderer.renderString(pressEnterText,
+        (screen.width - this.textLength) / 2, screen.height * (2 / 3) - this.textHeight / 2,
+        fonts.normal);
+    }
+  }
+
+  renderPlayButton() {
+    GameplayRenderer.renderBitmap(
+      resources.playButton,
+      this.playButtonX, this.playButtonY,
+    );
+  }
+
+  render() {
     const { screen } = GameplayGraphics;
     GameplayRenderer.clearScreen();
     GameplayRenderer.renderBitmap(resources.background, 0, 0, screen.width, screen.height);
@@ -84,23 +114,24 @@ class Menu extends Scene {
 
     GameplayRenderer.renderBitmap(
       resources.title,
-      screen.width / 2 - resources.title.width / 2,
-      screen.height * 0.25 - resources.title.height / 2,
+      this.titleX, this.titleY,
     );
-    GameplayRenderer.renderBitmap(
-      resources.playButton,
-      this.playButtonX, this.playButtonY,
-    );
-  }
 
-  mouseOver(x, y) {
-    const x0 = GameplayGraphics.screen.width / 2 - resources.playButton.width / 2;
-    const y0 = GameplayGraphics.screen.height / 2 - resources.playButton.height / 2;
-    FexDebug.logOnScreen('cursor relative', `(${x}, ${y})`);
+    this.fexi.render();
+
+    if (FexUtils.deviceHasTouch()) {
+      this.renderPlayButton();
+    } else {
+      this.renderPressStart();
+    }
   }
 
   onScreenResize() {
     this.placePlayUIButton();
+    this.titleX = GameplayGraphics.screen.width / 2 - resources.title.width / 2;
+    this.titleY = GameplayGraphics.screen.height * 0.25 - resources.title.height / 2;
+    this.fexi.position.x = this.titleX + 92;
+    this.fexi.position.y = this.titleY - this.fexi.height;
   }
 }
 

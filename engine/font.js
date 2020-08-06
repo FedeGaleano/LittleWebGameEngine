@@ -4,8 +4,9 @@ const spaceWidth = 2;
 
 class Font {
   constructor(bitmap) {
-    const cellWidth = 5;
-    const cellHeight = 8;
+    // REFACTORME: hardcoded cell size
+    this.cellWidth = 5;
+    this.cellHeight = 8;
 
     this.kerningData = [];
     this.kerningData[-1] = spaceWidth;
@@ -16,7 +17,7 @@ class Font {
     context2D.drawImage(bitmap, 0, 0, bitmap.width, bitmap.height);
 
     for (let i = 0; i < letters.length; i++) {
-      const x = i * (cellWidth + 1) + cellWidth;
+      const x = i * (this.cellWidth + 1) + this.cellWidth;
       const imageData = context2D.getImageData(x, 0, 1, 1);
       const rgba = imageData.data;
       this.kerningData.push(rgba[0]);

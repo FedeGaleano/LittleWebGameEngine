@@ -15,6 +15,7 @@ import Light from '../../engine/light.js';
 import Bound from '../../engine/Bound.js';
 import FexUtils from '../../engine/utils/FexUtils.js';
 import InputBuffer from '../../engine/InputBuffer.js';
+import Fexi from '../Fexi.js';
 
 const ArrayNewFunctionalities = {
   removeIf(condition) {
@@ -126,8 +127,6 @@ class Game extends Scene {
     this.createBackground = this.createBackground.bind(this);
     this.decideGravity = this.modifyGravity.bind(this);
 
-    this.spriteSlimeIdle = null;
-    this.spriteSlimeRunning = null;
     this.leftButtonSprite = null;
     this.leftButtonPressedSprite = null;
     this.rightButtonSprite = null;
@@ -212,10 +211,6 @@ class Game extends Scene {
     renderer.strokeStyle = '#00FFFF';
 
     this.uiButtonSize = resources.uiButtonLeft.width;
-
-    this.spriteSlimeIdle = new Sprite(resources.character, 4, [100, 200, 100, 200], GameplayGraphics);
-    this.spriteSlimeRunning = new Sprite(resources.characterRunning, 4, [100, 100, 150, 100], GameplayGraphics);
-    this.spriteSlimeRunningInverse = new Sprite(resources.characterRunningInverse, 4, [100, 100, 150, 100], GameplayGraphics);
 
     this.leftButtonSprite = new Sprite(resources.uiButtonLeft, 1, [1], GameplayGraphics);
     this.leftButtonPressedSprite = new Sprite(resources.uiButtonLeftPressed, 1, [1], GameplayGraphics);
@@ -304,15 +299,7 @@ class Game extends Scene {
 
     // Init Entities
 
-    // this.xFloor = GameplayGraphics.tileSize.w * characterTilePositionX;
-    // this.yFloor = GameplayGraphics.tileSize.h * characterTilePositionY - this.spriteSlimeIdle.height;
-    this.character = new Entity(
-      {
-        idle: this.spriteSlimeIdle,
-        run: this.spriteSlimeRunning,
-        runInverse: this.spriteSlimeRunningInverse,
-      }, { startingSpriteKey: 'idle' },
-    );
+    this.character = new Fexi();
     this.placeEntityOverTile(this.character, characterTilePositionX, characterTilePositionY);
     this.character.addHitbox(0.25, 0.3, 0.5, 0.7);
 
