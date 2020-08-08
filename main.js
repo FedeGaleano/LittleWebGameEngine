@@ -224,7 +224,7 @@ export default function startEngine() {
       currentGraphics = AskForRotationGraphics;
       gameplaySceneBackup = scene;
       scene = rotatePhoneScene;
-    } else {
+    } else if (GameplayGraphics.canvas.style.display === 'none') {
       GameplayGraphics.canvas.style.display = 'inline';
       AskForRotationGraphics.canvas.style.display = 'none';
       currentGraphics = GameplayGraphics;
