@@ -145,6 +145,9 @@ class Game extends Scene {
     this.createBackground = this.createBackground.bind(this);
     this.decideGravity = this.modifyGravity.bind(this);
 
+    this.blockGameplayInteraction = this.blockGameplayInteraction.bind(this);
+    this.recoverInputInNextFrame = this.recoverInputInNextFrame.bind(this);
+
     this.leftButtonSprite = null;
     this.leftButtonPressedSprite = null;
     this.rightButtonSprite = null;
@@ -665,7 +668,7 @@ class Game extends Scene {
   }
 
   // eslint-disable-next-line camelcase
-  scriptedScene_water(elapsedTime, now) {
+  scriptedScene_water(elapsedTime, now, prevInput) {
     if (now - this.waterSceneTriggerMoment < 1000) {
       // shake camera
       camera.y = camera.y === this.cameraYPivot ? this.cameraYPivot + 2 : this.cameraYPivot;
@@ -679,6 +682,7 @@ class Game extends Scene {
       camera.y = Math.max(camera.y - cameraCutSceneSpeed * 2 * elapsedTime, this.cameraYPivot);
 
       if (camera.y === this.cameraYPivot) {
+        this.recoverInputInNextFrame(prevInput);
         this.scriptedScene = () => {};
         this.waterSceneTriggered = true;
         curtainSpeed *= -1;
@@ -702,15 +706,18 @@ class Game extends Scene {
 
       // start moving water (trigger)
       if (!this.waterSceneTriggered && this.cameraYPivot == null
-        && this.character.position.x < triggerZoneCoords.x
-        && this.character.position.y < triggerZoneCoords.y
+        && this.character.position.x + this.character.hitbox.xOffset < triggerZoneCoords.x
+        && this.character.position.y + this.character.height < triggerZoneCoords.y
       ) {
-        // this.water.velocity.y = waterVelocity;
+        this.leftButton.changeSpriteTo('normal');
+        this.rightButton.changeSpriteTo('normal');
+        this.jumpButton.changeSpriteTo('normal');
         this.cameraYPivot = camera.y;
         this.waterSceneTriggerMoment = now;
-        this.input_waterScene();
-        this.scriptedScene = this.scriptedScene_water;
+        const prevInput = this.blockGameplayInteraction();
+        this.scriptedScene = (elapsed, virtualTime) => this.scriptedScene_water(elapsed, virtualTime, prevInput);
         curtainSpeed = maxCurtainSpeed;
+        this.character.changeSpriteTo('idle');
       }
 
       // light update
@@ -821,8 +828,12 @@ class Game extends Scene {
     camera.y = camera.y === this.cameraYPivot ? this.cameraYPivot + 2 : this.cameraYPivot;
   }
 
+  recoverInputInNextFrame(inputState) {
+    this.inputRecovery = inputState;
+  }
+
   unpause(previousInput) {
-    this.inputRecovery = previousInput;
+    this.recoverInputInNextFrame(previousInput);
     pause = false;
     this.pauseButton.changeSpriteTo('pause');
   }

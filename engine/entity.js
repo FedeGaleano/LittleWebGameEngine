@@ -16,6 +16,7 @@ class Entity {
     this.velocity = { x: 0, y: 0 };
     this.normalMovement = () => {};
     this.automaticMovement = this.normalMovement;
+    this.hitbox = null;
   }
 
   update(elapsedTime) {
