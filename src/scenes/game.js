@@ -56,7 +56,7 @@ const gravity = 0.001;
 // const gravity = 0.002;
 const coyoteTime = 100;
 const prematureJumpTolerance = 100;
-const lavaVelocity = 0.7;
+const waterVelocity = 0.7;
 
 const cameraFollowBox = {
   // (x, y) set on init()
@@ -81,8 +81,8 @@ const keyTilePositionX = 28;
 const keyTilePositionY = 51;
 const flagTilePositionX = 27;
 const flagTilePositionY = 0;
-const lavaTilePositionX = 0;
-const lavaTilePositionY = 64;
+const waterTilePositionX = 0;
+const waterTilePositionY = 64;
 const triggerZoneCoords = {
   // less than
   xTile: 20,
@@ -139,7 +139,7 @@ class Game extends Scene {
     this.character = null;
     this.key = null;
     this.flag = null;
-    this.lava = null;
+    this.water = null;
 
     // UI
     this.leftButton = null;
@@ -317,6 +317,7 @@ class Game extends Scene {
       0, 0,
     );
 
+    // init triggerZoneCoords
     this.demoWorld.copyTileCoordsInBound(0, triggerZoneCoords.xTile, triggerZoneCoords.yTile, triggerZoneCoords);
 
     // Init Entities
@@ -345,7 +346,7 @@ class Game extends Scene {
     );
     this.placeEntityOverTile(this.flag, flagTilePositionX, flagTilePositionY);
 
-    this.lava = new (class {
+    this.water = new (class {
       constructor() {
         this.position = { x: 0, y: 0 };
         this.velocity = { x: 0, y: 0 };
@@ -360,11 +361,11 @@ class Game extends Scene {
     })();
 
     // _, 58
-    this.resetLava = () => {
-      this.demoWorld.copyTileCoordsInBound(0, lavaTilePositionX, lavaTilePositionY, this.lava.position);
-      this.lava.velocity.y = 0;
+    this.resetWater = () => {
+      this.demoWorld.copyTileCoordsInBound(0, waterTilePositionX, waterTilePositionY, this.water.position);
+      this.water.velocity.y = 0;
     };
-    this.resetLava();
+    this.resetWater();
 
 
     // init cameraFollowBox coords
@@ -449,8 +450,8 @@ class Game extends Scene {
 
     // init camera
     // camera.x = -screen.width;
-    camera.x = 0;
-    camera.y = this.finalCameraY;
+    camera.x = this.finalCameraX;
+    camera.y = -GameplayGraphics.tileSize.h * 10; // 10 tiles above the surface
   }
 
   createBackground() {
@@ -516,7 +517,7 @@ class Game extends Scene {
       this.character.render(camera);
     }
 
-    this.lava.render(camera);
+    this.water.render(camera);
 
     // Render Curtain
     // TOCACHE
@@ -645,18 +646,18 @@ class Game extends Scene {
     if (!pause) {
       curtain = Math.max(0, Math.min(1, curtain + curtainSpeed * elapsedTime));
 
-      if (this.lava.position.y > GameplayGraphics.tileSize.h) {
-        this.lava.position.y -= this.lava.velocity.y;
+      if (this.water.position.y > GameplayGraphics.tileSize.h) {
+        this.water.position.y -= this.water.velocity.y;
       }
 
       this.character.velocity.y += this.modifyGravity(gravity) * elapsedTime;
       this.character.update(elapsedTime);
 
-      // start moving lava (trigger)
-      if (this.lava.velocity.y === 0
+      // start moving water (trigger)
+      if (this.water.velocity.y === 0
         && this.character.position.x < triggerZoneCoords.x
         && this.character.position.y < triggerZoneCoords.y) {
-        this.lava.velocity.y = lavaVelocity;
+        this.water.velocity.y = waterVelocity;
       }
 
       // light update
@@ -675,13 +676,13 @@ class Game extends Scene {
 
       if (this.demoWorld.collisionInfo.dead) {
         this.character.die();
-        this.resetLava();
+        this.resetWater();
         return;
       }
 
-      if (this.character.position.y + this.character.height > this.lava.position.y) {
+      if (this.character.position.y + this.character.height > this.water.position.y) {
         this.character.die();
-        this.resetLava();
+        this.resetWater();
         return;
       }
 
@@ -724,9 +725,9 @@ class Game extends Scene {
     curtain = Math.max(0, Math.min(1, curtain + curtainSpeed * elapsedTime));
 
     const cameraCutSceneSpeed = 0.05;
-    camera.x = Math.min(camera.x + elapsedTime * cameraCutSceneSpeed, this.finalCameraX);
+    camera.y = Math.min(camera.y + elapsedTime * cameraCutSceneSpeed, this.finalCameraY);
 
-    if (camera.x === this.finalCameraX) {
+    if (camera.x === this.finalCameraX && camera.y === this.finalCameraY) {
       if (this.speechClosed) {
         this.speech.next();
         this.onFired('continue', () => {
@@ -768,7 +769,7 @@ class Game extends Scene {
   cutSceneInput() {
     this.clearInputState();
     this.onFired('pause', this.onFocusLost);
-    this.onFired('continue', () => { camera.x = this.getFinalCameraX(); });
+    this.onFired('continue', () => { camera.y = this.getFinalCameraY(); });
   }
 
   normalInput() {
