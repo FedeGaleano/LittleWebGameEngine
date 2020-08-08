@@ -224,11 +224,13 @@ export default function startEngine() {
       currentGraphics = AskForRotationGraphics;
       gameplaySceneBackup = scene;
       scene = rotatePhoneScene;
-    } else if (GameplayGraphics.canvas.style.display === 'none') {
-      GameplayGraphics.canvas.style.display = 'inline';
-      AskForRotationGraphics.canvas.style.display = 'none';
+    } else {
+      if (GameplayGraphics.canvas.style.display === 'none') {
+        GameplayGraphics.canvas.style.display = 'inline';
+        AskForRotationGraphics.canvas.style.display = 'none';
+        scene = gameplaySceneBackup;
+      }
       currentGraphics = GameplayGraphics;
-      scene = gameplaySceneBackup;
     }
   }
 
@@ -237,6 +239,7 @@ export default function startEngine() {
     chooseLoopManager();
   }
 
+  // MAIN LOOP
   function loop(now) {
     if (lastTime === 0) lastTime = now;
 
