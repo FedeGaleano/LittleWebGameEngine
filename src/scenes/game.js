@@ -47,6 +47,7 @@ let curtain = 0;
 const curtainHeightFactor = 0.15;
 let curtainSpeed = 0;
 const maxCurtainSpeed = 0.003;
+const dialogSpeed = 0.009;
 
 let pause = false;
 
@@ -350,7 +351,8 @@ class Game extends Scene {
     this.character.addHitbox(0.25, 0.3, 0.5, 0.7);
 
     this.character.die = () => {
-      this.placeEntityOverTile(this.character, characterTilePositionX, characterTilePositionY);
+      // this.placeEntityOverTile(this.character, characterTilePositionX, characterTilePositionY);
+      this.placeEntityOverTile(this.character, triggerZoneCoords.xTile - 1, triggerZoneCoords.yTile);
       this.character.velocity.x = this.character.velocity.y = 0;
       this.resetAlpha = 1;
     };
@@ -386,12 +388,13 @@ class Game extends Scene {
     // _, 58
     this.resetWater = () => {
       this.demoWorld.copyTileCoordsInBound(0, waterTilePositionX, waterTilePositionY, this.water.position);
-      this.water.velocity.y = 0;
-      this.cameraYPivot = null;
-      this.waterSceneTriggered = false;
+      // this.water.velocity.y = 0;
+      // this.cameraYPivot = null;
+      // this.waterSceneTriggered = false;
+      this.water.velocity.y = waterVelocity;
     };
     this.resetWater();
-
+    this.water.velocity.y = 0;
 
     // init cameraFollowBox coords
     cameraFollowBox.x = this.character.position.x - (cameraFollowBox.width - this.character.width) / 2;
@@ -401,7 +404,6 @@ class Game extends Scene {
     this.getFinalCameraY = () => cameraFollowBox.y - (screen.height - cameraFollowBox.height) / 2;
 
     const dialogPoint = { x: this.character.position.x + 14, y: this.character.position.y };
-    const dialogSpeed = 0.009;
     this.speech = new Speech(dialogPoint.x, dialogPoint.y, [
       [
         'Hola, soy Fexi, la mascota',
@@ -521,7 +523,10 @@ class Game extends Scene {
 
     // TOCACHE
     this.speech.render(camera);
-    // cameraFollowBox.render(camera);
+    if (this.character.secondSpeech) {
+      this.character.secondSpeech.render(camera);
+    }
+
 
     this.boss.render(camera);
 
@@ -677,10 +682,22 @@ class Game extends Scene {
       camera.y = FexMath.boundExpression(camera.y + spd * elapsedTime, this.cameraYPivot, this.cameraYPivot + cameraShakingAmplitude);
       // camera.y = camera.y === this.cameraYPivot ? this.cameraYPivot + 2 : this.cameraYPivot;
     } else if (now - this.waterSceneTriggerMoment < 4000) {
-      // todo: fexi dialog
+      if (!this.character.secondSpeech) {
+        this.character.secondSpeech = new Speech(
+          this.character.position.x + this.character.width, this.character.position.y,
+          [
+            ['omg'],
+          ],
+          dialogSpeed,
+        );
+        this.character.secondSpeech.next();
+      }
     } else if (now - this.waterSceneTriggerMoment < 6000) {
       camera.y = Math.min(camera.y + cameraCutSceneSpeed * elapsedTime, this.cameraYPivot + 100);
     } else if (now - this.waterSceneTriggerMoment < 6500) {
+      if (!this.character.secondSpeech.closed) {
+        this.character.secondSpeech.next();
+      }
       if (this.water.velocity.y === 0) {
         this.water.velocity.y = waterVelocity;
       }
@@ -773,6 +790,10 @@ class Game extends Scene {
 
       this.speech.setBottomLeftCorner(this.character.position.x + 14, this.character.position.y);
       this.speech.update(elapsedTime);
+      if (this.character.secondSpeech) {
+        this.character.secondSpeech.update(elapsedTime);
+      }
+
 
       this.updateCameraFollowBox();
     }
