@@ -37,7 +37,8 @@ const { renderer, screen } = GameplayGraphics;
 
 const camera = { x: 0, y: 0 };
 const cameraCutSceneSpeed = 0.05;
-const cameraShakingSpeed = 0.01;
+const cameraShakingSpeed = 0.075;
+const cameraShakingAmplitude = 2;
 const artificialCameraOffsetX = 0;
 let artificialCameraOffsetY = 0;
 const starsParallax = 0.25;
@@ -672,12 +673,14 @@ class Game extends Scene {
   scriptedScene_water(elapsedTime, now, prevInput) {
     if (now - this.waterSceneTriggerMoment < 1000) {
       // shake camera
-      const spd = camera.y > this.cameraYPivot + 2 ? cameraShakingSpeed : -cameraShakingSpeed;
-      camera.y += spd * elapsedTime;
+      const spd = camera.y >= this.cameraYPivot + cameraShakingAmplitude ? -cameraShakingSpeed : cameraShakingSpeed;
+      camera.y = FexMath.boundExpression(camera.y + spd * elapsedTime, this.cameraYPivot, this.cameraYPivot + cameraShakingAmplitude);
       // camera.y = camera.y === this.cameraYPivot ? this.cameraYPivot + 2 : this.cameraYPivot;
     } else if (now - this.waterSceneTriggerMoment < 4000) {
+      // todo: fexi dialog
+    } else if (now - this.waterSceneTriggerMoment < 6000) {
       camera.y = Math.min(camera.y + cameraCutSceneSpeed * elapsedTime, this.cameraYPivot + 100);
-    } else if (now - this.waterSceneTriggerMoment < 4500) {
+    } else if (now - this.waterSceneTriggerMoment < 6500) {
       if (this.water.velocity.y === 0) {
         this.water.velocity.y = waterVelocity;
       }
