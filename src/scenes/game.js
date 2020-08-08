@@ -155,8 +155,8 @@ class Game extends Scene {
     this.createBackground();
 
     // Final camera coords
-    this.getFinalCameraX = () => cameraFollowBox.x - (screen.width - cameraFollowBox.width) / 2;
-    this.getFinalCameraY = () => cameraFollowBox.y - (screen.height - cameraFollowBox.height) / 2;
+    this.getFinalCameraX = null;
+    this.getFinalCameraY = null;
     this.finalCameraX = null;
     this.finalCameraY = null;
 
@@ -165,6 +165,23 @@ class Game extends Scene {
   }
 
   onScreenResize() {
+    /* Things that MUST be initialized:
+        -this.uiButtonSize
+        -this.leftButton
+        -this.rightButton
+        -this.jumpButton
+        -this.pauseButton
+        -this.leftButtonTouchScreenArea
+        -this.rightButtonTouchScreenArea
+        -this.jumpButtonTouchScreenArea
+        -this.pauseButtonTouchScreenArea
+        -this.anyTouchScreenArea
+        -this.getFinalCameraX()
+        -this.getFinalCameraY()
+        -cameraFollowBox.x
+        -cameraFollowBox.y
+    */
+
     this.leftButton.position.x = 10;
     this.leftButton.position.y = screen.height - 10 - this.uiButtonSize;
 
@@ -178,7 +195,7 @@ class Game extends Scene {
     this.pauseButton.position.y = 10;
 
 
-    this.leftButtonTouchScreenArea.upperLeftCornerX = this.leftButton.position.x - 10;
+    this.pauseButton.upperLeftCornerX = this.leftButton.position.x - 10;
     this.leftButtonTouchScreenArea.upperLeftCornerY = this.leftButton.position.y - 10;
 
     this.rightButtonTouchScreenArea.upperLeftCornerX = this.rightButton.position.x - 5;
@@ -349,6 +366,14 @@ class Game extends Scene {
     };
     this.resetLava();
 
+
+    // init cameraFollowBox coords
+    cameraFollowBox.x = this.character.position.x - (cameraFollowBox.width - this.character.width) / 2;
+    cameraFollowBox.y = this.character.position.y - (cameraFollowBox.height - this.character.height);
+
+    this.getFinalCameraX = () => cameraFollowBox.x - (screen.width - cameraFollowBox.width) / 2;
+    this.getFinalCameraY = () => cameraFollowBox.y - (screen.height - cameraFollowBox.height) / 2;
+
     const dialogPoint = { x: this.character.position.x + 14, y: this.character.position.y };
     const dialogSpeed = 0.15;
     this.speech = new Speech(dialogPoint.x, dialogPoint.y, [
@@ -408,18 +433,6 @@ class Game extends Scene {
       1,
     );
 
-    const createLightAt = (x, y) => new Light(
-      x, y,
-      this.character.width / 2 + 35,
-      255, 0, 255,
-      1,
-    );
-
-    const xx = this.character.position.x;
-    const yy = this.character.position.y;
-
-    // this.lights = Array(10).fill().map((_, i) => createLightAt(xx + i * 10, yy));
-
     const panelWidth = resources.stars.width;
     const panelHeight = resources.stars.height;
 
@@ -433,10 +446,6 @@ class Game extends Scene {
 
     this.init = () => {};
     this.onScreenResize();
-
-    // init cameraFollowBox coords
-    cameraFollowBox.x = this.character.position.x - (cameraFollowBox.width - this.character.width) / 2;
-    cameraFollowBox.y = this.character.position.y - (cameraFollowBox.height - this.character.height);
 
     // init camera
     // camera.x = -screen.width;
@@ -759,7 +768,7 @@ class Game extends Scene {
   cutSceneInput() {
     this.clearInputState();
     this.onFired('pause', this.onFocusLost);
-    this.onFired('continue', () => { camera.x = this.finalCameraX; });
+    this.onFired('continue', () => { camera.x = this.getFinalCameraX(); });
   }
 
   normalInput() {
