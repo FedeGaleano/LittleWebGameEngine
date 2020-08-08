@@ -16,18 +16,26 @@ class Speech {
     this.renderBehaviour = () => {};
 
     this.audio = new Audio('res/select2.wav');
+
+    // binds
+    this.update = this.update.bind(this);
+    this.render = this.render.bind(this);
+    this.normalUpdate = this.normalUpdate.bind(this);
+    this.normalRender = this.normalRender.bind(this);
+    this.next = this.next.bind(this);
+    this.setBottomLeftCorner = this.setBottomLeftCorner.bind(this);
   }
 
-  update() {
-    this.updateBehaviour();
+  update(elapsedTime) {
+    this.updateBehaviour(elapsedTime);
   }
 
   render(camera) {
     this.renderBehaviour(camera);
   }
 
-  normalUpdate() {
-    this.dialogs[this.currentDialog].update();
+  normalUpdate(elapsedTime) {
+    this.dialogs[this.currentDialog].update(elapsedTime);
   }
 
   normalRender(camera) {
@@ -38,8 +46,8 @@ class Speech {
     if (this.currentDialog < 0) {
       this.complete = false;
       this.currentDialog++;
-      this.updateBehaviour = () => this.normalUpdate();
-      this.renderBehaviour = camera => this.normalRender(camera);
+      this.updateBehaviour = this.normalUpdate;
+      this.renderBehaviour = this.normalRender;
       this.audio.play();
       return;
     }

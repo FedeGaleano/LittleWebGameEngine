@@ -401,7 +401,7 @@ class Game extends Scene {
     this.getFinalCameraY = () => cameraFollowBox.y - (screen.height - cameraFollowBox.height) / 2;
 
     const dialogPoint = { x: this.character.position.x + 14, y: this.character.position.y };
-    const dialogSpeed = 0.15;
+    const dialogSpeed = 0.009;
     this.speech = new Speech(dialogPoint.x, dialogPoint.y, [
       [
         'Hola, soy Fexi, la mascota',

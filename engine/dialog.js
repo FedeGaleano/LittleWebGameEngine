@@ -20,7 +20,7 @@ class Dialog {
     const OLDMAX = maxLength * 6 - 1;
     this.wordBubble = new WordBubble(this.x, this.y, maxKerningSum, textLines.length * 8);
     this.textSpeed = textSpeed;
-    this.count = 0;
+    this.openingSpeed = 0.006;
     this.cursor = 0;
     this.complete = false;
     const accumulatedLengths = [...lengths];
@@ -32,39 +32,49 @@ class Dialog {
     this.accumulatedLengths = accumulatedLengths;
     this.options = options;
 
+    // binds
+    this.update = this.update.bind(this);
+    this.render = this.render.bind(this);
+    this.normalUpdate = this.normalUpdate.bind(this);
+    this.openingUpdate = this.openingUpdate.bind(this);
+    this.normalRender = this.normalRender.bind(this);
+    this.openingRender = this.openingRender.bind(this);
+    this.forceCompleteText = this.forceCompleteText.bind(this);
+    this.reset = this.reset.bind(this);
+    this.setBottomLeftCorner = this.setBottomLeftCorner.bind(this);
+
     if (options.open) {
       this.opening = 0;
-      this.updateBehaviour = () => this.openingUpdate();
-      this.renderBehaviour = camera => this.openingRender(camera);
+      this.updateBehaviour = this.openingUpdate;
+      this.renderBehaviour = this.openingRender;
     } else {
       this.opening = 1;
-      this.renderBehaviour = camera => this.normalRender(camera);
-      this.updateBehaviour = () => this.normalUpdate();
+      this.renderBehaviour = this.normalRender;
+      this.updateBehaviour = this.normalUpdate;
     }
   }
 
-  update() {
-    this.updateBehaviour();
+  update(elapsedTime) {
+    this.updateBehaviour(elapsedTime);
   }
 
   render(camera) {
     this.renderBehaviour(camera);
   }
 
-  normalUpdate() {
+  normalUpdate(elapsedTime) {
     if (this.cursor < this.dialogLength) {
-      this.count++;
-      this.cursor = Math.floor(this.count * this.textSpeed);
+      this.cursor += this.textSpeed * elapsedTime;
     }
   }
 
-  openingUpdate() {
-    this.opening = Math.min(this.opening + 0.1, 1);
+  openingUpdate(elapsedTime) {
+    this.opening = Math.min(this.opening + this.openingSpeed * elapsedTime, 1);
     this.wordBubble.opening = this.opening;
     this.wordBubble.y = this.bottomLeftCornerY - 3 - (8 * this.textLines.length) * this.opening - 5;
     if (this.opening >= 1) {
-      this.updateBehaviour = () => this.normalUpdate();
-      this.renderBehaviour = camera => this.normalRender(camera);
+      this.updateBehaviour = this.normalUpdate;
+      this.renderBehaviour = this.normalRender;
     }
   }
 
@@ -74,7 +84,7 @@ class Dialog {
 
     for (let line = 0; line < this.textLines.length; line++) {
       GameplayGraphics.renderer.renderString(
-        this.textLines[line].substring(0, this.cursor - (line === 0 ? 0 : accumulatedLengths[line - 1])),
+        this.textLines[line].substring(0, Math.floor(this.cursor) - (line === 0 ? 0 : accumulatedLengths[line - 1])),
         this.x + 3 - camera.x, this.y + 3 + line * 8 - camera.y, fonts.normal,
       );
     }
@@ -89,12 +99,11 @@ class Dialog {
   }
 
   reset() {
-    this.count = 0;
     this.cursor = 0;
     if (this.options.open) {
       this.opening = 0;
-      this.updateBehaviour = () => this.openingUpdate();
-      this.renderBehaviour = camera => this.openingRender(camera);
+      this.updateBehaviour = this.openingUpdate;
+      this.renderBehaviour = this.openingRender;
     }
   }
 
