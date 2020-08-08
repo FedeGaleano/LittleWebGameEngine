@@ -305,6 +305,7 @@ class Game extends Scene {
     this.registerVolatileTouchScreenArea(this.pauseButtonTouchScreenArea);
     this.registerVolatileTouchScreenArea(this.anyTouchScreenArea);
 
+    // virtual buttons
     this.createVirtualButton('pause', {
       keys: ['KeyP'],
       touchScreenAreas: ['pause'],
@@ -611,19 +612,23 @@ class Game extends Scene {
     }
   }
 
+  blockGameplayInteraction() {
+    const previousInput = { fired: this.fired, pressed: this.pressed, released: this.released };
+    this.clearInputState();
+    return previousInput;
+  }
+
   onFocusLost() {
     if (pause) return;
     pause = true;
     this.pauseButton.changeSpriteTo('unpause');
 
-    const previousInput = { fired: this.fired, pressed: this.pressed, released: this.released };
-    this.clearInputState();
+    const previousInput = this.blockGameplayInteraction();
+    this.onFired('pause', () => this.unpause(previousInput));
 
     this.leftButton.changeSpriteTo('normal');
     this.rightButton.changeSpriteTo('normal');
     this.jumpButton.changeSpriteTo('normal');
-
-    this.onFired('pause', () => this.unpause(previousInput));
   }
 
   renderUI() {
