@@ -7,6 +7,9 @@ const FexMath = {
   signedBoolean(condition) {
     return condition ? 1 : -1;
   },
+  boundExpression(expression, minValue, maxValue) {
+    return Math.max(Math.min(expression, maxValue), minValue);
+  },
 };
 
 export default FexMath;

@@ -37,6 +37,7 @@ const { renderer, screen } = GameplayGraphics;
 
 const camera = { x: 0, y: 0 };
 const cameraCutSceneSpeed = 0.05;
+const cameraShakingSpeed = 0.01;
 const artificialCameraOffsetX = 0;
 let artificialCameraOffsetY = 0;
 const starsParallax = 0.25;
@@ -671,7 +672,9 @@ class Game extends Scene {
   scriptedScene_water(elapsedTime, now, prevInput) {
     if (now - this.waterSceneTriggerMoment < 1000) {
       // shake camera
-      camera.y = camera.y === this.cameraYPivot ? this.cameraYPivot + 2 : this.cameraYPivot;
+      const spd = camera.y > this.cameraYPivot + 2 ? cameraShakingSpeed : -cameraShakingSpeed;
+      camera.y += spd * elapsedTime;
+      // camera.y = camera.y === this.cameraYPivot ? this.cameraYPivot + 2 : this.cameraYPivot;
     } else if (now - this.waterSceneTriggerMoment < 4000) {
       camera.y = Math.min(camera.y + cameraCutSceneSpeed * elapsedTime, this.cameraYPivot + 100);
     } else if (now - this.waterSceneTriggerMoment < 4500) {
@@ -823,9 +826,7 @@ class Game extends Scene {
 
   // eslint-disable-next-line camelcase
   update_waterScene(elapsedTime, now) {
-    // shake camera
-    this.character.update(elapsedTime);
-    camera.y = camera.y === this.cameraYPivot ? this.cameraYPivot + 2 : this.cameraYPivot;
+
   }
 
   recoverInputInNextFrame(inputState) {
