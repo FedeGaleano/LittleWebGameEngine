@@ -107,9 +107,9 @@ class Game extends Scene {
   constructor() {
     super();
     this.unpause = this.unpause.bind(this);
-    this.idleInput = this.idleInput.bind(this);
-    this.normalInput = this.normalInput.bind(this);
-    this.cutSceneInput = this.cutSceneInput.bind(this);
+    this.input_idle = this.input_idle.bind(this);
+    this.input_normal = this.input_normal.bind(this);
+    this.input_intro = this.input_intro.bind(this);
     this.moveRight = this.moveRight.bind(this);
     this.moveLeft = this.moveLeft.bind(this);
     this.tryToJump = this.tryToJump.bind(this);
@@ -121,9 +121,9 @@ class Game extends Scene {
     this.moveUpDebug = this.moveUpDebug.bind(this);
     this.updateCameraFollowBox = this.updateCameraFollowBox.bind(this);
 
-    this.idleUpdate = this.idleUpdate.bind(this);
-    this.initialCutSceneUpdate = this.initialCutSceneUpdate.bind(this);
-    this.normalUpdate = this.normalUpdate.bind(this);
+    this.update_idle = this.update_idle.bind(this);
+    this.update_intro = this.update_intro.bind(this);
+    this.update_normal = this.update_normal.bind(this);
 
     this.createBackground = this.createBackground.bind(this);
     this.decideGravity = this.modifyGravity.bind(this);
@@ -410,14 +410,14 @@ class Game extends Scene {
     ], dialogSpeed);
 
     // to start idle
-    // this.updateLogic = this.idleUpdate;
+    // this.updateLogic = this.update_idle;
     // this.renderLogic = () => {};
-    // this.idleInput();
+    // this.input_idle();
 
     // to start with cutScene
-    this.updateLogic = this.initialCutSceneUpdate;
+    this.updateLogic = this.update_intro;
     this.renderLogic = () => {};
-    this.cutSceneInput();
+    this.input_intro();
     curtain = -500;
     curtainSpeed = 0.003;
     this.speechClosed = true;
@@ -640,7 +640,8 @@ class Game extends Scene {
     return standardGravity * Math.max(0.5, factor);
   }
 
-  normalUpdate(elapsedTime, now) {
+  // eslint-disable-next-line camelcase
+  update_normal(elapsedTime, now) {
     // FexDebug.chargeHeavily();
     FexDebug.logOnScreen('this.timeInAir', this.timeInAir);
     if (!pause) {
@@ -656,7 +657,8 @@ class Game extends Scene {
       // start moving water (trigger)
       if (this.water.velocity.y === 0
         && this.character.position.x < triggerZoneCoords.x
-        && this.character.position.y < triggerZoneCoords.y) {
+        && this.character.position.y < triggerZoneCoords.y
+      ) {
         this.water.velocity.y = waterVelocity;
       }
 
@@ -717,11 +719,13 @@ class Game extends Scene {
     camera.y = artificialCameraOffsetY + Math.min(this.finalCameraY + 700, cameraFollowBox.y - (screen.height - cameraFollowBox.height) / 2);
   }
 
-  idleUpdate(elapsedTime) {
+  // eslint-disable-next-line camelcase
+  update_idle(elapsedTime) {
 
   }
 
-  initialCutSceneUpdate(elapsedTime) {
+  // eslint-disable-next-line camelcase
+  update_intro(elapsedTime) {
     curtain = Math.max(0, Math.min(1, curtain + curtainSpeed * elapsedTime));
 
     const cameraCutSceneSpeed = 0.05;
@@ -740,8 +744,8 @@ class Game extends Scene {
 
       if (this.speech.complete) {
         curtainSpeed *= -1;
-        this.updateLogic = this.normalUpdate;
-        this.normalInput();
+        this.updateLogic = this.update_normal;
+        this.input_normal();
         if (FexUtils.deviceHasTouch()) {
           this.renderLogic = this.renderUI;
         }
@@ -755,24 +759,24 @@ class Game extends Scene {
     this.pauseButton.changeSpriteTo('pause');
   }
 
-  idleInput() {
+  input_idle() {
     this.clearInputState();
 
     this.onFired('continue', () => {
       curtainSpeed = 0.003;
       this.speech.next();
-      this.updateLogic = this.initialCutSceneUpdate;
-      this.cutSceneInput();
+      this.updateLogic = this.update_intro;
+      this.input_intro();
     });
   }
 
-  cutSceneInput() {
+  input_intro() {
     this.clearInputState();
     this.onFired('pause', this.onFocusLost);
     this.onFired('continue', () => { camera.y = this.getFinalCameraY(); });
   }
 
-  normalInput() {
+  input_normal() {
     InputBuffer.deleteTouchScreenArea('any');
     this.registerVolatileTouchScreenArea(this.leftButtonTouchScreenArea);
     this.registerVolatileTouchScreenArea(this.rightButtonTouchScreenArea);
