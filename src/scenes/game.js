@@ -36,6 +36,7 @@ let showGrid = false;
 const { renderer, screen } = GameplayGraphics;
 
 const camera = { x: 0, y: 0 };
+const cameraCutSceneSpeed = 0.05;
 const artificialCameraOffsetX = 0;
 let artificialCameraOffsetY = 0;
 const starsParallax = 0.25;
@@ -43,6 +44,7 @@ const starsParallax = 0.25;
 let curtain = 0;
 const curtainHeightFactor = 0.15;
 let curtainSpeed = 0;
+const maxCurtainSpeed = 0.003;
 
 let pause = false;
 
@@ -107,9 +109,28 @@ class Game extends Scene {
   constructor() {
     super();
     this.unpause = this.unpause.bind(this);
+
+    // bind input methods
     this.input_idle = this.input_idle.bind(this);
     this.input_normal = this.input_normal.bind(this);
     this.input_intro = this.input_intro.bind(this);
+    this.input_waterScene = this.input_waterScene.bind(this);
+
+    // bind update methods
+    this.update_idle = this.update_idle.bind(this);
+    this.update_intro = this.update_intro.bind(this);
+    this.update_normal = this.update_normal.bind(this);
+    this.update_waterScene = this.update_waterScene.bind(this);
+
+    // bind scripted scenes
+    this.scriptedScene_water = this.scriptedScene_water.bind(this);
+
+    this.scriptedScene = () => {};
+
+    this.cameraYPivot = null;
+    this.waterSceneTriggerMoment = null;
+    this.waterSceneTriggered = false;
+
     this.moveRight = this.moveRight.bind(this);
     this.moveLeft = this.moveLeft.bind(this);
     this.tryToJump = this.tryToJump.bind(this);
@@ -120,10 +141,6 @@ class Game extends Scene {
     this.moveRightDebug = this.moveRightDebug.bind(this);
     this.moveUpDebug = this.moveUpDebug.bind(this);
     this.updateCameraFollowBox = this.updateCameraFollowBox.bind(this);
-
-    this.update_idle = this.update_idle.bind(this);
-    this.update_intro = this.update_intro.bind(this);
-    this.update_normal = this.update_normal.bind(this);
 
     this.createBackground = this.createBackground.bind(this);
     this.decideGravity = this.modifyGravity.bind(this);
@@ -151,8 +168,6 @@ class Game extends Scene {
     this.speech = null;
     this.demoWorld = null;
     this.starPanels = [];
-
-    this.createBackground();
 
     // Final camera coords
     this.getFinalCameraX = null;
@@ -218,6 +233,8 @@ class Game extends Scene {
 
     this.finalCameraX = this.getFinalCameraX();
     this.finalCameraY = this.getFinalCameraY();
+
+    this.createBackground();
   }
 
   placeEntityOverTile(entity, xTile, yTile, zoneIndex = 0) {
@@ -364,6 +381,8 @@ class Game extends Scene {
     this.resetWater = () => {
       this.demoWorld.copyTileCoordsInBound(0, waterTilePositionX, waterTilePositionY, this.water.position);
       this.water.velocity.y = 0;
+      this.cameraYPivot = null;
+      this.waterSceneTriggered = false;
     };
     this.resetWater();
 
@@ -419,7 +438,7 @@ class Game extends Scene {
     this.renderLogic = () => {};
     this.input_intro();
     curtain = -500;
-    curtainSpeed = 0.003;
+    curtainSpeed = maxCurtainSpeed;
     this.speechClosed = true;
 
     const boundForLightPosition = new Bound();
@@ -641,6 +660,28 @@ class Game extends Scene {
   }
 
   // eslint-disable-next-line camelcase
+  scriptedScene_water(elapsedTime, now) {
+    if (now - this.waterSceneTriggerMoment < 1000) {
+      // shake camera
+      camera.y = camera.y === this.cameraYPivot ? this.cameraYPivot + 2 : this.cameraYPivot;
+    } else if (now - this.waterSceneTriggerMoment < 4000) {
+      camera.y = Math.min(camera.y + cameraCutSceneSpeed * elapsedTime, this.cameraYPivot + 100);
+    } else if (now - this.waterSceneTriggerMoment < 4500) {
+      if (this.water.velocity.y === 0) {
+        this.water.velocity.y = waterVelocity;
+      }
+    } else {
+      camera.y = Math.max(camera.y - cameraCutSceneSpeed * 2 * elapsedTime, this.cameraYPivot);
+
+      if (camera.y === this.cameraYPivot) {
+        this.scriptedScene = () => {};
+        this.waterSceneTriggered = true;
+        curtainSpeed *= -1;
+      }
+    }
+  }
+
+  // eslint-disable-next-line camelcase
   update_normal(elapsedTime, now) {
     // FexDebug.chargeHeavily();
     FexDebug.logOnScreen('this.timeInAir', this.timeInAir);
@@ -655,11 +696,16 @@ class Game extends Scene {
       this.character.update(elapsedTime);
 
       // start moving water (trigger)
-      if (this.water.velocity.y === 0
+      if (!this.waterSceneTriggered && this.cameraYPivot == null
         && this.character.position.x < triggerZoneCoords.x
         && this.character.position.y < triggerZoneCoords.y
       ) {
-        this.water.velocity.y = waterVelocity;
+        // this.water.velocity.y = waterVelocity;
+        this.cameraYPivot = camera.y;
+        this.waterSceneTriggerMoment = now;
+        this.input_waterScene();
+        this.scriptedScene = this.scriptedScene_water;
+        curtainSpeed = maxCurtainSpeed;
       }
 
       // light update
@@ -670,8 +716,6 @@ class Game extends Scene {
       //   l.x = this.character.position.x + this.character.width / 2 + 10 * i;
       //   l.y = this.character.position.y + this.character.height / 2;
       // });
-
-      this.createBackground();
 
       this.zoneIndex = this.demoWorld.getZoneIndex(this.character.hitbox);
       this.demoWorld.setCollisionInfo(this.character, elapsedTime);
@@ -715,8 +759,16 @@ class Game extends Scene {
       this.updateCameraFollowBox();
     }
 
+    FexDebug.logOnScreen('this.waterSceneTriggered', this.waterSceneTriggered);
+    FexDebug.logOnScreen('this.cameraYPivot', this.cameraYPivot);
+
     camera.x = artificialCameraOffsetX + Math.max(0, cameraFollowBox.x - (screen.width - cameraFollowBox.width) / 2);
-    camera.y = artificialCameraOffsetY + Math.min(this.finalCameraY + 700, cameraFollowBox.y - (screen.height - cameraFollowBox.height) / 2);
+    if (this.waterSceneTriggered || this.cameraYPivot === null) {
+      camera.y = artificialCameraOffsetY + Math.min(this.finalCameraY + 700, cameraFollowBox.y - (screen.height - cameraFollowBox.height) / 2);
+    }
+
+    // FexDebug.logOnScreen('')
+    this.scriptedScene(elapsedTime, now);
   }
 
   // eslint-disable-next-line camelcase
@@ -728,7 +780,6 @@ class Game extends Scene {
   update_intro(elapsedTime) {
     curtain = Math.max(0, Math.min(1, curtain + curtainSpeed * elapsedTime));
 
-    const cameraCutSceneSpeed = 0.05;
     camera.y = Math.min(camera.y + elapsedTime * cameraCutSceneSpeed, this.finalCameraY);
 
     if (camera.x === this.finalCameraX && camera.y === this.finalCameraY) {
@@ -753,29 +804,44 @@ class Game extends Scene {
     }
   }
 
+  // eslint-disable-next-line camelcase
+  input_waterScene() {
+
+  }
+
+  // eslint-disable-next-line camelcase
+  update_waterScene(elapsedTime, now) {
+    // shake camera
+    this.character.update(elapsedTime);
+    camera.y = camera.y === this.cameraYPivot ? this.cameraYPivot + 2 : this.cameraYPivot;
+  }
+
   unpause(previousInput) {
     this.inputRecovery = previousInput;
     pause = false;
     this.pauseButton.changeSpriteTo('pause');
   }
 
+  // eslint-disable-next-line camelcase
   input_idle() {
     this.clearInputState();
 
     this.onFired('continue', () => {
-      curtainSpeed = 0.003;
+      curtainSpeed = maxCurtainSpeed;
       this.speech.next();
       this.updateLogic = this.update_intro;
       this.input_intro();
     });
   }
 
+  // eslint-disable-next-line camelcase
   input_intro() {
     this.clearInputState();
     this.onFired('pause', this.onFocusLost);
     this.onFired('continue', () => { camera.y = this.getFinalCameraY(); });
   }
 
+  // eslint-disable-next-line camelcase
   input_normal() {
     InputBuffer.deleteTouchScreenArea('any');
     this.registerVolatileTouchScreenArea(this.leftButtonTouchScreenArea);
@@ -818,7 +884,7 @@ class Game extends Scene {
 
     this.fired.keyboard.KeyC = () => {
       if (curtainSpeed === 0) {
-        curtainSpeed = 0.003;
+        curtainSpeed = maxCurtainSpeed;
       } else {
         curtainSpeed *= -1;
       }
