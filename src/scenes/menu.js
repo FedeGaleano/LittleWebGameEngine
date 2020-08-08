@@ -40,7 +40,6 @@ class Menu extends Scene {
     FexDebug.logOnConsole('menu init()');
 
     const { screen } = GameplayGraphics;
-    GameplayRenderer.fillStyle = 'red';
     this.xTimes = Math.ceil(screen.width / resources.stars.width);
     this.starPanels = [];
     for (let index = 0; index < this.xTimes; ++index) {

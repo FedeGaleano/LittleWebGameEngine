@@ -59,8 +59,9 @@ const prematureJumpTolerance = 100;
 const lavaVelocity = 0.7;
 
 const cameraFollowBox = {
+  // (x, y) set on init()
   x: 0,
-  y: -80,
+  y: 0,
   width: 50,
   height: 50,
   render(customCamera) {
@@ -153,10 +154,10 @@ class Game extends Scene {
 
     this.createBackground();
 
-    // TOCACHE
-    // this.getFinalCameraX = () => -(screen.width / 2 - (numberOfTilesInTheFloorX / 2) * GameplayGraphics.tileSize.w);
     this.getFinalCameraX = () => cameraFollowBox.x - (screen.width - cameraFollowBox.width) / 2;
     this.getFinalCameraY = () => cameraFollowBox.y - (screen.height - cameraFollowBox.height) / 2;
+    this.finalCameraX = null;
+    this.finalCameraY = null;
 
     this.resetAlpha = 0;
     this.resetAlphaSpeed = 0.05;
@@ -196,6 +197,9 @@ class Game extends Scene {
     this.isInAir = false;
     this.hasJumped = false;
     this.jumpRequestTime = null;
+
+    this.finalCameraX = this.getFinalCameraX();
+    this.finalCameraY = this.getFinalCameraY();
   }
 
   placeEntityOverTile(entity, xTile, yTile, zoneIndex = 0) {
@@ -332,7 +336,7 @@ class Game extends Scene {
       render(customCamera) {
         GameplayRenderer.renderFullRectangle(
           0, this.position.y - customCamera.y,
-          GameplayGraphics.screen.width, GameplayGraphics.screen.height, 'rgba(255, 0, 0, 0.5)',
+          GameplayGraphics.screen.width, GameplayGraphics.screen.height, 'rgba(0, 0, 255, 0.5)',
         );
       }
     })();
@@ -344,10 +348,11 @@ class Game extends Scene {
     };
     this.resetLava();
 
+    // init cameraFollowBox
     cameraFollowBox.x = this.character.position.x - (cameraFollowBox.width - this.character.width) / 2;
     cameraFollowBox.y = this.character.position.y - (cameraFollowBox.height - this.character.height);
 
-    // camera init
+    // init camera
     camera.x = -screen.width;
 
     const dialogPoint = { x: this.character.position.x + 14, y: this.character.position.y };
@@ -707,17 +712,12 @@ class Game extends Scene {
     curtain = Math.max(0, Math.min(1, curtain + curtainSpeed * elapsedTime));
 
     const cameraCutSceneSpeed = 0.05;
-    const finalCameraX = this.getFinalCameraX();
-    const finalCameraY = this.getFinalCameraY();
-    camera.x = Math.min(camera.x + elapsedTime * cameraCutSceneSpeed, finalCameraX);
+    camera.x = Math.min(camera.x + elapsedTime * cameraCutSceneSpeed, this.finalCameraX);
 
     // camera.y = -(screen.height * 0.6 - (numberOfTilesInTheFloorY / 2) * GameplayGraphics.tileSize.h);
-    camera.y = finalCameraY;
+    camera.y = this.finalCameraY;
 
-    this.finalCameraY = camera.y;
-
-    if (camera.x === finalCameraX) {
-      this.finalCameraX = finalCameraX;
+    if (camera.x === this.finalCameraX) {
       if (this.speechClosed) {
         this.speech.next();
         this.onFired('continue', () => {
@@ -759,7 +759,7 @@ class Game extends Scene {
   cutSceneInput() {
     this.clearInputState();
     this.onFired('pause', this.onFocusLost);
-    this.onFired('continue', () => { camera.x = this.getFinalCameraX(); });
+    this.onFired('continue', () => { camera.x = this.finalCameraX; });
   }
 
   normalInput() {
