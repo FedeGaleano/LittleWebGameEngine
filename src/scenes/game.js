@@ -98,8 +98,12 @@ const triggerZoneCoords = {
   y: null,
 };
 const checkpoint = { xTile: characterTilePositionX, yTile: characterTilePositionY };
+const entranceTilePositionX = 28;
+const entranceTileWidthX = 2;
 
 const touchMargin = 10;
+
+let won = false;
 
 class Game extends Scene {
   static get camera() {
@@ -184,6 +188,9 @@ class Game extends Scene {
 
     this.resetAlpha = 0;
     this.resetAlphaSpeed = 0.05;
+
+    this.winString = 'GANASTE';
+    this.winStringLength = null;
   }
 
   onScreenResize() {
@@ -480,6 +487,9 @@ class Game extends Scene {
     // camera.x = -screen.width;
     camera.x = this.finalCameraX;
     camera.y = -GameplayGraphics.tileSize.h * 10; // 10 tiles above the surface
+
+    // init winString Length
+    this.winStringLength = fonts.normal.measureText(this.winString);
   }
 
   createBackground() {
@@ -549,6 +559,15 @@ class Game extends Scene {
     }
 
     this.water.render(camera);
+
+    if (won) {
+      GameplayRenderer.renderString(
+        this.winString,
+        (screen.width - this.winStringLength) / 2,
+        (screen.height - fonts.normal.cellHeight) / 2,
+        fonts.normal,
+      );
+    }
 
     // Render Curtain
     // TOCACHE
@@ -749,6 +768,16 @@ class Game extends Scene {
         this.character.changeSpriteTo('idle');
       }
 
+      // check win
+      if (this.character.position.y + this.character.height < 0
+        && (
+          this.character.position.x < entranceTilePositionX * GameplayGraphics.tileSize.w
+          || this.character.position.x > (entranceTilePositionX + entranceTileWidthX) * GameplayGraphics.tileSize.w
+        )
+      ) {
+        won = true;
+      }
+
       // light update
       // this.light.x = this.character.position.x + this.character.width / 2;
       // this.light.y = this.character.position.y + this.character.height / 2;
@@ -799,7 +828,6 @@ class Game extends Scene {
       if (this.character.secondSpeech) {
         this.character.secondSpeech.update(elapsedTime);
       }
-
 
       this.updateCameraFollowBox();
     }
