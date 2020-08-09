@@ -80,6 +80,8 @@ const cameraFollowBox = {
 const jumpMovement = Physics.buildJumpMovement(5, 0.01);
 const jumpMovement2 = Physics.buildJumpMovement2(5);
 
+const floorStart = 7;
+const wallStart = 10;
 const characterTilePositionX = 27;
 const characterTilePositionY = 63;
 const keyTilePositionX = 28;
@@ -90,7 +92,7 @@ const waterTilePositionX = 0;
 const waterTilePositionY = 64;
 const triggerZoneCoords = {
   // less than
-  xTile: 20,
+  xTile: 18,
   yTile: 57,
 
   // these two are set in Game.init after world creation using the tile coords above
@@ -256,6 +258,7 @@ class Game extends Scene {
       zoneIndex, xTile, yTile, entity.position,
     );
     entity.position.y -= entity.height;
+    entity.position.y += floorStart;
     entity.position.x += Math.round((GameplayGraphics.tileSize.w - entity.width) / 2);
   }
 
@@ -768,14 +771,16 @@ class Game extends Scene {
         this.character.changeSpriteTo('idle');
       }
 
-      // check win
-      if (this.character.position.y + this.character.height < 0
+      // check win condition
+      if (this.character.position.y + this.character.height < 0 + floorStart
         && (
-          this.character.position.x < entranceTilePositionX * GameplayGraphics.tileSize.w
-          || this.character.position.x > (entranceTilePositionX + entranceTileWidthX) * GameplayGraphics.tileSize.w
+          this.character.position.x < entranceTilePositionX * GameplayGraphics.tileSize.w + wallStart
+          || this.character.position.x > (entranceTilePositionX + entranceTileWidthX) * GameplayGraphics.tileSize.w + wallStart
         )
       ) {
         won = true;
+        this.clearInputState();
+        this.character.changeSpriteTo('idle');
       }
 
       // light update
