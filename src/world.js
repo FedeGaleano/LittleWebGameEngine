@@ -206,9 +206,10 @@ class World {
                 tileSet.fillHitboxAbsoluteBound(tileValue - 1, tileHitboxAbsoluteBound);
 
                 // use custom hitbox for tile 2 (third tile) when comming from above
-                if ((tileValue === 1 || tileValue === 3) && characterHitbox.getAbsoluteY() < tileBoundY && velocity.y > 0) {
+                const customTileStartY = 7;
+                if ((tileValue === 1 || tileValue === 3) && characterHitbox.getAbsoluteY() < tileBoundY + customTileStartY && velocity.y > 0) {
                   tileHitboxAbsoluteBound.x = 0;
-                  tileHitboxAbsoluteBound.y = 7;
+                  tileHitboxAbsoluteBound.y = customTileStartY;
                   tileHitboxAbsoluteBound.width = tileSize.w;
                   tileHitboxAbsoluteBound.height = 9;
                 }
