@@ -97,6 +97,7 @@ const triggerZoneCoords = {
   x: null,
   y: null,
 };
+const checkpoint = { xTile: characterTilePositionX, yTile: characterTilePositionY };
 
 const touchMargin = 10;
 
@@ -336,7 +337,7 @@ class Game extends Scene {
     // Init World
     this.demoWorld = new World(
       // [tileMaps.zone1, tileMaps.try, tileMaps.try2],
-      [tileMaps.test],
+      [tileMaps.demo],
       tilesets.world,
       0, 0,
     );
@@ -352,7 +353,7 @@ class Game extends Scene {
 
     this.character.die = () => {
       // this.placeEntityOverTile(this.character, characterTilePositionX, characterTilePositionY);
-      this.placeEntityOverTile(this.character, triggerZoneCoords.xTile - 1, triggerZoneCoords.yTile);
+      this.placeEntityOverTile(this.character, checkpoint.xTile, checkpoint.yTile);
       this.character.velocity.x = this.character.velocity.y = 0;
       this.resetAlpha = 1;
     };
@@ -391,7 +392,7 @@ class Game extends Scene {
       // this.water.velocity.y = 0;
       // this.cameraYPivot = null;
       // this.waterSceneTriggered = false;
-      this.water.velocity.y = waterVelocity;
+      this.water.velocity.y = checkpoint.yTile === triggerZoneCoords.yTile ? waterVelocity : 0;
     };
     this.resetWater();
     this.water.velocity.y = 0;
@@ -412,8 +413,8 @@ class Game extends Scene {
       [
         'seguramente Fex',
         'ya te explico',
-        'que esto no es',
-        'un videojuego',
+        'que este no es',
+        'el videojuego',
       ],
       [
         'pero aun asi',
@@ -422,11 +423,11 @@ class Game extends Scene {
         'no te deja escuchar',
       ],
       [
-        'asi que mi tarea aqui es...',
+        'asi que mientras tanto...',
       ],
       [
-        'repetirte que esto',
-        'NO es un videojuego',
+        'Ayudame a salir de aqui',
+        'sin caer al agua',
       ],
       [
         ':)',
@@ -584,6 +585,8 @@ class Game extends Scene {
     FexDebug.logOnScreen('character pos x', this.character.position.x);
     FexDebug.logOnScreen('character pos y', this.character.position.y);
     FexDebug.logOnScreen('isInAir', this.demoWorld.collisionInfo.isInAir);
+    FexDebug.logOnScreen('checkpoint.xTile', checkpoint.xTile);
+    FexDebug.logOnScreen('checkpoint.yTile', checkpoint.yTile);
     // FexDebug.logOnScreen('cameraFollowBox x', cameraFollowBox.x);
     // FexDebug.logOnScreen('cameraFollowBox y', cameraFollowBox.y);
     // FexDebug.logOnScreen('slime pos from cam x', this.character.position.x - camera.x);
@@ -732,6 +735,9 @@ class Game extends Scene {
         && this.character.position.x + this.character.hitbox.xOffset < triggerZoneCoords.x
         && this.character.position.y + this.character.height < triggerZoneCoords.y
       ) {
+        checkpoint.xTile = triggerZoneCoords.xTile - 1;
+        checkpoint.yTile = triggerZoneCoords.yTile;
+
         this.leftButton.changeSpriteTo('normal');
         this.rightButton.changeSpriteTo('normal');
         this.jumpButton.changeSpriteTo('normal');

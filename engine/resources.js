@@ -55,6 +55,7 @@ const tileMaps = {
   cave4: 'cave4.json',
   cave5: 'cave5.json',
   test: 'test.json',
+  demo: 'demo.json',
 };
 
 const tilesets = {
