@@ -208,9 +208,9 @@ class World {
                 // use custom hitbox for tile 2 (third tile) when comming from above
                 if ((tileValue === 1 || tileValue === 3) && characterHitbox.getAbsoluteY() < tileBoundY && velocity.y > 0) {
                   tileHitboxAbsoluteBound.x = 0;
-                  tileHitboxAbsoluteBound.y = 0;
+                  tileHitboxAbsoluteBound.y = 7;
                   tileHitboxAbsoluteBound.width = tileSize.w;
-                  tileHitboxAbsoluteBound.height = tileSize.h;
+                  tileHitboxAbsoluteBound.height = 9;
                 }
 
                 if (characterHitbox.collidesWithBound(

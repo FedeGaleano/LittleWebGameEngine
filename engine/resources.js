@@ -32,7 +32,8 @@ const resourceLoadingData = [
   { path: 'engine-demo-button-right-pressed.png', resourceName: 'uiButtonRightPressed' },
   { path: 'engine-demo-button-jump-pressed.png', resourceName: 'uiButtonActionPressed' },
   { path: 'fex-engine-camera.png', resourceName: 'camera' },
-  { path: 'tileset-engine-demo.png', resourceName: 'tileset' },
+  // { path: 'tileset-engine-demo.png', resourceName: 'tileset' },
+  { path: 'tileset-2-engine-demo.png', resourceName: 'tileset2' },
   { path: 'boss.png', resourceName: 'boss' },
   { path: 'engine-demo-focus-alert-window.png', resourceName: 'focusAlertWindow' },
   { path: 'engine-demo-intro.png', resourceName: 'fexIntro' },
@@ -59,7 +60,8 @@ const tileMaps = {
 };
 
 const tilesets = {
-  world: 'tileset-engine-demo.json',
+  // world: 'tileset-engine-demo.json',
+  world: 'tileset2.json',
 };
 
 function loadFonts() {
