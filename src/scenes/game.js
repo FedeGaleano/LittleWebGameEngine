@@ -711,7 +711,7 @@ class Game extends Scene {
         this.character.secondSpeech = new Speech(
           this.character.position.x + this.character.width, this.character.position.y,
           [
-            ['omg'],
+            ['!'],
           ],
           dialogSpeed,
         );
@@ -781,6 +781,9 @@ class Game extends Scene {
         won = true;
         this.clearInputState();
         this.character.changeSpriteTo('idle');
+        this.leftButton.changeSpriteTo('normal');
+        this.rightButton.changeSpriteTo('normal');
+        this.jumpButton.changeSpriteTo('normal');
       }
 
       // light update
