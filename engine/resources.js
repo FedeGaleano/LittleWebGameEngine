@@ -39,6 +39,7 @@ const resourceLoadingData = [
   { path: 'engine-demo-intro.png', resourceName: 'fexIntro' },
   { path: 'engine-demo-key.png', resourceName: 'key' },
   { path: 'engine-demo-flag.png', resourceName: 'flag' },
+  { path: 'engine-demo-arrow.png', resourceName: 'arrow' },
 ];
 
 const resources = {};
@@ -56,7 +57,7 @@ const tileMaps = {
   cave4: 'cave4.json',
   cave5: 'cave5.json',
   test: 'test.json',
-  demo: 'demo.json',
+  demo: 'demo-layered.json',
 };
 
 const tilesets = {

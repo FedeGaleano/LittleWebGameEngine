@@ -22,7 +22,7 @@ class Zone {
     this.tileMap = tileMap;
     this.tileSet = tileSet;
     this.tilesInX = tileMap.scanline;
-    this.tilesInY = tileMap.data.length / tileMap.scanline;
+    this.tilesInY = tileMap.layers[0].length / tileMap.scanline;
     this.width = this.tilesInX * GameplayGraphics.tileSize.w;
     this.height = this.tilesInY * GameplayGraphics.tileSize.h;
   }
@@ -37,17 +37,20 @@ class Zone {
       && (x > screeenWidth || x + this.width < 0 || y > screeenHeight || y + this.height < 0)
     ) return;
 
-    const { scanline, data } = this.tileMap;
+    const { scanline, layers } = this.tileMap;
     const { w, h } = GameplayGraphics.tileSize;
-    for (let i = 0; i < data.length; ++i) {
-      const finalX = (i % scanline) * w + x;
-      const finalY = Math.floor(i / scanline) * h + y;
+    for (let l = 0; l < layers.length; ++l) {
+      const data = layers[l];
+      for (let i = 0; i < data.length; ++i) {
+        const finalX = (i % scanline) * w + x;
+        const finalY = Math.floor(i / scanline) * h + y;
 
-      if (renderingOptimizationLevel > 1
+        if (renderingOptimizationLevel > 1
         && (finalX > screeenWidth || finalX + w < 0 || finalY > screeenHeight || finalY + h < 0)
-      ) continue;
+        ) continue;
 
-      this.tileSet.render(data[i], finalX, finalY);
+        this.tileSet.render(data[i], finalX, finalY);
+      }
     }
   }
 }
@@ -170,7 +173,7 @@ class World {
         const xBaseTileIndex = Math.floor(xOffset / tileSize.w);
         const yBaseTileIndex = Math.floor(yOffset / tileSize.h);
         const { tileMap } = this.zones[zoneIndex];
-        const tileMapData = tileMap.data;
+        const tileMapData = tileMap.layers[tileMap.layers.length - 1];
 
         const areaWidth = this.collisionCheckAreaInTiles.width;
         const areaHeight = this.collisionCheckAreaInTiles.height;

@@ -84,8 +84,6 @@ const floorStart = 7;
 const wallStart = 10;
 const characterTilePositionX = 27;
 const characterTilePositionY = 63;
-const keyTilePositionX = 28;
-const keyTilePositionY = 51;
 const flagTilePositionX = 27;
 const flagTilePositionY = 0;
 const waterTilePositionX = 0;
@@ -167,9 +165,9 @@ class Game extends Scene {
 
     // Entities
     this.character = null;
-    this.key = null;
     this.flag = null;
     this.water = null;
+    this.arrow = null;
 
     // UI
     this.leftButton = null;
@@ -368,19 +366,19 @@ class Game extends Scene {
       this.resetAlpha = 1;
     };
 
-    this.keySprite = new Sprite(resources.key, 1, [1], GameplayGraphics);
-    this.key = new Entity(
-      { normal: this.keySprite },
-      { startingSpriteKey: 'normal' },
-    );
-    this.placeEntityOverTile(this.key, keyTilePositionX, keyTilePositionY);
-
     this.flagSprite = new Sprite(resources.flag, 1, [1], GameplayGraphics);
     this.flag = new Entity(
       { normal: this.flagSprite },
       { startingSpriteKey: 'normal' },
     );
     this.placeEntityOverTile(this.flag, flagTilePositionX, flagTilePositionY);
+
+    this.arrowSprite = new Sprite(resources.arrow, 2, [400, 400], GameplayGraphics);
+    this.arrow = new Entity(
+      { normal: this.arrowSprite },
+      { startingSpriteKey: 'normal' }, 0, 0,
+    );
+    this.demoWorld.copyTileCoordsInBound(0, 21, 52, this.arrow.position);
 
     this.water = new (class {
       constructor() {
@@ -462,15 +460,6 @@ class Game extends Scene {
 
     const boundForLightPosition = new Bound();
     this.demoWorld.copyTileCoordsInBound(0, 29, 22, boundForLightPosition);
-    this.light = new Light(
-      this.key.position.x + this.key.width / 2, this.key.position.y + this.key.height / 2,
-      // boundForLightPosition.x, boundForLightPosition.y,
-      // this.character.position.x + this.character.width / 2, this.character.position.y + this.character.height / 2,
-      // this.character.width / 2 + 35,
-      this.key.height / 2 + 10,
-      255, 0, 255,
-      1,
-    );
 
     const panelWidth = resources.stars.width;
     const panelHeight = resources.stars.height;
@@ -535,6 +524,8 @@ class Game extends Scene {
 
     this.demoWorld.render(camera);
 
+    this.arrow.render(camera);
+
     // TOCACHE
     this.speech.render(camera);
     if (this.character.secondSpeech) {
@@ -542,16 +533,9 @@ class Game extends Scene {
     }
 
 
-    this.boss.render(camera);
+    // this.boss.render(camera);
 
-
-    this.key.render(camera);
     this.flag.render(camera);
-    this.light.render(camera);
-    // GameplayRenderer.renderFullRectangle((this.light.x - camera.x) - 10, (this.light.y - camera.y) - 10, 20, 20, 'white');
-    // GameplayRenderer.renderFullCircle(this.light.x - camera.x, this.light.y - camera.y, 5, 'white');
-
-    // this.lights.forEach(l => l.render(camera));
 
     if (showGrid) {
       renderer.renderWorldTileGrid(this.demoWorld, camera, this.demoWorld.collisionInfo.map);
@@ -564,11 +548,14 @@ class Game extends Scene {
     this.water.render(camera);
 
     if (won) {
-      GameplayRenderer.renderString(
+      const x = (screen.width - this.winStringLength) / 2;
+      const y = (screen.height - fonts.normal.cellHeight) / 2;
+      GameplayRenderer.renderFullRectangle(x - 1, y - 1, this.winStringLength + 1, fonts.normal.cellHeight - 1, 'rgba(0, 0, 0, 0.75)');
+      GameplayRenderer.renderStringColored(
         this.winString,
-        (screen.width - this.winStringLength) / 2,
-        (screen.height - fonts.normal.cellHeight) / 2,
-        fonts.normal,
+        x,
+        y,
+        fonts.normal, '#55FF00',
       );
     }
 
@@ -711,7 +698,7 @@ class Game extends Scene {
         this.character.secondSpeech = new Speech(
           this.character.position.x + this.character.width, this.character.position.y,
           [
-            ['!'],
+            ['OMG'],
           ],
           dialogSpeed,
         );
@@ -752,6 +739,8 @@ class Game extends Scene {
       this.character.velocity.y += this.modifyGravity(gravity) * elapsedTime;
       this.character.update(elapsedTime);
 
+      this.arrow.update(elapsedTime);
+
       // start moving water (trigger)
       if (!this.waterSceneTriggered && this.cameraYPivot == null
         && this.character.position.x + this.character.hitbox.xOffset < triggerZoneCoords.x
@@ -785,15 +774,6 @@ class Game extends Scene {
         this.rightButton.changeSpriteTo('normal');
         this.jumpButton.changeSpriteTo('normal');
       }
-
-      // light update
-      // this.light.x = this.character.position.x + this.character.width / 2;
-      // this.light.y = this.character.position.y + this.character.height / 2;
-
-      // this.lights.forEach((l, i) => {
-      //   l.x = this.character.position.x + this.character.width / 2 + 10 * i;
-      //   l.y = this.character.position.y + this.character.height / 2;
-      // });
 
       this.zoneIndex = this.demoWorld.getZoneIndex(this.character.hitbox);
       this.demoWorld.setCollisionInfo(this.character, elapsedTime);
