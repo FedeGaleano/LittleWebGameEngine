@@ -4,7 +4,7 @@ import FexMath from '../engine/utils/FexMath.js';
 import FexDebug from '../engine/debug.js';
 import Bound from '../engine/Bound.js';
 
-let renderingOptimizationLevel = 2;
+let renderingOptimizationLevel = 3;
 
 FexDebug.createGlobal('setOptLevel', (val) => { renderingOptimizationLevel = val; });
 
@@ -28,28 +28,45 @@ class Zone {
   }
 
   render(camera) {
-    const x = this.x - camera.x;
-    const y = this.y - camera.y;
+    const zoneScreenX0 = this.x - camera.x;
+    const zoneScreenY0 = this.y - camera.y;
 
     const { width: screeenWidth, height: screeenHeight } = GameplayGraphics.screen;
 
     if (renderingOptimizationLevel > 0
-      && (x > screeenWidth || x + this.width < 0 || y > screeenHeight || y + this.height < 0)
+      && (zoneScreenX0 > screeenWidth || zoneScreenX0 + this.width < 0 || zoneScreenY0 > screeenHeight || zoneScreenY0 + this.height < 0)
     ) return;
 
     const { scanline, layers } = this.tileMap;
     const { w, h } = GameplayGraphics.tileSize;
-    for (let l = 0; l < layers.length; ++l) {
-      const data = layers[l];
-      for (let i = 0; i < data.length; ++i) {
-        const finalX = (i % scanline) * w + x;
-        const finalY = Math.floor(i / scanline) * h + y;
 
-        if (renderingOptimizationLevel > 1
+    const maxTilesInScreenX = Math.ceil(screeenWidth / w) + 1;
+    const maxTilesInScreenY = Math.ceil(screeenHeight / h) + 1;
+
+    if (renderingOptimizationLevel > 2) {
+      const x0 = Math.max(0, Math.floor(0 - zoneScreenX0 / w));
+      const y0 = Math.max(0, Math.floor(0 - zoneScreenY0 / h));
+
+      for (let xi = x0; xi < x0 + maxTilesInScreenX; ++xi) {
+        for (let yi = y0; yi < y0 + maxTilesInScreenY; ++yi) {
+          const i = yi * scanline + xi;
+          this.tileSet.render(layers[0][i], zoneScreenX0 + xi * w, zoneScreenY0 + yi * h); // back
+          this.tileSet.render(layers[1][i], zoneScreenX0 + xi * w, zoneScreenY0 + yi * h); // front
+        }
+      }
+    } else {
+      for (let l = 0; l < layers.length; ++l) {
+        const data = layers[l];
+        for (let i = 0; i < data.length; ++i) {
+          const finalX = zoneScreenX0 + (i % scanline) * w;
+          const finalY = zoneScreenY0 + Math.floor(i / scanline) * h;
+
+          if (renderingOptimizationLevel > 1
         && (finalX > screeenWidth || finalX + w < 0 || finalY > screeenHeight || finalY + h < 0)
-        ) continue;
+          ) continue;
 
-        this.tileSet.render(data[i], finalX, finalY);
+          this.tileSet.render(data[i], finalX, finalY);
+        }
       }
     }
   }

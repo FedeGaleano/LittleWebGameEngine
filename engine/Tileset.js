@@ -30,7 +30,7 @@ class TileSet {
     const sx = (tileIndex % this.tileScanline) * this.tileWidth;
     const sy = Math.floor(tileIndex / this.tileScanline) * this.tileWidth;
 
-    GameplayGraphics.renderer.renderSubBitmap(
+    GameplayGraphics.renderer.renderSubBitmapNoRound(
       this.bitmap, finalX, finalY, sx, sy, this.tileWidth, this.tileHeight,
     );
   }
