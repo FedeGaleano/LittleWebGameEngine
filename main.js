@@ -336,6 +336,8 @@ export default function startEngine() {
       GameplayGraphics.renderer.renderBitmapCentered(resources.focusAlertWindow);
     }
 
+    currentGraphics.presentFrameToScreen();
+
     window.requestAnimationFrame(loop);
   }
 

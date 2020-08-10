@@ -54,8 +54,8 @@ window.addEventListener('resize', adjust /* () => { console.log('resize'); } */)
 
 GameplayGraphics.canvas.id = 'canvas';
 AskForRotationGraphics.canvas.id = 'askToRotatePhone';
-document.body.appendChild(GameplayGraphics.canvas);
-document.body.appendChild(AskForRotationGraphics.canvas);
+document.body.appendChild(GameplayGraphics.presentationCanvas);
+document.body.appendChild(AskForRotationGraphics.presentationCanvas);
 adjust();
 
 function recreate() {
