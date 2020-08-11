@@ -1,8 +1,10 @@
-import { GameplayGraphics } from '../engine/rendering.js';
+import { GameplayGraphics, GameplayRenderer } from '../engine/rendering.js';
 import TileMark from '../engine/TileMark.js';
 import FexMath from '../engine/utils/FexMath.js';
 import FexDebug from '../engine/debug.js';
 import Bound from '../engine/Bound.js';
+import Graphics from '../engine/graphics.js';
+import TileSet from '../engine/Tileset.js';
 
 let renderingOptimizationLevel = 3;
 
@@ -15,6 +17,12 @@ const tileFriction = tileValue => ({
   3: defaultFriction,
 }[tileValue]) || defaultFriction;
 
+class ZoneGraphics extends Graphics {
+  rescale() {
+    this.scale = GameplayGraphics.scale;
+  }
+}
+
 class Zone {
   constructor(x, y, tileMap, tileSet) {
     this.x = x;
@@ -25,6 +33,8 @@ class Zone {
     this.tilesInY = tileMap.layers[0].length / tileMap.scanline;
     this.width = this.tilesInX * GameplayGraphics.tileSize.w;
     this.height = this.tilesInY * GameplayGraphics.tileSize.h;
+    this.customGraphics = new ZoneGraphics();
+    this.customGraphics.adjustRenderingContext();
   }
 
   render(camera) {
@@ -70,6 +80,33 @@ class Zone {
       }
     }
   }
+
+  preRender() {
+    const { scanline, layers, length } = this.tileMap;
+    const { tileSize: { w, h }, scale } = GameplayGraphics;
+
+    this.customGraphics.scale = scale;
+    this.customGraphics.canvas.width = this.width * scale;
+    this.customGraphics.canvas.height = this.height * scale;
+    this.customGraphics.noBlur();
+    this.tileSet.graphics = this.customGraphics;
+
+    for (let xi = 0; xi < scanline; ++xi) {
+      for (let yi = 0; yi < length / scanline; ++yi) {
+        const i = yi * scanline + xi;
+        this.tileSet.render(layers[0][i], xi * w, +yi * h); // back
+        this.tileSet.render(layers[1][i], xi * w, +yi * h); // front
+      }
+    }
+
+    this.tileSet.graphics = GameplayGraphics;
+  }
+
+  renderFast(camera) {
+    const x = this.x - camera.x;
+    const y = this.y - camera.y;
+    GameplayGraphics.renderingContext2D.drawImage(this.customGraphics.canvas, x * GameplayGraphics.scale, y * GameplayGraphics.scale);
+  }
 }
 
 class World {
@@ -106,8 +143,14 @@ class World {
     this.zoneIndexes = [null, null];
   }
 
+  preRender() {
+    this.zones.forEach((zone) => {
+      zone.preRender();
+    });
+  }
+
   render(camera) {
-    this.zones.forEach(zone => zone.render(camera));
+    this.zones.forEach(zone => zone.renderFast(camera));
   }
 
   getZoneIndex(hitBox) {

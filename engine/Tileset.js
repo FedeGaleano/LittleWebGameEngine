@@ -10,6 +10,7 @@ class TileSet {
     this.tileHeight = metadata.tileheight;
     this.tileScanline = Math.floor(this.bitmap.width / this.tileWidth);
     this.count = metadata.tilecount;
+    this.graphics = GameplayGraphics;
 
     this.collisionData = new Array(this.count).fill().map(() => new Bound());
     metadata.tiles
@@ -30,7 +31,7 @@ class TileSet {
     const sx = (tileIndex % this.tileScanline) * this.tileWidth;
     const sy = Math.floor(tileIndex / this.tileScanline) * this.tileWidth;
 
-    GameplayGraphics.renderer.renderSubBitmapNoRound(
+    this.graphics.renderer.renderSubBitmapNoRound(
       this.bitmap, finalX, finalY, sx, sy, this.tileWidth, this.tileHeight,
     );
   }

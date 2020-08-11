@@ -21,6 +21,10 @@ class Graphics {
     throw new Error('Graphics::rescale() method called but not implemented');
   }
 
+  noBlur() {
+    this.renderingContext2D.imageSmoothingEnabled = this.offScreenRenderingContext2D.imageSmoothingEnabled = this.presentationRenderingContext2D.imageSmoothingEnabled = false;
+  }
+
   adjustRenderingContext() {
     const {
       canvas, screen, offScreenCanvas, presentationCanvas,
@@ -58,7 +62,7 @@ class Graphics {
     screen.width = this.canvasWidth / this.scale;
     screen.height = this.canvasHeight / this.scale;
 
-    this.renderingContext2D.imageSmoothingEnabled = this.offScreenRenderingContext2D.imageSmoothingEnabled = this.presentationRenderingContext2D.imageSmoothingEnabled = false;
+    this.noBlur();
   }
 
   presentFrameToScreen() {

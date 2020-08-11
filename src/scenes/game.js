@@ -249,6 +249,8 @@ class Game extends Scene {
     this.finalCameraY = this.getFinalCameraY();
 
     this.createBackground();
+
+    this.demoWorld.preRender();
   }
 
   placeEntityOverTile(entity, xTile, yTile, zoneIndex = 0) {
@@ -349,6 +351,8 @@ class Game extends Scene {
       tilesets.world,
       0, 0,
     );
+
+    this.demoWorld.preRender();
 
     // init triggerZoneCoords
     this.demoWorld.copyTileCoordsInBound(0, triggerZoneCoords.xTile, triggerZoneCoords.yTile, triggerZoneCoords);
