@@ -592,23 +592,17 @@ class Game extends Scene {
       GameplayRenderer.alpha = 1;
     }
 
-    FexDebug.logOnScreen('zone indexes', JSON.stringify(this.demoWorld.zoneIndexes));
-    FexDebug.logOnScreen('character velocity x', FexMath.precision(this.character.velocity.x));
-    FexDebug.logOnScreen('character velocity y', FexMath.precision(this.character.velocity.y));
-    FexDebug.logOnScreen('character pos x', this.character.position.x);
-    FexDebug.logOnScreen('character pos y', this.character.position.y);
+    FexDebug.logOnScreen('velocity fixed', `<${
+      Number.parseFloat(FexMath.precision(this.character.velocity.x)).toFixed(2)
+    }, ${
+      Number.parseFloat(FexMath.precision(this.character.velocity.y)).toFixed(2)
+    }>`);
+    FexDebug.logOnScreen('position fixed', `<${
+      Number.parseFloat(FexMath.precision(this.character.position.x)).toFixed(2)
+    }, ${
+      Number.parseFloat(FexMath.precision(this.character.position.y)).toFixed(2)
+    }>`);
     FexDebug.logOnScreen('isInAir', this.demoWorld.collisionInfo.isInAir);
-    FexDebug.logOnScreen('checkpoint.xTile', checkpoint.xTile);
-    FexDebug.logOnScreen('checkpoint.yTile', checkpoint.yTile);
-    // FexDebug.logOnScreen('cameraFollowBox x', cameraFollowBox.x);
-    // FexDebug.logOnScreen('cameraFollowBox y', cameraFollowBox.y);
-    // FexDebug.logOnScreen('slime pos from cam x', this.character.position.x - camera.x);
-    // FexDebug.logOnScreen('slime pos from cam y', this.character.position.y - camera.y);
-    // FexDebug.logOnScreen('hitbox pos from cam x', this.character.hitbox.getAbsoluteX() - camera.x);
-    // FexDebug.logOnScreen('hitbox pos from cam y', this.character.hitbox.getAbsoluteY() - camera.y);
-
-    // FexDebug.logOnScreen('hitbox pos x', FexMath.precision(this.character.hitbox.getAbsoluteX() + this.character.hitbox.absoluteWidth));
-    // FexDebug.logOnScreen('hitbox pos y', FexMath.precision(this.character.hitbox.getAbsoluteY() + this.character.hitbox.absoluteHeight));
   }
 
   postUpdate() {
