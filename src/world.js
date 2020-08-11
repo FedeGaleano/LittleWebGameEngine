@@ -91,11 +91,11 @@ class Zone {
     this.customGraphics.noBlur();
     this.tileSet.graphics = this.customGraphics;
 
-    for (let xi = 0; xi < scanline; ++xi) {
-      for (let yi = 0; yi < length / scanline; ++yi) {
+    for (let yi = 0; yi < length / scanline; ++yi) {
+      for (let xi = 0; xi < scanline; ++xi) {
         const i = yi * scanline + xi;
-        this.tileSet.render(layers[0][i], xi * w, +yi * h); // back
-        this.tileSet.render(layers[1][i], xi * w, +yi * h); // front
+        this.tileSet.render(layers[0][i], xi * w, yi * h); // back
+        this.tileSet.render(layers[1][i], xi * w, yi * h); // front
       }
     }
 
