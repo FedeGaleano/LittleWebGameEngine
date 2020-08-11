@@ -66,6 +66,7 @@ class Graphics {
   }
 
   presentFrameToScreen() {
+    this.presentationRenderingContext2D.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
     this.presentationRenderingContext2D.drawImage(this.canvas, 0, 0, this.canvasWidth, this.canvasHeight);
   }
 }

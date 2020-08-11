@@ -219,15 +219,15 @@ export default function startEngine() {
   function chooseLoopManager() {
     clearInput();
     if (/^portrait/i.test(orientation)) {
-      GameplayGraphics.canvas.style.display = 'none';
-      AskForRotationGraphics.canvas.style.display = 'inline';
+      GameplayGraphics.presentationCanvas.style.display = 'none';
+      AskForRotationGraphics.presentationCanvas.style.display = 'inline';
       currentGraphics = AskForRotationGraphics;
       gameplaySceneBackup = scene;
       scene = rotatePhoneScene;
     } else {
-      if (GameplayGraphics.canvas.style.display === 'none') {
-        GameplayGraphics.canvas.style.display = 'inline';
-        AskForRotationGraphics.canvas.style.display = 'none';
+      if (GameplayGraphics.presentationCanvas.style.display === 'none') {
+        GameplayGraphics.presentationCanvas.style.display = 'inline';
+        AskForRotationGraphics.presentationCanvas.style.display = 'none';
         scene = gameplaySceneBackup;
       }
       currentGraphics = GameplayGraphics;
