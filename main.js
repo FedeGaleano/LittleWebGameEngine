@@ -118,8 +118,10 @@ function changeScene(newScene, effect) {
     InputBuffer.deleteTouchScreenArea(areaName);
   });
   scene.volatileTouchScreenAreas = [];
-  newScene.init();
-  nextScene = newScene;
+  setTimeout(() => {
+    newScene.init();
+    nextScene = newScene;
+  }, 200);
   transitionAlpha = 0;
   transitionSpeed = 0.1;
 }
@@ -127,7 +129,7 @@ function changeScene(newScene, effect) {
 function renderScene() {
   scene.render();
   if (transitionAlpha >= 0) {
-    if (transitionAlpha >= 1) {
+    if (transitionAlpha >= 1 && nextScene) {
       transitionAlpha = 1;
       transitionSpeed *= -1;
       scene = nextScene;
