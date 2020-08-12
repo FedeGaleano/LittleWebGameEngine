@@ -37,7 +37,6 @@ const { renderer, screen } = GameplayGraphics;
 
 const camera = { x: 0, y: 0 };
 const cameraCutSceneSpeed = 0.05;
-const cameraShakingSpeed = 0.075;
 const cameraShakingAmplitude = 2;
 const cameraShakingVelocity = 0.2;
 const artificialCameraOffsetX = 0;
