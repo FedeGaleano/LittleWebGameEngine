@@ -39,6 +39,7 @@ const camera = { x: 0, y: 0 };
 const cameraCutSceneSpeed = 0.05;
 const cameraShakingSpeed = 0.075;
 const cameraShakingAmplitude = 2;
+const cameraShakingVelocity = 0.2;
 const artificialCameraOffsetX = 0;
 let artificialCameraOffsetY = 0;
 const starsParallax = 0.25;
@@ -603,6 +604,7 @@ class Game extends Scene {
       Number.parseFloat(FexMath.precision(this.character.position.y)).toFixed(2)
     }>`);
     FexDebug.logOnScreen('isInAir', this.demoWorld.collisionInfo.isInAir);
+    FexDebug.logOnScreen('cameraShakingAmplitude', cameraShakingAmplitude);
   }
 
   postUpdate() {
@@ -686,12 +688,21 @@ class Game extends Scene {
 
   // eslint-disable-next-line camelcase
   scriptedScene_water(elapsedTime, now, prevInput) {
-    if (now - this.waterSceneTriggerMoment < 1000) {
+    const extraTime = 2000;
+    if (now - this.waterSceneTriggerMoment < 1000 + extraTime) {
       // shake camera
-      const spd = camera.y >= this.cameraYPivot + cameraShakingAmplitude ? -cameraShakingSpeed : cameraShakingSpeed;
+      // const spd = camera.y >= this.cameraYPivot + cameraShakingAmplitude ? -cameraShakingSpeed : cameraShakingSpeed;
+      let spd = cameraShakingAmplitude;
+      if (camera.y >= this.cameraYPivot + cameraShakingAmplitude) {
+        spd = -cameraShakingVelocity;
+      }
+      if (camera.y < this.cameraYPivot) {
+        spd = cameraShakingVelocity;
+      }
+
       camera.y = FexMath.boundExpression(camera.y + spd * elapsedTime, this.cameraYPivot, this.cameraYPivot + cameraShakingAmplitude);
       // camera.y = camera.y === this.cameraYPivot ? this.cameraYPivot + 2 : this.cameraYPivot;
-    } else if (now - this.waterSceneTriggerMoment < 4000) {
+    } else if (now - this.waterSceneTriggerMoment < 4000 + extraTime) {
       if (!this.character.secondSpeech) {
         this.character.secondSpeech = new Speech(
           this.character.position.x + this.character.width, this.character.position.y,
@@ -702,9 +713,9 @@ class Game extends Scene {
         );
         this.character.secondSpeech.next();
       }
-    } else if (now - this.waterSceneTriggerMoment < 6000) {
+    } else if (now - this.waterSceneTriggerMoment < 6000 + extraTime) {
       camera.y = Math.min(camera.y + cameraCutSceneSpeed * elapsedTime, this.cameraYPivot + 100);
-    } else if (now - this.waterSceneTriggerMoment < 6500) {
+    } else if (now - this.waterSceneTriggerMoment < 6500 + extraTime) {
       if (!this.character.secondSpeech.closed) {
         this.character.secondSpeech.next();
       }
