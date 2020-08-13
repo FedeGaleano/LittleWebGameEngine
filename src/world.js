@@ -1,14 +1,9 @@
-import { GameplayGraphics, GameplayRenderer } from '../engine/rendering.js';
+import { GameplayGraphics } from '../engine/rendering.js';
 import TileMark from '../engine/TileMark.js';
 import FexMath from '../engine/utils/FexMath.js';
-import FexDebug from '../engine/debug.js';
 import Bound from '../engine/Bound.js';
 import Graphics from '../engine/graphics.js';
-import TileSet from '../engine/Tileset.js';
-
-let renderingOptimizationLevel = 3;
-
-FexDebug.createGlobal('setOptLevel', (val) => { renderingOptimizationLevel = val; });
+import FexGlobals from '../engine/utils/FexGlobals.js';
 
 const defaultFriction = 0.0005;
 const tileFriction = tileValue => ({
@@ -43,7 +38,8 @@ class Zone {
 
     const { width: screeenWidth, height: screeenHeight } = GameplayGraphics.screen;
 
-    if (renderingOptimizationLevel > 0
+    const optimizationLevel = FexGlobals.mapRenderingOptimizationLevel.get();
+    if (optimizationLevel > 0
       && (zoneScreenX0 > screeenWidth || zoneScreenX0 + this.width < 0 || zoneScreenY0 > screeenHeight || zoneScreenY0 + this.height < 0)
     ) return;
 
@@ -53,7 +49,7 @@ class Zone {
     const maxTilesInScreenX = Math.ceil(screeenWidth / w) + 1;
     const maxTilesInScreenY = Math.ceil(screeenHeight / h) + 1;
 
-    if (renderingOptimizationLevel > 2) {
+    if (optimizationLevel > 2) {
       const x0 = Math.max(0, Math.floor(0 - zoneScreenX0 / w));
       const y0 = Math.max(0, Math.floor(0 - zoneScreenY0 / h));
 
@@ -71,7 +67,7 @@ class Zone {
           const finalX = zoneScreenX0 + (i % scanline) * w;
           const finalY = zoneScreenY0 + Math.floor(i / scanline) * h;
 
-          if (renderingOptimizationLevel > 1
+          if (optimizationLevel > 1
         && (finalX > screeenWidth || finalX + w < 0 || finalY > screeenHeight || finalY + h < 0)
           ) continue;
 
@@ -150,7 +146,8 @@ class World {
   }
 
   render(camera) {
-    this.zones.forEach(zone => zone.renderFast(camera));
+    const renderMethod = FexGlobals.useRenderCache.get() ? 'renderFast' : 'render';
+    this.zones.forEach(zone => zone[renderMethod](camera));
   }
 
   getZoneIndex(hitBox) {

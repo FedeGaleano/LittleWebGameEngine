@@ -11,6 +11,7 @@ import InputBuffer from './engine/InputBuffer.js';
 import RotatePhoneScene from './src/rotatePhoneScene.js';
 import FexMath from './engine/utils/FexMath.js';
 import TouchScreenArea from './engine/TouchScreenArea.js';
+import FexGlobals from './engine/utils/FexGlobals.js';
 
 let debug = false;
 let focus = true;
@@ -66,19 +67,29 @@ let debugCamera = false;
 let debugTouchScreen = false;
 let playerScale = null;
 
-function manageDebugCamera() {
+function turnOnDebugCamera() {
+  FexGlobals.useRenderCache.set(false);
+  playerScale = currentGraphics.scale;
+  const xTranslate = (currentGraphics.canvas.width / 2) * (1 - 1 / playerScale);
+  const yTranslate = (currentGraphics.canvas.height / 2) * (1 - 1 / playerScale);
+  FexDebug.setChangedOrigin(-xTranslate, -yTranslate);
+  currentGraphics.scale = 1;
+  currentGraphics.renderingContext2D.translate(xTranslate, yTranslate);
+  debugCamera = true;
+}
+
+function turnOffDebugCamera() {
+  FexGlobals.useRenderCache.set(true);
+  FexDebug.setChangedOrigin(0, 0);
+  currentGraphics.adjustRenderingContext();
+  debugCamera = false;
+}
+
+function toggleDebugCamera() {
   if (!debugCamera) {
-    playerScale = currentGraphics.scale;
-    const xTranslate = (currentGraphics.canvas.width / 2) * (1 - 1 / playerScale);
-    const yTranslate = (currentGraphics.canvas.height / 2) * (1 - 1 / playerScale);
-    FexDebug.setChangedOrigin(-xTranslate, -yTranslate);
-    currentGraphics.scale = 1;
-    currentGraphics.renderingContext2D.translate(xTranslate, yTranslate);
-    debugCamera = true;
+    turnOnDebugCamera();
   } else {
-    FexDebug.setChangedOrigin(0, 0);
-    currentGraphics.adjustRenderingContext();
-    debugCamera = false;
+    turnOffDebugCamera();
   }
 }
 
@@ -296,6 +307,7 @@ export default function startEngine() {
     if (debug) {
       info.fps = fps;
       FexDebug.setGeneralInfo(info);
+      FexDebug.logOnScreen('useRenderCache', FexGlobals.useRenderCache.get());
       FexDebug.render(currentGraphics);
     }
     if (debugCamera) {
@@ -345,6 +357,7 @@ export default function startEngine() {
 
   function start() {
     setEnvironment().then(() => {
+      FexGlobals.useRenderCache.set(true);
       rotatePhoneScene.init();
       scene.init();
       orientation = previousOrientation = window.screen.orientation.type;
@@ -370,7 +383,7 @@ export default function startEngine() {
     if (code === 'Escape') exitFullScreen();
     if (code === 'KeyL') { debug = !debug; }
     if (code === 'KeyT') { debugTouchScreen = !debugTouchScreen; }
-    if (code === 'KeyX') manageDebugCamera();
+    if (code === 'KeyX') toggleDebugCamera();
     if (code === 'KeyM') recreate();
   });
 
@@ -462,7 +475,10 @@ export default function startEngine() {
 
   // window.addEventListener('orientationchange', handleOrientationChange);
 
-  window.addEventListener('resize', () => scene.onScreenResize());
+  window.addEventListener('resize', () => {
+    turnOffDebugCamera();
+    scene.onScreenResize();
+  });
 
   window.onload = start;
 }
