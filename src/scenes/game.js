@@ -687,7 +687,7 @@ class Game extends Scene {
 
   // eslint-disable-next-line camelcase
   scriptedScene_water(elapsedTime, now, prevInput) {
-    const extraTime = 2000;
+    const extraTime = 0;
     if (now - this.waterSceneTriggerMoment < 1000 + extraTime) {
       // shake camera
       // const spd = camera.y >= this.cameraYPivot + cameraShakingAmplitude ? -cameraShakingSpeed : cameraShakingSpeed;
