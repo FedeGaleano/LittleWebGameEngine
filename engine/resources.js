@@ -40,6 +40,7 @@ const resourceLoadingData = [
   { path: 'engine-demo-key.png', resourceName: 'key' },
   { path: 'engine-demo-flag.png', resourceName: 'flag' },
   { path: 'engine-demo-arrow.png', resourceName: 'arrow' },
+  { path: 'fireworks.png', resourceName: 'fireworks' },
 ];
 
 const resources = {};

@@ -4,7 +4,7 @@ class Sprite {
     this.flop = flop;
     this.image = image;
     this.numberOfFrames = numberOfFrames;
-    this.framesDurations = framesDurations;
+    this.framesDurations = typeof framesDurations === 'number' ? Array(numberOfFrames).fill(framesDurations) : framesDurations;
     this.graphics = graphics;
     this.frameWidth = image.width / numberOfFrames;
     this.frameHeight = image.height;

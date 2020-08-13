@@ -16,6 +16,7 @@ import Bound from '../../engine/Bound.js';
 import FexUtils from '../../engine/utils/FexUtils.js';
 import InputBuffer from '../../engine/InputBuffer.js';
 import Fexi from '../Fexi.js';
+import FireWorks from '../entities/fireworks.js';
 
 const ArrayNewFunctionalities = {
   removeIf(condition) {
@@ -168,6 +169,7 @@ class Game extends Scene {
     this.flag = null;
     this.water = null;
     this.arrow = null;
+    this.fireworks = null;
 
     // UI
     this.leftButton = null;
@@ -409,6 +411,9 @@ class Game extends Scene {
     this.resetWater();
     this.water.velocity.y = 0;
 
+    this.fireworks = new FireWorks();
+    this.fireworks.position.y = -3 * GameplayGraphics.tileSize.h;
+
     // init cameraFollowBox coords
     cameraFollowBox.x = this.character.position.x - (cameraFollowBox.width - this.character.width) / 2;
     cameraFollowBox.y = this.character.position.y - (cameraFollowBox.height - this.character.height);
@@ -524,6 +529,11 @@ class Game extends Scene {
           resources.stars, resources.stars.width * i - camera.x * starsParallax, resources.stars.height * j - camera.y * starsParallax,
         );
       }
+    }
+
+
+    if (won) {
+      this.fireworks.render(camera);
     }
 
     this.demoWorld.render(camera);
@@ -776,6 +786,7 @@ class Game extends Scene {
         )
       ) {
         won = true;
+        this.fireworks.position.x = this.character.position.x + this.character.width / 2 - this.fireworks.width / 2;
         this.clearInputState();
         this.character.changeSpriteTo('idle');
         this.leftButton.changeSpriteTo('normal');
@@ -834,6 +845,10 @@ class Game extends Scene {
     camera.x = artificialCameraOffsetX + Math.max(0, cameraFollowBox.x - (screen.width - cameraFollowBox.width) / 2);
     if (this.waterSceneTriggered || this.cameraYPivot === null) {
       camera.y = artificialCameraOffsetY + Math.min(this.finalCameraY + 700, cameraFollowBox.y - (screen.height - cameraFollowBox.height) / 2);
+    }
+
+    if (won) {
+      this.fireworks.update(elapsedTime);
     }
 
     // FexDebug.logOnScreen('')
