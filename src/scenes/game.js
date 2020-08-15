@@ -553,7 +553,7 @@ class Game extends Scene {
       this.character.changeSpriteTo('idle');
     });
     this.waterCutScene.on(0, shakeCamera, 1000);
-    this.waterCutScene.on(2000, fexiSaysOmg, 4000);
+    this.waterCutScene.on(1500, fexiSaysOmg, 4000);
     this.waterCutScene.on(3000, startMovingCameraDown, 5500);
     this.waterCutScene.on(6000, startMovingWater, 6000);
     this.waterCutScene.on(6500, bringCameraBackToFexi, 8500);
