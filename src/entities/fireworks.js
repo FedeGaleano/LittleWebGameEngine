@@ -6,7 +6,7 @@ import { GameplayGraphics } from '../../engine/rendering.js';
 class FireWorks extends Entity {
   constructor() {
     super({
-      normal: new Sprite(resources.fireworks, 22, 100, GameplayGraphics),
+      normal: new Sprite(resources.fireworks, 22, 75, GameplayGraphics),
     }, { startingSpriteKey: 'normal' });
   }
 }

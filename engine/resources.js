@@ -38,7 +38,7 @@ const resourceLoadingData = [
   { path: 'engine-demo-focus-alert-window.png', resourceName: 'focusAlertWindow' },
   { path: 'engine-demo-intro.png', resourceName: 'fexIntro' },
   { path: 'engine-demo-key.png', resourceName: 'key' },
-  { path: 'engine-demo-flag.png', resourceName: 'flag' },
+  { path: 'flag.png', resourceName: 'flag' },
   { path: 'engine-demo-arrow.png', resourceName: 'arrow' },
   { path: 'fireworks.png', resourceName: 'fireworks' },
 ];

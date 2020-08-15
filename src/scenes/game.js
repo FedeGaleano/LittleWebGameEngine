@@ -135,6 +135,8 @@ class Game extends Scene {
     this.cameraYPivot = null;
     this.waterSceneTriggerMoment = null;
     this.waterSceneTriggered = false;
+    this.gameHasCameraControlX = true;
+    this.gameHasCameraControlY = true;
 
     this.moveRight = this.moveRight.bind(this);
     this.moveLeft = this.moveLeft.bind(this);
@@ -187,7 +189,7 @@ class Game extends Scene {
     this.resetAlpha = 0;
     this.resetAlphaSpeed = 0.05;
 
-    this.winString = 'GANASTE';
+    this.winString = 'GANASTE. GRACIAS POR JUGAR :3';
     this.winStringLength = null;
   }
 
@@ -368,7 +370,7 @@ class Game extends Scene {
       this.resetAlpha = 1;
     };
 
-    this.flagSprite = new Sprite(resources.flag, 1, [1], GameplayGraphics);
+    this.flagSprite = new Sprite(resources.flag, 13, 50, GameplayGraphics);
     this.flag = new Entity(
       { normal: this.flagSprite },
       { startingSpriteKey: 'normal' },
@@ -540,6 +542,7 @@ class Game extends Scene {
     };
     this.waterCutScene = new CutScene();
     this.waterCutScene.onInit = () => {
+      this.gameHasCameraControlY = false;
       checkpoint.xTile = triggerZoneCoords.xTile - 1;
       checkpoint.yTile = triggerZoneCoords.yTile;
       this.leftButton.changeSpriteTo('normal');
@@ -554,6 +557,41 @@ class Game extends Scene {
     this.waterCutScene.on(3000, startMovingCameraDown, 5500);
     this.waterCutScene.on(6000, startMovingWater, 6000);
     this.waterCutScene.on(6500, bringCameraBackToFexi, 8500);
+
+    const fexiRunsToWinPoint = {
+      update: (elapsedTime) => {
+        this.moveLeft(elapsedTime);
+      },
+    };
+    const launchFireworks = {
+      init: () => {
+        this.fireworks.position.x = this.character.position.x + this.character.width / 2 - this.fireworks.width / 2;
+        this.character.changeSpriteTo('idle');
+        this.leftButton.changeSpriteTo('normal');
+        this.rightButton.changeSpriteTo('normal');
+        this.jumpButton.changeSpriteTo('normal');
+      },
+      update: (elapsedTime) => {
+        this.fireworks.update(elapsedTime);
+      },
+      render: (camera) => {
+        const x = (screen.width - this.winStringLength) / 2;
+        const y = (screen.height - fonts.normal.cellHeight) / 2;
+        GameplayRenderer.renderFullRectangle(x - 1, y - 1, this.winStringLength + 1, fonts.normal.cellHeight - 1, 'rgba(0, 0, 0, 0.75)');
+        GameplayRenderer.renderStringColored(
+          this.winString,
+          x,
+          y,
+          fonts.normal, '#55FF00',
+        );
+      },
+    };
+    this.winCutScene = new CutScene();
+    this.winCutScene.onInit = () => {
+      this.clearInputState();
+    };
+    this.winCutScene.on(0, fexiRunsToWinPoint, 500);
+    this.winCutScene.on(500, launchFireworks, Infinity);
   }
 
   createBackground() {
@@ -624,18 +662,6 @@ class Game extends Scene {
 
     this.water.render(camera);
 
-    if (won) {
-      const x = (screen.width - this.winStringLength) / 2;
-      const y = (screen.height - fonts.normal.cellHeight) / 2;
-      GameplayRenderer.renderFullRectangle(x - 1, y - 1, this.winStringLength + 1, fonts.normal.cellHeight - 1, 'rgba(0, 0, 0, 0.75)');
-      GameplayRenderer.renderStringColored(
-        this.winString,
-        x,
-        y,
-        fonts.normal, '#55FF00',
-      );
-    }
-
     // Render Curtain
     // TOCACHE
     const curtainHeight = screen.height * curtainHeightFactor * curtain;
@@ -644,14 +670,6 @@ class Game extends Scene {
     GameplayRenderer.renderFullRectangle(0, screen.height - curtainHeight, screen.width, curtainHeight);
 
     this.renderLogic();
-
-    if (pause) {
-      GameplayGraphics.renderingContext2D.globalAlpha = 0.75;
-      GameplayGraphics.renderer.fillStyle = 'black';
-      GameplayGraphics.renderer.renderFullRectangle(0, 0, screen.width, screen.height);
-      GameplayGraphics.renderingContext2D.globalAlpha = 1;
-      GameplayGraphics.renderer.renderString('PAUSE', (screen.width / 2) - ('pause'.length / 2) * 6, screen.height / 2 - 2.5, fonts.normal);
-    }
 
     if (FexUtils.deviceHasTouch()) {
       this.pauseButton.render();
@@ -666,6 +684,15 @@ class Game extends Scene {
     }
 
     this.waterCutScene.render(camera);
+    this.winCutScene.render(camera);
+
+    if (pause) {
+      GameplayGraphics.renderingContext2D.globalAlpha = 0.75;
+      GameplayGraphics.renderer.fillStyle = 'black';
+      GameplayGraphics.renderer.renderFullRectangle(0, 0, screen.width, screen.height);
+      GameplayGraphics.renderingContext2D.globalAlpha = 1;
+      GameplayGraphics.renderer.renderString('PAUSE', (screen.width / 2) - ('pause'.length / 2) * 6, screen.height / 2 - 2.5, fonts.normal);
+    }
 
     FexDebug.logOnScreen('velocity fixed', `<${
       Number.parseFloat(FexMath.precision(this.character.velocity.x)).toFixed(2)
@@ -774,6 +801,7 @@ class Game extends Scene {
       this.character.update(elapsedTime);
 
       this.arrow.update(elapsedTime);
+      this.flag.update(elapsedTime);
 
       // start moving water (trigger)
       if (!this.waterSceneTriggered && this.cameraYPivot == null
@@ -785,6 +813,7 @@ class Game extends Scene {
         const prevInput = this.blockGameplayInteraction();
 
         this.waterCutScene.onFinish = () => {
+          this.gameHasCameraControlY = true;
           this.recoverInputInNextFrame(prevInput);
           this.waterSceneTriggered = true;
           curtainSpeed *= -1;
@@ -799,12 +828,13 @@ class Game extends Scene {
         )
       ) {
         won = true;
-        this.fireworks.position.x = this.character.position.x + this.character.width / 2 - this.fireworks.width / 2;
-        this.clearInputState();
-        this.character.changeSpriteTo('idle');
-        this.leftButton.changeSpriteTo('normal');
-        this.rightButton.changeSpriteTo('normal');
-        this.jumpButton.changeSpriteTo('normal');
+        this.winCutScene.init();
+        // this.fireworks.position.x = this.character.position.x + this.character.width / 2 - this.fireworks.width / 2;
+        // this.clearInputState();
+        // this.character.changeSpriteTo('idle');
+        // this.leftButton.changeSpriteTo('normal');
+        // this.rightButton.changeSpriteTo('normal');
+        // this.jumpButton.changeSpriteTo('normal');
       }
 
       this.zoneIndex = this.demoWorld.getZoneIndex(this.character.hitbox);
@@ -850,22 +880,21 @@ class Game extends Scene {
       }
 
       this.updateCameraFollowBox();
+
+      // update cutscenes
+      this.waterCutScene.update(elapsedTime);
+      this.winCutScene.update(elapsedTime);
     }
 
     FexDebug.logOnScreen('this.waterSceneTriggered', this.waterSceneTriggered);
     FexDebug.logOnScreen('this.cameraYPivot', this.cameraYPivot);
 
-    camera.x = artificialCameraOffsetX + Math.max(0, cameraFollowBox.x - (screen.width - cameraFollowBox.width) / 2);
-    if (this.waterSceneTriggered || this.cameraYPivot === null) {
+    if (this.gameHasCameraControlX) {
+      camera.x = artificialCameraOffsetX + Math.max(0, cameraFollowBox.x - (screen.width - cameraFollowBox.width) / 2);
+    }
+    if (this.gameHasCameraControlY) {
       camera.y = artificialCameraOffsetY + Math.min(this.finalCameraY + 700, cameraFollowBox.y - (screen.height - cameraFollowBox.height) / 2);
     }
-
-    if (won) {
-      this.fireworks.update(elapsedTime);
-    }
-
-    // this.scriptedScene.update(elapsedTime, now);
-    this.waterCutScene.update(elapsedTime);
   }
 
   // eslint-disable-next-line camelcase
