@@ -901,6 +901,7 @@ class Game extends Scene {
     curtain = Math.max(0, Math.min(1, curtain + curtainSpeed * elapsedTime));
 
     camera.y = Math.min(camera.y + elapsedTime * cameraCutSceneSpeed, this.finalCameraY);
+    this.flag.update(elapsedTime);
 
     if (camera.x === this.finalCameraX && camera.y === this.finalCameraY) {
       if (this.speechClosed) {
