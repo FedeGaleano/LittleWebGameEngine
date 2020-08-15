@@ -781,21 +781,7 @@ class Game extends Scene {
       if (!this.waterSceneTriggered && this.cameraYPivot == null
         && this.character.position.x + this.character.hitbox.xOffset < triggerZoneCoords.x
         && this.character.position.y + this.character.height < triggerZoneCoords.y
-      ) /* {
-        checkpoint.xTile = triggerZoneCoords.xTile - 1;
-        checkpoint.yTile = triggerZoneCoords.yTile;
-
-        this.leftButton.changeSpriteTo('normal');
-        this.rightButton.changeSpriteTo('normal');
-        this.jumpButton.changeSpriteTo('normal');
-        this.cameraYPivot = camera.y;
-        this.waterSceneTriggerMoment = now;
-        const prevInput = this.blockGameplayInteraction();
-        this.scriptedScene = (elapsed, virtualTime) => this.scriptedScene_water(elapsed, virtualTime, prevInput);
-        curtainSpeed = maxCurtainSpeed;
-        this.character.changeSpriteTo('idle');
-      } */
-      {
+      ) {
         this.newCutscene.init();
 
         const prevInput = this.blockGameplayInteraction();
