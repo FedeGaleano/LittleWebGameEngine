@@ -479,7 +479,7 @@ class Game extends Scene {
       730, 350 - this.bossSprite.height,
     );
 
-    this.init = () => {};
+    // this.init = () => {};
     this.onScreenResize();
 
     // init camera
@@ -621,10 +621,11 @@ class Game extends Scene {
     const xTimes = Math.ceil(screen.width / resources.stars.width);
     const yTimes = Math.ceil(screen.height / resources.stars.height);
 
+    const starsOffsetY = 50;
     for (let j = 0; j < yTimes; ++j) {
       for (let i = 0; i < xTimes; ++i) {
         GameplayGraphics.renderer.renderBitmap(
-          resources.stars, resources.stars.width * i - camera.x * starsParallax, resources.stars.height * j - camera.y * starsParallax,
+          resources.stars, resources.stars.width * i - camera.x * starsParallax, resources.stars.height * j - starsOffsetY - camera.y * starsParallax,
         );
       }
     }
@@ -985,6 +986,11 @@ class Game extends Scene {
     };
     this.fired.keyboard.KeyK = () => {
       this.speech.next();
+    };
+
+    this.fired.keyboard.KeyR = () => {
+      FexDebug.logOnConsole('reload call');
+      this.init();
     };
 
     this.onPressed('left', this.moveLeft);
