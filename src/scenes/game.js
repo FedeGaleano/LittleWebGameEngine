@@ -829,12 +829,6 @@ class Game extends Scene {
         this.winCutScene.on(0, this.fexiRunsToWinPoint, time);
         this.winCutScene.on(time, this.launchFireworks, Infinity);
         this.winCutScene.start();
-        // this.fireworks.position.x = this.character.position.x + this.character.width / 2 - this.fireworks.width / 2;
-        // this.clearInputState();
-        // this.character.changeSpriteTo('idle');
-        // this.leftButton.changeSpriteTo('normal');
-        // this.rightButton.changeSpriteTo('normal');
-        // this.jumpButton.changeSpriteTo('normal');
       }
 
       this.zoneIndex = this.demoWorld.getZoneIndex(this.character.hitbox);
