@@ -17,6 +17,7 @@ import FexUtils from '../../engine/utils/FexUtils.js';
 import InputBuffer from '../../engine/InputBuffer.js';
 import Fexi from '../Fexi.js';
 import FireWorks from '../entities/fireworks.js';
+import CutScene from '../../engine/cutScene.js';
 
 const ArrayNewFunctionalities = {
   removeIf(condition) {
@@ -130,11 +131,6 @@ class Game extends Scene {
     this.update_intro = this.update_intro.bind(this);
     this.update_normal = this.update_normal.bind(this);
     this.update_waterScene = this.update_waterScene.bind(this);
-
-    // bind scripted scenes
-    this.scriptedScene_water = this.scriptedScene_water.bind(this);
-
-    this.scriptedScene = () => {};
 
     this.cameraYPivot = null;
     this.waterSceneTriggerMoment = null;
@@ -491,6 +487,72 @@ class Game extends Scene {
 
     // init winString Length
     this.winStringLength = fonts.normal.measureText(this.winString);
+
+    // Init Cutscenes
+    const shakeCameraCode = {
+      update: (elapsedTime) => {
+        // shake camera
+        let spd = cameraShakingAmplitude;
+        if (camera.y >= this.cameraYPivot + cameraShakingAmplitude) {
+          spd = -cameraShakingVelocity;
+        }
+        if (camera.y < this.cameraYPivot) {
+          spd = cameraShakingVelocity;
+        }
+
+        camera.y = FexMath.boundExpression(camera.y + spd * elapsedTime, this.cameraYPivot, this.cameraYPivot + cameraShakingAmplitude);
+      },
+    };
+    const fexiSaysOmgCode = {
+      init: () => {
+        this.character.secondSpeech = new Speech(
+          this.character.position.x + this.character.width, this.character.position.y,
+          [
+            ['OMG'],
+          ],
+          dialogSpeed,
+        );
+      },
+      update: (elapsedTime) => {
+        if (this.character.secondSpeech.closed) {
+          this.character.secondSpeech.next();
+        }
+      },
+      finish: () => {
+        this.character.secondSpeech.next();
+      },
+    };
+    const startMovingCameraDownCode = {
+      update: (elapsedTime) => {
+        camera.y = Math.min(camera.y + cameraCutSceneSpeed * elapsedTime, this.cameraYPivot + 100);
+      },
+    };
+    const startMovingWaterCode = {
+      init: () => {
+        this.water.velocity.y = waterVelocity;
+      },
+      update: (elapsedTime) => {
+        camera.y = Math.max(camera.y - cameraCutSceneSpeed * 2 * elapsedTime, this.cameraYPivot);
+      },
+      forceFinishTrigger: () => camera.y === this.cameraYPivot,
+    };
+    this.newCutscene = new CutScene();
+    this.newCutscene.onInit = () => {
+      FexDebug.logOnConsole('entered newCutscene init, camera.y: ', camera.y);
+      checkpoint.xTile = triggerZoneCoords.xTile - 1;
+      checkpoint.yTile = triggerZoneCoords.yTile;
+      this.leftButton.changeSpriteTo('normal');
+      this.rightButton.changeSpriteTo('normal');
+      this.jumpButton.changeSpriteTo('normal');
+      this.cameraYPivot = camera.y;
+      FexDebug.logOnConsole('also from init, this.cameraYPivot: ', this.cameraYPivot);
+      curtainSpeed = maxCurtainSpeed;
+      this.character.changeSpriteTo('idle');
+    };
+    this.newCutscene.on(0, shakeCameraCode, 1000);
+    this.newCutscene.on(2000, fexiSaysOmgCode, 4000);
+    this.newCutscene.on(3000, startMovingCameraDownCode, 6000);
+    this.newCutscene.on(6500, startMovingWaterCode, 8500);
   }
 
   createBackground() {
@@ -602,6 +664,8 @@ class Game extends Scene {
       GameplayRenderer.alpha = 1;
     }
 
+    this.newCutscene.render(camera);
+
     FexDebug.logOnScreen('velocity fixed', `<${
       Number.parseFloat(FexMath.precision(this.character.velocity.x)).toFixed(2)
     }, ${
@@ -614,6 +678,8 @@ class Game extends Scene {
     }>`);
     FexDebug.logOnScreen('isInAir', this.demoWorld.collisionInfo.isInAir);
     FexDebug.logOnScreen('cameraShakingAmplitude', cameraShakingAmplitude);
+    FexDebug.logOnScreen('scriptsWaiting', this.newCutscene.scriptsWaiting.length);
+    FexDebug.logOnScreen('scriptsActive', this.newCutscene.scriptsActive.length);
   }
 
   postUpdate() {
@@ -696,54 +762,6 @@ class Game extends Scene {
   }
 
   // eslint-disable-next-line camelcase
-  scriptedScene_water(elapsedTime, now, prevInput) {
-    const extraTime = 0;
-    if (now - this.waterSceneTriggerMoment < 1000 + extraTime) {
-      // shake camera
-      // const spd = camera.y >= this.cameraYPivot + cameraShakingAmplitude ? -cameraShakingSpeed : cameraShakingSpeed;
-      let spd = cameraShakingAmplitude;
-      if (camera.y >= this.cameraYPivot + cameraShakingAmplitude) {
-        spd = -cameraShakingVelocity;
-      }
-      if (camera.y < this.cameraYPivot) {
-        spd = cameraShakingVelocity;
-      }
-
-      camera.y = FexMath.boundExpression(camera.y + spd * elapsedTime, this.cameraYPivot, this.cameraYPivot + cameraShakingAmplitude);
-      // camera.y = camera.y === this.cameraYPivot ? this.cameraYPivot + 2 : this.cameraYPivot;
-    } else if (now - this.waterSceneTriggerMoment < 4000 + extraTime) {
-      if (!this.character.secondSpeech) {
-        this.character.secondSpeech = new Speech(
-          this.character.position.x + this.character.width, this.character.position.y,
-          [
-            ['OMG'],
-          ],
-          dialogSpeed,
-        );
-        this.character.secondSpeech.next();
-      }
-    } else if (now - this.waterSceneTriggerMoment < 6000 + extraTime) {
-      camera.y = Math.min(camera.y + cameraCutSceneSpeed * elapsedTime, this.cameraYPivot + 100);
-    } else if (now - this.waterSceneTriggerMoment < 6500 + extraTime) {
-      if (!this.character.secondSpeech.closed) {
-        this.character.secondSpeech.next();
-      }
-      if (this.water.velocity.y === 0) {
-        this.water.velocity.y = waterVelocity;
-      }
-    } else {
-      camera.y = Math.max(camera.y - cameraCutSceneSpeed * 2 * elapsedTime, this.cameraYPivot);
-
-      if (camera.y === this.cameraYPivot) {
-        this.recoverInputInNextFrame(prevInput);
-        this.scriptedScene = () => {};
-        this.waterSceneTriggered = true;
-        curtainSpeed *= -1;
-      }
-    }
-  }
-
-  // eslint-disable-next-line camelcase
   update_normal(elapsedTime, now) {
     // FexDebug.chargeHeavily();
     FexDebug.logOnScreen('this.timeInAir', this.timeInAir);
@@ -763,7 +781,7 @@ class Game extends Scene {
       if (!this.waterSceneTriggered && this.cameraYPivot == null
         && this.character.position.x + this.character.hitbox.xOffset < triggerZoneCoords.x
         && this.character.position.y + this.character.height < triggerZoneCoords.y
-      ) {
+      ) /* {
         checkpoint.xTile = triggerZoneCoords.xTile - 1;
         checkpoint.yTile = triggerZoneCoords.yTile;
 
@@ -776,6 +794,17 @@ class Game extends Scene {
         this.scriptedScene = (elapsed, virtualTime) => this.scriptedScene_water(elapsed, virtualTime, prevInput);
         curtainSpeed = maxCurtainSpeed;
         this.character.changeSpriteTo('idle');
+      } */
+      {
+        this.newCutscene.init();
+
+        const prevInput = this.blockGameplayInteraction();
+
+        this.newCutscene.onFinish = () => {
+          this.recoverInputInNextFrame(prevInput);
+          this.waterSceneTriggered = true;
+          curtainSpeed *= -1;
+        };
       }
 
       // check win condition
@@ -851,8 +880,8 @@ class Game extends Scene {
       this.fireworks.update(elapsedTime);
     }
 
-    // FexDebug.logOnScreen('')
-    this.scriptedScene(elapsedTime, now);
+    // this.scriptedScene.update(elapsedTime, now);
+    this.newCutscene.update(elapsedTime);
   }
 
   // eslint-disable-next-line camelcase
