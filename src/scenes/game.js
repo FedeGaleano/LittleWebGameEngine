@@ -489,7 +489,7 @@ class Game extends Scene {
     this.winStringLength = fonts.normal.measureText(this.winString);
 
     // Init Cutscenes
-    const shakeCameraCode = {
+    const shakeCamera = {
       update: (elapsedTime) => {
         // shake camera
         let spd = cameraShakingAmplitude;
@@ -503,7 +503,7 @@ class Game extends Scene {
         camera.y = FexMath.boundExpression(camera.y + spd * elapsedTime, this.cameraYPivot, this.cameraYPivot + cameraShakingAmplitude);
       },
     };
-    const fexiSaysOmgCode = {
+    const fexiSaysOmg = {
       init: () => {
         this.character.secondSpeech = new Speech(
           this.character.position.x + this.character.width, this.character.position.y,
@@ -522,22 +522,24 @@ class Game extends Scene {
         this.character.secondSpeech.next();
       },
     };
-    const startMovingCameraDownCode = {
+    const startMovingCameraDown = {
       update: (elapsedTime) => {
         camera.y = Math.min(camera.y + cameraCutSceneSpeed * elapsedTime, this.cameraYPivot + 100);
       },
     };
-    const startMovingWaterCode = {
+    const startMovingWater = {
       init: () => {
         this.water.velocity.y = waterVelocity;
       },
+    };
+    const bringCameraBackToFexi = {
       update: (elapsedTime) => {
         camera.y = Math.max(camera.y - cameraCutSceneSpeed * 2 * elapsedTime, this.cameraYPivot);
       },
       forceFinishTrigger: () => camera.y === this.cameraYPivot,
     };
-    this.newCutscene = new CutScene();
-    this.newCutscene.onInit = () => {
+    this.waterCutScene = new CutScene();
+    this.waterCutScene.onInit = () => {
       FexDebug.logOnConsole('entered newCutscene init, camera.y: ', camera.y);
       checkpoint.xTile = triggerZoneCoords.xTile - 1;
       checkpoint.yTile = triggerZoneCoords.yTile;
@@ -549,10 +551,11 @@ class Game extends Scene {
       curtainSpeed = maxCurtainSpeed;
       this.character.changeSpriteTo('idle');
     };
-    this.newCutscene.on(0, shakeCameraCode, 1000);
-    this.newCutscene.on(2000, fexiSaysOmgCode, 4000);
-    this.newCutscene.on(3000, startMovingCameraDownCode, 6000);
-    this.newCutscene.on(6500, startMovingWaterCode, 8500);
+    this.waterCutScene.on(0, shakeCamera, 1000);
+    this.waterCutScene.on(2000, fexiSaysOmg, 4000);
+    this.waterCutScene.on(3000, startMovingCameraDown, 5500);
+    this.waterCutScene.on(6000, startMovingWater, 6000);
+    this.waterCutScene.on(6500, bringCameraBackToFexi, 8500);
   }
 
   createBackground() {
@@ -664,7 +667,7 @@ class Game extends Scene {
       GameplayRenderer.alpha = 1;
     }
 
-    this.newCutscene.render(camera);
+    this.waterCutScene.render(camera);
 
     FexDebug.logOnScreen('velocity fixed', `<${
       Number.parseFloat(FexMath.precision(this.character.velocity.x)).toFixed(2)
@@ -678,8 +681,8 @@ class Game extends Scene {
     }>`);
     FexDebug.logOnScreen('isInAir', this.demoWorld.collisionInfo.isInAir);
     FexDebug.logOnScreen('cameraShakingAmplitude', cameraShakingAmplitude);
-    FexDebug.logOnScreen('scriptsWaiting', this.newCutscene.scriptsWaiting.length);
-    FexDebug.logOnScreen('scriptsActive', this.newCutscene.scriptsActive.length);
+    FexDebug.logOnScreen('scriptsWaiting', this.waterCutScene.scriptsWaiting.length);
+    FexDebug.logOnScreen('scriptsActive', this.waterCutScene.scriptsActive.length);
   }
 
   postUpdate() {
@@ -782,11 +785,11 @@ class Game extends Scene {
         && this.character.position.x + this.character.hitbox.xOffset < triggerZoneCoords.x
         && this.character.position.y + this.character.height < triggerZoneCoords.y
       ) {
-        this.newCutscene.init();
+        this.waterCutScene.init();
 
         const prevInput = this.blockGameplayInteraction();
 
-        this.newCutscene.onFinish = () => {
+        this.waterCutScene.onFinish = () => {
           this.recoverInputInNextFrame(prevInput);
           this.waterSceneTriggered = true;
           curtainSpeed *= -1;
@@ -867,7 +870,7 @@ class Game extends Scene {
     }
 
     // this.scriptedScene.update(elapsedTime, now);
-    this.newCutscene.update(elapsedTime);
+    this.waterCutScene.update(elapsedTime);
   }
 
   // eslint-disable-next-line camelcase
