@@ -536,7 +536,7 @@ class Game extends Scene {
       update: (elapsedTime) => {
         camera.y = Math.max(camera.y - cameraCutSceneSpeed * 2 * elapsedTime, this.cameraYPivot);
       },
-      forceFinishTrigger: () => camera.y === this.cameraYPivot,
+      forceFinishIf: () => camera.y === this.cameraYPivot,
     };
     this.waterCutScene = new CutScene();
     this.waterCutScene.onInit = () => {

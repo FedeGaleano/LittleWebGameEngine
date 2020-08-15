@@ -32,7 +32,7 @@ class CutScene {
     code.update = code.update || (() => {});
     code.render = code.render || (() => {});
     code.finish = code.finish || (() => {});
-    code.forceFinishTrigger = code.forceFinishTrigger || (() => {});
+    code.forceFinishIf = code.forceFinishIf || (() => {});
     this.scriptsWaiting.push({ startTime, code, endTime });
   }
 
@@ -46,7 +46,7 @@ class CutScene {
       }
 
       removeEachThatFulfillsBut(this.scriptsActive,
-        script => script.code.forceFinishTrigger() || script.endTime <= this.timer,
+        script => script.code.forceFinishIf() || script.endTime <= this.timer,
         (script) => {
           script.code.finish();
         });
