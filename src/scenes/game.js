@@ -540,14 +540,12 @@ class Game extends Scene {
     };
     this.waterCutScene = new CutScene();
     this.waterCutScene.onInit = () => {
-      FexDebug.logOnConsole('entered newCutscene init, camera.y: ', camera.y);
       checkpoint.xTile = triggerZoneCoords.xTile - 1;
       checkpoint.yTile = triggerZoneCoords.yTile;
       this.leftButton.changeSpriteTo('normal');
       this.rightButton.changeSpriteTo('normal');
       this.jumpButton.changeSpriteTo('normal');
       this.cameraYPivot = camera.y;
-      FexDebug.logOnConsole('also from init, this.cameraYPivot: ', this.cameraYPivot);
       curtainSpeed = maxCurtainSpeed;
       this.character.changeSpriteTo('idle');
     };
@@ -680,9 +678,6 @@ class Game extends Scene {
       Number.parseFloat(FexMath.precision(this.character.position.y)).toFixed(2)
     }>`);
     FexDebug.logOnScreen('isInAir', this.demoWorld.collisionInfo.isInAir);
-    FexDebug.logOnScreen('cameraShakingAmplitude', cameraShakingAmplitude);
-    FexDebug.logOnScreen('scriptsWaiting', this.waterCutScene.scriptsWaiting.length);
-    FexDebug.logOnScreen('scriptsActive', this.waterCutScene.scriptsActive.length);
   }
 
   postUpdate() {
