@@ -14,16 +14,24 @@ class CutScene {
     this.running = false;
     this.scriptsWaiting = [];
     this.scriptsActive = [];
-    this.onInit = () => {};
-    this.onFinish = () => {};
-    this.init = () => {
+    this.init = () => {};
+    this.dispose = () => {};
+    this.start = () => {
       this.running = true;
-      this.onInit();
+      this.init();
     };
     this.finish = () => {
       this.running = false;
-      this.onFinish();
+      this.dispose();
     };
+  }
+
+  onStart(action) {
+    this.init = action;
+  }
+
+  onFinish(action) {
+    this.dispose = action;
   }
 
   // So far scripts have to be pushed in order

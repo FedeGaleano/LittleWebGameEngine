@@ -541,7 +541,7 @@ class Game extends Scene {
       forceFinishIf: () => camera.y === this.cameraYPivot,
     };
     this.waterCutScene = new CutScene();
-    this.waterCutScene.onInit = () => {
+    this.waterCutScene.onStart(() => {
       this.gameHasCameraControlY = false;
       checkpoint.xTile = triggerZoneCoords.xTile - 1;
       checkpoint.yTile = triggerZoneCoords.yTile;
@@ -551,19 +551,22 @@ class Game extends Scene {
       this.cameraYPivot = camera.y;
       curtainSpeed = maxCurtainSpeed;
       this.character.changeSpriteTo('idle');
-    };
+    });
     this.waterCutScene.on(0, shakeCamera, 1000);
     this.waterCutScene.on(2000, fexiSaysOmg, 4000);
     this.waterCutScene.on(3000, startMovingCameraDown, 5500);
     this.waterCutScene.on(6000, startMovingWater, 6000);
     this.waterCutScene.on(6500, bringCameraBackToFexi, 8500);
 
-    const fexiRunsToWinPoint = {
+    this.fexiRunsToWinPoint = {
+      init: () => {
+        this.jump();
+      },
       update: (elapsedTime) => {
         this.moveLeft(elapsedTime);
       },
     };
-    const launchFireworks = {
+    this.launchFireworks = {
       init: () => {
         this.fireworks.position.x = this.character.position.x + this.character.width / 2 - this.fireworks.width / 2;
         this.character.changeSpriteTo('idle');
@@ -578,20 +581,14 @@ class Game extends Scene {
         const x = (screen.width - this.winStringLength) / 2;
         const y = (screen.height - fonts.normal.cellHeight) / 2;
         GameplayRenderer.renderFullRectangle(x - 1, y - 1, this.winStringLength + 1, fonts.normal.cellHeight - 1, 'rgba(0, 0, 0, 0.75)');
-        GameplayRenderer.renderStringColored(
-          this.winString,
-          x,
-          y,
-          fonts.normal, '#55FF00',
-        );
+        GameplayRenderer.renderStringColored(this.winString, x, y, fonts.normal, '#55FF00');
       },
     };
     this.winCutScene = new CutScene();
-    this.winCutScene.onInit = () => {
+    this.winCutScene.onStart(() => {
+      this.gameHasCameraControlY = false;
       this.clearInputState();
-    };
-    this.winCutScene.on(0, fexiRunsToWinPoint, 500);
-    this.winCutScene.on(500, launchFireworks, Infinity);
+    });
   }
 
   createBackground() {
@@ -808,27 +805,30 @@ class Game extends Scene {
         && this.character.position.x + this.character.hitbox.xOffset < triggerZoneCoords.x
         && this.character.position.y + this.character.height < triggerZoneCoords.y
       ) {
-        this.waterCutScene.init();
+        this.waterCutScene.start();
 
         const prevInput = this.blockGameplayInteraction();
 
-        this.waterCutScene.onFinish = () => {
+        this.waterCutScene.onFinish(() => {
           this.gameHasCameraControlY = true;
           this.recoverInputInNextFrame(prevInput);
           this.waterSceneTriggered = true;
           curtainSpeed *= -1;
-        };
+        });
       }
 
       // check win condition
-      if (this.character.position.y + this.character.height < 0 + floorStart
+      if (!won && this.character.position.y + this.character.height < 0 + floorStart
         && (
           this.character.position.x < entranceTilePositionX * GameplayGraphics.tileSize.w + wallStart
           || this.character.position.x > (entranceTilePositionX + entranceTileWidthX) * GameplayGraphics.tileSize.w + wallStart
         )
       ) {
         won = true;
-        this.winCutScene.init();
+        const time = this.character.velocity.x <= 0 ? 400 : 1000;
+        this.winCutScene.on(0, this.fexiRunsToWinPoint, time);
+        this.winCutScene.on(time, this.launchFireworks, Infinity);
+        this.winCutScene.start();
         // this.fireworks.position.x = this.character.position.x + this.character.width / 2 - this.fireworks.width / 2;
         // this.clearInputState();
         // this.character.changeSpriteTo('idle');
