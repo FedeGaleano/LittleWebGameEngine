@@ -820,10 +820,10 @@ class Game extends Scene {
       }
 
       // check win condition
-      if (!won && this.character.position.y + this.character.height < 0 + floorStart
+      if (!won && this.character.position.y + this.character.height - (4 /* temp security range */) <= 0 + floorStart
         && (
           this.character.position.x < entranceTilePositionX * GameplayGraphics.tileSize.w + wallStart
-          || this.character.position.x > (entranceTilePositionX + entranceTileWidthX) * GameplayGraphics.tileSize.w + wallStart
+          || this.character.position.x + this.character.width > (entranceTilePositionX + entranceTileWidthX) * GameplayGraphics.tileSize.w + wallStart
         )
       ) {
         won = true;
