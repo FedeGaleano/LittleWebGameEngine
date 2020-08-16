@@ -757,8 +757,8 @@ class Game extends Scene {
     this.rightButton.render();
     this.jumpButton.render();
 
-    FexDebug.logOnScreen('pauseButton.y', this.pauseButton.position.y);
-    FexDebug.logOnScreen('jumpButton.y', this.jumpButton.position.y);
+    // FexDebug.logOnScreen('pauseButton.y', this.pauseButton.position.y);
+    // FexDebug.logOnScreen('jumpButton.y', this.jumpButton.position.y);
   }
 
   updateCameraFollowBox() {
@@ -788,7 +788,7 @@ class Game extends Scene {
   // eslint-disable-next-line camelcase
   update_normal(elapsedTime, now) {
     // FexDebug.chargeHeavily();
-    FexDebug.logOnScreen('this.timeInAir', this.timeInAir);
+    FexDebug.logOnScreen('timeInAir', this.timeInAir);
     if (!pause) {
       curtain = Math.max(0, Math.min(1, curtain + curtainSpeed * elapsedTime));
 
