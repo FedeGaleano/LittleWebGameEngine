@@ -882,9 +882,6 @@ class Game extends Scene {
       this.winCutScene.update(elapsedTime);
     }
 
-    FexDebug.logOnScreen('this.waterSceneTriggered', this.waterSceneTriggered);
-    FexDebug.logOnScreen('this.cameraYPivot', this.cameraYPivot);
-
     if (this.gameHasCameraControlX) {
       camera.x = artificialCameraOffsetX + Math.max(0, cameraFollowBox.x - (screen.width - cameraFollowBox.width) / 2);
     }

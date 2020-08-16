@@ -66,7 +66,7 @@ class Intro extends Scene {
     this.timePassed += elapsedTime;
 
     if (Math.abs(this.timePassed - 3500) < 1000 / 60 && !this.audioPlayed) {
-      this.audio.play();
+      // this.audio.play();
       this.audioPlayed = true;
     }
 
