@@ -36,6 +36,12 @@ class Menu extends Scene {
     );
   }
 
+  createBackground() {
+    this.back = GameplayGraphics.renderingContext2D.createLinearGradient(0, 0, 0, GameplayGraphics.screen.height * GameplayGraphics.scale);
+    this.back.addColorStop(0, '#190a2c');
+    this.back.addColorStop(1, '#4b2cb2');
+  }
+
   init() {
     FexDebug.logOnConsole('menu init()');
 
@@ -108,7 +114,9 @@ class Menu extends Scene {
   render() {
     const { screen } = GameplayGraphics;
     GameplayRenderer.clearScreen();
-    GameplayRenderer.renderBitmap(resources.background, 0, 0, screen.width, screen.height);
+
+    GameplayRenderer.fillStyle = this.back;
+    GameplayRenderer.renderFullRectangle();
 
     for (let index = 0; index < this.starPanels.length; ++index) {
       GameplayRenderer.renderBitmap(
@@ -132,6 +140,7 @@ class Menu extends Scene {
   }
 
   onScreenResize() {
+    this.createBackground();
     this.placePlayUIButton();
     this.titleX = GameplayGraphics.screen.width / 2 - resources.title.width / 2;
     this.titleY = GameplayGraphics.screen.height * 0.25 - resources.title.height / 2;

@@ -594,8 +594,8 @@ class Game extends Scene {
 
   createBackground() {
     this.back = GameplayGraphics.renderingContext2D.createLinearGradient(0, 0, 0, GameplayGraphics.screen.height * GameplayGraphics.scale);
-    this.back.addColorStop(0, '#333333');
-    this.back.addColorStop(1, '#333366');
+    this.back.addColorStop(0, '#190a2c');
+    this.back.addColorStop(1, '#4b2cb2');
   }
 
   update(elapsedTime, now) {
@@ -612,10 +612,10 @@ class Game extends Scene {
     // Render background
     // TOCACHE
 
-    GameplayGraphics.renderer.renderBitmap(resources.background, 0, 0, screen.width, screen.height);
+    // GameplayGraphics.renderer.renderBitmap(resources.background, 0, 0, screen.width, screen.height);
+
     GameplayRenderer.fillStyle = this.back;
-    // GameplayRenderer.fillStyle = 'black';
-    // GameplayRenderer.renderFullRectangle();
+    GameplayRenderer.renderFullRectangle();
 
     // Render stars
     // TOCACHE
