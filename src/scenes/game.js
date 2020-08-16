@@ -756,9 +756,6 @@ class Game extends Scene {
     this.leftButton.render();
     this.rightButton.render();
     this.jumpButton.render();
-
-    // FexDebug.logOnScreen('pauseButton.y', this.pauseButton.position.y);
-    // FexDebug.logOnScreen('jumpButton.y', this.jumpButton.position.y);
   }
 
   updateCameraFollowBox() {
