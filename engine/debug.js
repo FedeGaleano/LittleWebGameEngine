@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-const version = '0.0.7';
+const version = '0.1.0';
 const debugInfo = { };
 const generalInfo = {};
 const fontSize = 18;

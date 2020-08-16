@@ -18,6 +18,7 @@ import InputBuffer from '../../engine/InputBuffer.js';
 import Fexi from '../Fexi.js';
 import FireWorks from '../entities/fireworks.js';
 import CutScene from '../../engine/cutScene.js';
+import FexGlobals from '../../engine/utils/FexGlobals.js';
 
 const ArrayNewFunctionalities = {
   removeIf(condition) {
@@ -42,7 +43,7 @@ const cameraCutSceneSpeed = 0.05;
 const cameraShakingAmplitude = 2;
 const cameraShakingVelocity = 0.2;
 const artificialCameraOffsetX = 0;
-let artificialCameraOffsetY = 0;
+const artificialCameraOffsetY = 0;
 const starsParallax = 0.25;
 
 let curtain = 0;
@@ -340,7 +341,7 @@ class Game extends Scene {
       touchScreenAreas: ['right'],
     });
     this.createVirtualButton('jump', {
-      keys: ['Space'],
+      keys: ['Space', 'ArrowUp', 'KeyW'],
       touchScreenAreas: ['jump'],
     });
 
@@ -669,10 +670,6 @@ class Game extends Scene {
 
     this.renderLogic();
 
-    if (FexUtils.deviceHasTouch()) {
-      this.pauseButton.render();
-    }
-
     if (this.resetAlpha > 0) {
       GameplayRenderer.fillStyle = 'black';
       GameplayRenderer.alpha = this.resetAlpha;
@@ -690,6 +687,10 @@ class Game extends Scene {
       GameplayGraphics.renderer.renderFullRectangle(0, 0, screen.width, screen.height);
       GameplayGraphics.renderingContext2D.globalAlpha = 1;
       GameplayGraphics.renderer.renderString('PAUSE', (screen.width / 2) - ('pause'.length / 2) * 6, screen.height / 2 - 2.5, fonts.normal);
+    }
+
+    if (FexUtils.deviceHasTouch()) {
+      this.pauseButton.render();
     }
 
     FexDebug.logOnScreen('velocity fixed', `<${
@@ -975,23 +976,25 @@ class Game extends Scene {
     this.clearInputState();
     this.onFired('pause', this.onFocusLost);
 
-    this.pressed.keyboard.ArrowUp = () => {
-      artificialCameraOffsetY -= 1;
-    };
-    this.pressed.keyboard.ArrowDown = () => {
-      artificialCameraOffsetY += 1;
-    };
+    // this.pressed.keyboard.ArrowUp = () => {
+    //   artificialCameraOffsetY -= 1;
+    // };
+    // this.pressed.keyboard.ArrowDown = () => {
+    //   artificialCameraOffsetY += 1;
+    // };
     this.fired.keyboard.KeyG = () => {
-      showGrid = !showGrid;
+      if (FexGlobals.useDebugCommands.get()) {
+        showGrid = !showGrid;
+      }
     };
-    this.fired.keyboard.KeyK = () => {
-      this.speech.next();
-    };
+    // this.fired.keyboard.KeyK = () => {
+    //   this.speech.next();
+    // };
 
-    this.fired.keyboard.KeyR = () => {
-      FexDebug.logOnConsole('reload call');
-      this.init();
-    };
+    // this.fired.keyboard.KeyR = () => {
+    //   FexDebug.logOnConsole('reload call');
+    //   this.init();
+    // };
 
     this.onPressed('left', this.moveLeft);
     this.onPressed('right', this.moveRight);
@@ -1011,20 +1014,20 @@ class Game extends Scene {
       this.rightButton.changeSpriteTo('normal');
     });
 
-    this.fired.keyboard.KeyC = () => {
-      if (curtainSpeed === 0) {
-        curtainSpeed = maxCurtainSpeed;
-      } else {
-        curtainSpeed *= -1;
-      }
-    };
+    // this.fired.keyboard.KeyC = () => {
+    //   if (curtainSpeed === 0) {
+    //     curtainSpeed = maxCurtainSpeed;
+    //   } else {
+    //     curtainSpeed *= -1;
+    //   }
+    // };
 
     this.onFired('jump', (deltaTime, now) => {
       this.jumpButton.changeSpriteTo('pressed');
       this.tryToJump(deltaTime, now);
     });
 
-    this.fired.keyboard.KeyJ = this.jump;
+    // this.fired.keyboard.KeyJ = this.jump;
 
     this.onReleased('jump', () => {
       this.jumpButton.changeSpriteTo('normal');

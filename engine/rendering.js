@@ -38,7 +38,7 @@ class AskForRotationGraphicsClass extends Graphics {
   }
 }
 
-let GameplayGraphics = new GameplayGraphicsClass();
+const GameplayGraphics = new GameplayGraphicsClass();
 const AskForRotationGraphics = new AskForRotationGraphicsClass();
 const GameplayRenderer = GameplayGraphics.renderer;
 const AskForRotationRenderer = AskForRotationGraphics.renderer;
@@ -58,13 +58,6 @@ document.body.appendChild(GameplayGraphics.presentationCanvas);
 document.body.appendChild(AskForRotationGraphics.presentationCanvas);
 adjust();
 
-function recreate() {
-  document.body.removeChild(GameplayGraphics.canvas);
-  GameplayGraphics = new GameplayGraphicsClass();
-  GameplayGraphics.canvas.id = 'canvas';
-  document.body.appendChild(GameplayGraphics.canvas);
-}
-
 export {
-  GameplayGraphics, AskForRotationGraphics, GameplayRenderer, AskForRotationRenderer, recreate,
+  GameplayGraphics, AskForRotationGraphics, GameplayRenderer, AskForRotationRenderer,
 };

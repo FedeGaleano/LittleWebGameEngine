@@ -4,7 +4,7 @@ import Intro from './src/scenes/intro.js';
 import Menu from './src/scenes/menu.js';
 import Game from './src/scenes/game.js';
 import { setEnvironment, resources, fonts } from './engine/resources.js';
-import { GameplayGraphics, AskForRotationGraphics, recreate } from './engine/rendering.js';
+import { GameplayGraphics, AskForRotationGraphics } from './engine/rendering.js';
 import Sprite from './engine/sprite.js';
 import FexDebug from './engine/debug.js';
 import InputBuffer from './engine/InputBuffer.js';
@@ -382,9 +382,10 @@ export default function startEngine() {
     if (code === 'KeyF') toggleFullscreen();
     if (code === 'Escape') exitFullScreen();
     if (code === 'KeyL') { debug = !debug; }
-    if (code === 'KeyT') { debugTouchScreen = !debugTouchScreen; }
-    if (code === 'KeyX') toggleDebugCamera();
-    if (code === 'KeyM') recreate();
+    if (FexGlobals.useDebugCommands.get()) {
+      if (code === 'KeyT') { debugTouchScreen = !debugTouchScreen; }
+      if (code === 'KeyX') toggleDebugCamera();
+    }
   });
 
   document.addEventListener('touchstart', (event) => {

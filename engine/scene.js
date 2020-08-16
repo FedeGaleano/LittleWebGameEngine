@@ -110,20 +110,6 @@ class Scene {
   onReleased(virtualButtonName, action) {
     this.on('released', virtualButtonName, action);
   }
-
-  // asd() {
-  //   this.registerVirtualButton('jump', {
-  //     keys: ['Space', 'ArrowUp'],
-  //     touchScreenAreas: ['jumpArea'],
-  //   });
-
-  //   this.on('pressed', 'jump', () => {
-
-  //   });
-  //   this.onPressed('jump', () => {
-
-  //   });
-  // }
 }
 
 export default Scene;

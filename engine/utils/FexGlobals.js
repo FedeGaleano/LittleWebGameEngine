@@ -31,8 +31,9 @@ class GlobalVariable {
 }
 
 const FexGlobals = {
-  mapRenderingOptimizationLevel: new GlobalVariable('mapRenderingOptimizationLevel', 3, { isPublic: true }),
+  mapRenderingOptimizationLevel: new GlobalVariable('mapRenderingOptimizationLevel', 0, { isPublic: true }),
   useRenderCache: new GlobalVariable('useRenderCache', true),
+  useDebugCommands: new GlobalVariable('useDebugCommands', false, { isPublic: true }),
 };
 
 export default FexGlobals;
