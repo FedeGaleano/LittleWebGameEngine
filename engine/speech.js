@@ -3,11 +3,11 @@ import Dialog from './dialog.js';
 import { fonts } from './resources.js';
 
 class Speech {
-  constructor(bottomLeftCornerX, bottomLeftCornerY, listOfTextLines, textSpeed) {
-    this.dialogs = listOfTextLines.map(
-      (textLines, i) => new Dialog(
-        bottomLeftCornerX, bottomLeftCornerY, textLines, fonts.normal, textSpeed,
-        ({ open: /* i === 0 */true, close: i === listOfTextLines.length - 1 }),
+  constructor(bottomLeftCornerX, bottomLeftCornerY, paragraphs, textSpeed) {
+    this.dialogs = paragraphs.map(
+      (paragraph, i) => new Dialog(
+        bottomLeftCornerX, bottomLeftCornerY, paragraph, fonts.normal, textSpeed,
+        ({ open: /* i === 0 */true, close: i === paragraphs.length - 1 }),
       ),
     );
     this.currentDialog = -1;
