@@ -190,8 +190,15 @@ class Game extends Scene {
     this.resetAlpha = 0;
     this.resetAlphaSpeed = 0.05;
 
+    // strings
     this.winString = 'GANASTE. GRACIAS POR JUGAR :3';
     this.winStringLength = null;
+
+    this.pauseString = 'PAUSE';
+    this.pauseStringLength = null;
+
+    this.unpauseHelpString = '[P/Enter]';
+    this.unpauseHelpStringLength = null;
   }
 
   onScreenResize() {
@@ -325,7 +332,7 @@ class Game extends Scene {
 
     // virtual buttons
     this.createVirtualButton('pause', {
-      keys: ['KeyP'],
+      keys: ['KeyP', 'Enter'],
       touchScreenAreas: ['pause'],
     });
     this.createVirtualButton('continue', {
@@ -488,8 +495,10 @@ class Game extends Scene {
     camera.x = this.finalCameraX;
     camera.y = -GameplayGraphics.tileSize.h * 10; // 10 tiles above the surface
 
-    // init winString Length
+    // init strings lengths
     this.winStringLength = fonts.normal.measureText(this.winString);
+    this.pauseStringLength = fonts.normal.measureText(this.pauseString);
+    this.unpauseHelpStringLength = fonts.normal.measureText(this.unpauseHelpString);
 
     // Init Cutscenes
     const shakeCamera = {
@@ -682,11 +691,24 @@ class Game extends Scene {
     this.winCutScene.render(camera);
 
     if (pause) {
-      GameplayGraphics.renderingContext2D.globalAlpha = 0.75;
-      GameplayGraphics.renderer.fillStyle = 'black';
-      GameplayGraphics.renderer.renderFullRectangle(0, 0, screen.width, screen.height);
-      GameplayGraphics.renderingContext2D.globalAlpha = 1;
-      GameplayGraphics.renderer.renderString('PAUSE', (screen.width / 2) - ('pause'.length / 2) * 6, screen.height / 2 - 2.5, fonts.normal);
+      GameplayRenderer.alpha = 0.75;
+      GameplayRenderer.fillStyle = 'black';
+      GameplayRenderer.renderFullRectangle(0, 0, screen.width, screen.height);
+      GameplayRenderer.alpha = 1;
+      const pauseX = (screen.width - this.pauseStringLength) / 2;
+      const pauseY = screen.height / 2 - 2.5;
+      GameplayRenderer.renderFullRectangle(pauseX - 1, pauseY - 1, this.pauseStringLength + 1, 8, 'rgba(0, 0, 0, 0.75)');
+      GameplayRenderer.renderString(this.pauseString, pauseX, pauseY, fonts.normal);
+
+      if (!FexUtils.deviceHasTouch()) {
+        const x = (screen.width - this.unpauseHelpStringLength) / 2;
+        const y = screen.height / 2 - 2.5 + 8;
+        GameplayRenderer.renderFullRectangle(x - 1, y - 1, this.unpauseHelpStringLength + 1, 8, 'rgba(0, 0, 0, 0.75)');
+        GameplayRenderer.renderStringColored(
+          this.unpauseHelpString, x, y, fonts.normal,
+          '#222222',
+        );
+      }
     }
 
     if (FexUtils.deviceHasTouch()) {
