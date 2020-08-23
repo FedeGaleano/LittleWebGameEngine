@@ -3,7 +3,7 @@ import FexDebug from './debug.js';
 
 class GameplayGraphicsClass extends Graphics {
   rescale() {
-    const minimumNumberOfTilesInYAxis = 10;
+    const minimumNumberOfTilesInYAxis = 8;
     const maximumNumberOfTilesInYAxis = 15;
 
     const bestPossibleScale = Math.round(window.screen.height / (maximumNumberOfTilesInYAxis * this.tileSize.h));
