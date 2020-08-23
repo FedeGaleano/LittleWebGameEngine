@@ -2,37 +2,20 @@ import Graphics from './graphics.js';
 import FexDebug from './debug.js';
 
 class GameplayGraphicsClass extends Graphics {
-  constructor() {
-    super();
-  }
-
   rescale() {
-    // const minimumNumberOfTilesInYAxis = 5;
-    // const maximumNumberOfTilesInYAxis = 8;
-    // const maxScale = Math.floor(
-    //   this.canvasHeight / (minimumNumberOfTilesInYAxis * this.tileSize.h),
-    // );
-    // const minScale = Math.ceil(
-    //   this.canvasHeight / (maximumNumberOfTilesInYAxis * this.tileSize.h),
-    // );
-    // this.scale = minScale;
+    const minimumNumberOfTilesInYAxis = 10;
+    const maximumNumberOfTilesInYAxis = 15;
 
-    this.scale = Math.floor(this.canvasHeight / 200);
-    this.scale = Math.min(
-      Math.floor(this.canvasWidth / 100), this.scale,
-    );
-    this.scale = Math.max(Math.round(this.scale * 1.25), 2);
-    // this.scale = 3;
+    const bestPossibleScale = Math.round(window.screen.height / (maximumNumberOfTilesInYAxis * this.tileSize.h));
 
-    // this.scale = 8;
+    this.scale = bestPossibleScale;
+    while (this.canvasHeight / (this.scale * this.tileSize.h) < minimumNumberOfTilesInYAxis) {
+      this.scale = Math.max(1, this.scale - 1);
+    }
   }
 }
 
 class AskForRotationGraphicsClass extends Graphics {
-  constructor() {
-    super();
-  }
-
   rescale() {
     this.scale = Math.floor(this.canvasHeight / 150);
   }
