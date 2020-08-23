@@ -1,6 +1,5 @@
 import WordBubble from './wordBubble.js';
 import { GameplayGraphics } from './rendering.js';
-import { resources, fonts } from './resources.js';
 
 class Dialog {
   constructor(bottomLeftCornerX, bottomLeftCornerY, textLines, font, textSpeed, options) {
@@ -8,6 +7,7 @@ class Dialog {
     this.bottomLeftCornerY = bottomLeftCornerY;
     this.x = bottomLeftCornerX;
     this.y = bottomLeftCornerY - 3 - 8 * textLines.length - 5;
+    this.font = font;
     this.textLines = textLines;
     const lengths = this.textLines.map(({ length }) => length);
     this.dialogLength = lengths.reduce((a, b) => a + b);
@@ -85,7 +85,7 @@ class Dialog {
     for (let line = 0; line < this.textLines.length; line++) {
       GameplayGraphics.renderer.renderString(
         this.textLines[line].substring(0, Math.floor(this.cursor) - (line === 0 ? 0 : accumulatedLengths[line - 1])),
-        this.x + 3 - camera.x, this.y + 3 + line * 8 - camera.y, fonts.normal,
+        this.x + 3 - camera.x, this.y + 3 + line * 8 - camera.y, this.font,
       );
     }
   }

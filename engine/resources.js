@@ -17,6 +17,7 @@ const resourceLoadingData = [
   { path: 'slime-run.png', resourceName: 'characterRunning' },
   { path: 'slime-run-inverse.png', resourceName: 'characterRunningInverse' },
   { path: 'engine-demo-font.png', resourceName: 'font' },
+  { path: 'engine-demo-font-2.png', resourceName: 'font2' },
   { path: 'engine-demo-word-bubble.png', resourceName: 'wordBubble' },
   { path: 'engine-demo-word-bubble-parts.png', resourceName: 'wordBubbleParts' },
   { path: 'fill.png', resourceName: 'fill' },
@@ -69,6 +70,7 @@ const tilesets = {
 function loadFonts() {
   FexDebug.logOnConsole('loading fonts');
   fonts.normal = new Font(resources.font);
+  fonts.normal2 = new Font(resources.font2);
   FexDebug.logOnConsole('kerning data: ', fonts.normal.kerningData);
 }
 

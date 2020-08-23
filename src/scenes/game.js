@@ -197,7 +197,7 @@ class Game extends Scene {
     this.pauseString = 'PAUSE';
     this.pauseStringLength = null;
 
-    this.unpauseHelpString = '[P/Enter]';
+    this.unpauseHelpString = '[p/enter]';
     this.unpauseHelpStringLength = null;
   }
 
@@ -430,11 +430,11 @@ class Game extends Scene {
     const dialogPoint = { x: this.character.position.x + 14, y: this.character.position.y };
     this.speech = new Speech(dialogPoint.x, dialogPoint.y, [
       [
-        'Hola, soy Fexi, la mascota',
-        'del motor Fex Engine',
+        'hola, soy fexi, la mascota',
+        'del motor fex engine',
       ],
       [
-        'seguramente Fex',
+        'seguramente fex',
         'ya te explico',
         'que este no es',
         'el videojuego',
@@ -449,7 +449,7 @@ class Game extends Scene {
         'asi que mientras tanto...',
       ],
       [
-        'Ayudame a salir de aqui',
+        'ayudame a salir de aqui',
         'sin caer al agua',
       ],
       [
@@ -458,7 +458,7 @@ class Game extends Scene {
       [
         '<3',
       ],
-    ], dialogSpeed);
+    ], dialogSpeed, fonts.normal2);
 
     // to start idle
     // this.updateLogic = this.update_idle;
@@ -522,7 +522,7 @@ class Game extends Scene {
           [
             ['OMG'],
           ],
-          dialogSpeed,
+          dialogSpeed, fonts.normal,
         );
       },
       update: (elapsedTime) => {
@@ -705,7 +705,7 @@ class Game extends Scene {
         const y = screen.height / 2 - 2.5 + 8;
         GameplayRenderer.renderFullRectangle(x - 1, y - 1, this.unpauseHelpStringLength + 1, 8, 'rgba(0, 0, 0, 0.75)');
         GameplayRenderer.renderStringColored(
-          this.unpauseHelpString, x, y, fonts.normal,
+          this.unpauseHelpString, x, y, fonts.normal2,
           '#222222',
         );
       }
