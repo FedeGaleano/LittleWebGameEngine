@@ -600,9 +600,10 @@ class Game extends Scene {
       update: (elapsedTime) => {
         this.fireworks.update(elapsedTime);
       },
-      render: (camera) => {
+      render: (customCamera) => {
         const x = (screen.width - this.winStringLength) / 2;
-        const y = (screen.height - fonts.normal.cellHeight) / 2;
+        const yWorld = GameplayGraphics.tileSize.h;
+        const y = yWorld - customCamera.y;
         GameplayRenderer.alpha = 0.75;
         GameplayRenderer.renderFullRectangle(x - 1, y - 1, this.winStringLength + 1, fonts.normal.cellHeight - 1, '#07030d');
         GameplayRenderer.alpha = 1;
