@@ -603,8 +603,10 @@ class Game extends Scene {
       render: (camera) => {
         const x = (screen.width - this.winStringLength) / 2;
         const y = (screen.height - fonts.normal.cellHeight) / 2;
-        GameplayRenderer.renderFullRectangle(x - 1, y - 1, this.winStringLength + 1, fonts.normal.cellHeight - 1, 'rgba(0, 0, 0, 0.75)');
-        GameplayRenderer.renderStringColored(this.winString, x, y, fonts.normal, '#55FF00');
+        GameplayRenderer.alpha = 0.75;
+        GameplayRenderer.renderFullRectangle(x - 1, y - 1, this.winStringLength + 1, fonts.normal.cellHeight - 1, '#07030d');
+        GameplayRenderer.alpha = 1;
+        GameplayRenderer.renderStringColored(this.winString, x, y, fonts.normal, /* '#55FF00' */ '#c2c2d5');
       },
     };
     this.winCutScene = new CutScene();
