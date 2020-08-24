@@ -19,6 +19,7 @@ import Fexi from '../Fexi.js';
 import FireWorks from '../entities/fireworks.js';
 import CutScene from '../../engine/cutScene.js';
 import FexGlobals from '../../engine/utils/FexGlobals.js';
+import PlaneSurface from '../../engine/PlaneSurface.js';
 
 const ArrayNewFunctionalities = {
   removeIf(condition) {
@@ -169,6 +170,7 @@ class Game extends Scene {
     this.water = null;
     this.arrow = null;
     this.fireworks = null;
+    this.light = null;
 
     // UI
     this.leftButton = null;
@@ -217,6 +219,7 @@ class Game extends Scene {
         -this.getFinalCameraY()
         -cameraFollowBox.x
         -cameraFollowBox.y
+        -this.water
     */
 
     this.leftButton.position.x = 10;
@@ -259,6 +262,8 @@ class Game extends Scene {
     this.createBackground();
 
     this.demoWorld.preRender();
+
+    this.water.position.x = this.finalCameraX;
   }
 
   placeEntityOverTile(entity, xTile, yTile, zoneIndex = 0) {
@@ -378,6 +383,13 @@ class Game extends Scene {
       this.resetAlpha = 1;
     };
 
+    this.light = new Light(
+      this.character.position.x + this.character.width / 2,
+      this.character.position.y + this.character.height / 2,
+      this.character.width / 2 + 15,
+      0, 255, 255, 0.1,
+    );
+
     this.flagSprite = new Sprite(resources.flag, 13, 50, GameplayGraphics);
     this.flag = new Entity(
       { normal: this.flagSprite },
@@ -392,19 +404,20 @@ class Game extends Scene {
     );
     this.demoWorld.copyTileCoordsInBound(0, 21, 52, this.arrow.position);
 
-    this.water = new (class {
-      constructor() {
-        this.position = { x: 0, y: 0 };
-        this.velocity = { x: 0, y: 0 };
-      }
+    // this.water = new (class {
+    //   constructor() {
+    //     this.position = { x: 0, y: 0 };
+    //     this.velocity = { x: 0, y: 0 };
+    //   }
 
-      render(customCamera) {
-        GameplayRenderer.renderFullRectangle(
-          0, this.position.y - customCamera.y,
-          GameplayGraphics.screen.width, GameplayGraphics.screen.height, 'rgba(0, 0, 255, 0.5)',
-        );
-      }
-    })();
+    //   render(customCamera) {
+    //     GameplayRenderer.renderFullRectangle(
+    //       0, this.position.y - customCamera.y,
+    //       GameplayGraphics.screen.width, GameplayGraphics.screen.height, 'rgba(0, 0, 255, 0.5)',
+    //     );
+    //   }
+    // })();
+    this.water = new PlaneSurface(resources.water);
 
     // _, 58
     this.resetWater = () => {
@@ -659,6 +672,7 @@ class Game extends Scene {
     // this.boss.render(camera);
 
     this.flag.render(camera);
+    this.light.render(camera);
 
     if (showGrid) {
       renderer.renderWorldTileGrid(this.demoWorld, camera, this.demoWorld.collisionInfo.map);
@@ -817,6 +831,9 @@ class Game extends Scene {
 
       this.character.velocity.y += this.modifyGravity(gravity) * elapsedTime;
       this.character.update(elapsedTime);
+
+      this.light.x = this.character.position.x + this.character.width / 2;
+      this.light.y = this.character.position.y + this.character.height / 2;
 
       this.arrow.update(elapsedTime);
       this.flag.update(elapsedTime);

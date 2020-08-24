@@ -284,8 +284,8 @@ class Renderer {
     const realRadius = radius * scale;
     const gradient = renderingContext2D.createRadialGradient(realX, realY, 0, realX, realY, realRadius);
 
-    gradient.addColorStop(0, `rgba(${r},${g},${b},${intensity})`);
-    gradient.addColorStop(1, `rgba(${r},${g},${b},0)`);
+    // gradient.addColorStop(0, `rgba(${r},${g},${b},${intensity})`);
+    // gradient.addColorStop(1, `rgba(${r},${g},${b},0)`);
 
     // gradient.addColorStop(0, `rgba(${r},${g},${b},${intensity})`);
     // gradient.addColorStop(0.25, `rgba(${r},${g},${b},0.5)`);
@@ -297,14 +297,17 @@ class Renderer {
     // // gradient.addColorStop(0.5, `rgba(${r},${g},${b},0.5)`);
     // gradient.addColorStop(1, `rgba(${r},${g},${b},0)`);
 
+    gradient.addColorStop(0, `rgba(${r},${g},${b},${intensity})`);
+    gradient.addColorStop(1, `rgba(${0},${0},${0}, 0.85)`);
+
     return gradient;
   }
 
   renderLightSource(lightSource, x, y, radius) {
     const { scale } = this.graphics;
     this.fillStyle = lightSource;
-    // this.renderFullRectangle();
-    this.renderFullCircle(x, y, radius);
+    this.renderFullRectangle();
+    // this.renderFullCircle(x, y, radius);
   }
 }
 
