@@ -285,7 +285,16 @@ class Renderer {
     const gradient = renderingContext2D.createRadialGradient(realX, realY, 0, realX, realY, realRadius);
 
     // gradient.addColorStop(0, `rgba(${r},${g},${b},${intensity})`);
+    // gradient.addColorStop(0.25, `rgba(${r},${g},${b},${intensity * 0.75})`);
+    // gradient.addColorStop(0.5, `rgba(${r},${g},${b},${intensity * 0.5})`);
+    // gradient.addColorStop(0.75, `rgba(${r},${g},${b},${intensity * 0.25})`);
     // gradient.addColorStop(1, `rgba(${r},${g},${b},0)`);
+
+    const proportionalStep = 1 / Math.max(1, radius);
+    const calculateIntensity = xi => (xi - 1) ** 4;
+    for (let xi = 0; xi <= 1; xi += proportionalStep) {
+      gradient.addColorStop(xi, `rgba(${r},${g},${b},${intensity * calculateIntensity(xi)})`);
+    }
 
     // gradient.addColorStop(0, `rgba(${r},${g},${b},${intensity})`);
     // gradient.addColorStop(0.25, `rgba(${r},${g},${b},0.5)`);
@@ -297,8 +306,8 @@ class Renderer {
     // // gradient.addColorStop(0.5, `rgba(${r},${g},${b},0.5)`);
     // gradient.addColorStop(1, `rgba(${r},${g},${b},0)`);
 
-    gradient.addColorStop(0, `rgba(${r},${g},${b},${intensity})`);
-    gradient.addColorStop(1, `rgba(${0},${0},${0}, 0.85)`);
+    // gradient.addColorStop(0, `rgba(${r},${g},${b},${intensity})`);
+    // gradient.addColorStop(1, `rgba(${0},${0},${0}, 0.85)`);
 
     return gradient;
   }

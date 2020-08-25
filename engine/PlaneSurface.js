@@ -5,7 +5,6 @@ class PlaneSurface {
     this.bitmap = bitmap;
     this.position = { x, y };
     this.velocity = { x: 0, y: 0 };
-    this.xTimes = GameplayGraphics.screen.width / this.bitmap.width + 1;
   }
 
   update(elapsedTime) {
@@ -13,7 +12,8 @@ class PlaneSurface {
   }
 
   render(camera) {
-    for (let i = 0; i < this.xTimes; ++i) {
+    const xTimes = GameplayGraphics.screen.width / this.bitmap.width + 1;
+    for (let i = 0; i < xTimes; ++i) {
       const realXStart = this.position.x - camera.x;
       const fakeXStart = realXStart - (this.bitmap.width * (Math.floor(realXStart / this.bitmap.width) + 1));
       const x = fakeXStart + i * this.bitmap.width;

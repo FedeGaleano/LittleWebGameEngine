@@ -57,8 +57,11 @@ let pause = false;
 
 // const getMoveAcceleration = max => (max ? 0.01 : 0.0006);
 // const getMoveAcceleration = () => 0.0007;
+
 const maxMoveVelocity = 0.1;
 const getMoveAcceleration = () => 0.0007;
+// const maxMoveVelocity = 0.15;
+// const getMoveAcceleration = () => 0.001;
 const maxJumpVelocity = 0.32;
 const gravity = 0.001;
 // const maxJumpVelocity = 0.5;
@@ -386,8 +389,8 @@ class Game extends Scene {
     this.light = new Light(
       this.character.position.x + this.character.width / 2,
       this.character.position.y + this.character.height / 2,
-      this.character.width / 2 + 15,
-      0, 255, 255, 0.1,
+      this.character.width / 2 + 45,
+      0, 255, 255, 1,
     );
 
     this.flagSprite = new Sprite(resources.flag, 13, 50, GameplayGraphics);
