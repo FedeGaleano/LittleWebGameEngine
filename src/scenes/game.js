@@ -317,7 +317,7 @@ class Game extends Scene {
     );
 
     this.leftButtonTouchScreenArea = new TouchScreenArea(
-      this.leftButton.position.x - 5, this.leftButton.position.y - 5, this.leftButton.width + 15, this.leftButton.height + 20, GameplayGraphics, 'left',
+      this.leftButton.position.x - 10, this.leftButton.position.y - 5, this.leftButton.width + 15, this.leftButton.height + 20, GameplayGraphics, 'left',
     );
     this.rightButtonTouchScreenArea = new TouchScreenArea(
       this.rightButton.position.x - 5, this.rightButton.position.y - 5, this.rightButton.width + 15, this.rightButton.height + 20, GameplayGraphics, 'right',
