@@ -19,12 +19,7 @@ class Entity {
     this.hitbox = null;
   }
 
-  update(elapsedTime) {
-    // to handle Physics.buildJumpMovement()
-    // this.automaticMovement(this.position, this.velocity, this.count * 2.5);
-
-    // to handle Physics.buildJumpMovement2()
-    // this.automaticMovement(this.position, this.velocity, this.t);
+  updateInternalStructure(elapsedTime) {
     this.lastStep.x = this.velocity.x * elapsedTime;
     this.lastStep.y = this.velocity.y * elapsedTime;
     this.position.x += FexMath.precision(this.lastStep.x);
@@ -34,8 +29,16 @@ class Entity {
     this.t += elapsedTime * 0.1;
   }
 
-  render(camera = { x: 0, y: 0 }) {
+  update(elapsedTime) {
+    this.updateInternalStructure(elapsedTime);
+  }
+
+  renderSprite(camera = { x: 0, y: 0 }) {
     this.sprite.render(this.position.x - camera.x, this.position.y - camera.y);
+  }
+
+  render(camera) {
+    this.renderSprite(camera);
   }
 
   changeSpriteTo(key, flip = false, flop = false) {

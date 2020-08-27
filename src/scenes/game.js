@@ -20,6 +20,7 @@ import FireWorks from '../entities/fireworks.js';
 import CutScene from '../../engine/cutScene.js';
 import FexGlobals from '../../engine/utils/FexGlobals.js';
 import PlaneSurface from '../../engine/PlaneSurface.js';
+import Plant from '../entities/plant.js';
 
 const ArrayNewFunctionalities = {
   removeIf(condition) {
@@ -393,6 +394,15 @@ class Game extends Scene {
       0, 255, 255, 1,
     );
 
+    this.plant = new Plant({
+      lightColor: {
+        r: 255,
+        g: 0,
+        b: 255,
+      },
+    });
+    this.placeEntityOverTile(this.plant, 33, 62);
+
     this.flagSprite = new Sprite(resources.flag, 13, 50, GameplayGraphics);
     this.flag = new Entity(
       { normal: this.flagSprite },
@@ -666,6 +676,8 @@ class Game extends Scene {
 
     this.demoWorld.render(camera);
 
+    this.plant.render(camera);
+
     this.arrow.render(camera);
 
     // TOCACHE
@@ -834,6 +846,8 @@ class Game extends Scene {
       if (this.water.position.y > GameplayGraphics.tileSize.h) {
         this.water.position.y -= this.water.velocity.y;
       }
+
+      this.plant.update(elapsedTime);
 
       this.character.velocity.y += this.modifyGravity(gravity) * elapsedTime;
       this.character.update(elapsedTime);

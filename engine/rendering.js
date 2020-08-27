@@ -6,7 +6,9 @@ class GameplayGraphicsClass extends Graphics {
     const minimumNumberOfTilesInYAxis = 8;
     const maximumNumberOfTilesInYAxis = 15;
 
-    const bestPossibleScale = Math.round(window.screen.height / (maximumNumberOfTilesInYAxis * this.tileSize.h));
+    const bestPossibleScale = Math.round(
+      window.screen.height / (maximumNumberOfTilesInYAxis * this.tileSize.h),
+    );
 
     this.scale = bestPossibleScale;
     while (this.canvasHeight / (this.scale * this.tileSize.h) < minimumNumberOfTilesInYAxis) {
