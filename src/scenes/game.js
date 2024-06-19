@@ -69,7 +69,7 @@ const gravity = 0.001;
 // const gravity = 0.002;
 const coyoteTime = 100;
 const prematureJumpTolerance = 100;
-const waterVelocity = 0.7;
+const waterVelocity = 0.04;
 
 const cameraFollowBox = {
   // (x, y) set on init()
@@ -493,7 +493,7 @@ class Game extends Scene {
 
     // to start with cutScene
     this.updateLogic = this.update_intro;
-    this.renderLogic = () => {};
+    this.renderLogic = () => { };
     this.input_intro();
     curtain = -500;
     curtainSpeed = maxCurtainSpeed;
@@ -747,16 +747,12 @@ class Game extends Scene {
       this.pauseButton.render();
     }
 
-    FexDebug.logOnScreen('velocity fixed', `<${
-      Number.parseFloat(FexMath.precision(this.character.velocity.x)).toFixed(2)
-    }, ${
-      Number.parseFloat(FexMath.precision(this.character.velocity.y)).toFixed(2)
-    }>`);
-    FexDebug.logOnScreen('position fixed', `<${
-      Number.parseFloat(FexMath.precision(this.character.position.x)).toFixed(2)
-    }, ${
-      Number.parseFloat(FexMath.precision(this.character.position.y)).toFixed(2)
-    }>`);
+    FexDebug.logOnScreen('velocity fixed', `<${Number.parseFloat(FexMath.precision(this.character.velocity.x)).toFixed(2)
+      }, ${Number.parseFloat(FexMath.precision(this.character.velocity.y)).toFixed(2)
+      }>`);
+    FexDebug.logOnScreen('position fixed', `<${Number.parseFloat(FexMath.precision(this.character.position.x)).toFixed(2)
+      }, ${Number.parseFloat(FexMath.precision(this.character.position.y)).toFixed(2)
+      }>`);
     FexDebug.logOnScreen('isInAir', this.demoWorld.collisionInfo.isInAir);
   }
 
@@ -844,7 +840,7 @@ class Game extends Scene {
       curtain = Math.max(0, Math.min(1, curtain + curtainSpeed * elapsedTime));
 
       if (this.water.position.y > GameplayGraphics.tileSize.h) {
-        this.water.position.y -= this.water.velocity.y;
+        this.water.position.y -= this.water.velocity.y * elapsedTime;
       }
 
       this.plant.update(elapsedTime);
