@@ -124,7 +124,7 @@ const Effects = {
 let nextScene = null;
 
 function changeScene(newScene, effect) {
-  scene.onFinish(() => {});
+  scene.onFinish(() => { });
   scene.volatileTouchScreenAreas.forEach((areaName) => {
     InputBuffer.deleteTouchScreenArea(areaName);
   });
@@ -169,7 +169,7 @@ function handleInput(elapsedTime, virtualTime) {
   function iterateOverState(state, logic) {
     // eslint-disable-next-line no-restricted-syntax
     for (const key in state) {
-    // eslint-disable-next-line no-prototype-builtins
+      // eslint-disable-next-line no-prototype-builtins
       if (state.hasOwnProperty(key) && state[key]) {
         logic(key);
       }
@@ -215,7 +215,7 @@ export default function startEngine() {
   let fps = 0;
   let lastTime = 0;
   let deltaTime = 0;
-  const targetFPS = 60;
+  const targetFPS = 120;
   const targetSecondsForOneFrame = 1 / targetFPS;
   const targetMillisForOneFrame = targetSecondsForOneFrame * 1000;
   FexDebug.logOnConsole('targetMillisForOneFrame: ', targetMillisForOneFrame);
