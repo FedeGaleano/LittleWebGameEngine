@@ -22,6 +22,8 @@ class Menu extends Scene {
     this.fexi = null;
     this.titleX = null;
     this.titleY = null;
+    this.language = 1;
+    this.languages = ['English', 'Español'];
   }
 
   placePlayUIButton() {
@@ -137,6 +139,8 @@ class Menu extends Scene {
     } else {
       this.renderPressStart();
     }
+
+    GameplayRenderer.renderStringColored(`<< ${this.languages[this.language]} >>`, 150, 150, fonts.normal, 'white');
   }
 
   onScreenResize() {
