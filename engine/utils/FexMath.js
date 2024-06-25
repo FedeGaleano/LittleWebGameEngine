@@ -10,6 +10,9 @@ const FexMath = {
   boundExpression(expression, minValue, maxValue) {
     return Math.max(Math.min(expression, maxValue), minValue);
   },
+  modulus(operand, base) {
+    return ((operand % base) + base) % base;
+  },
 };
 
 export default FexMath;
