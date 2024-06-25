@@ -7,6 +7,7 @@ import InputBuffer from '../../engine/InputBuffer.js';
 import TouchScreenArea from '../../engine/TouchScreenArea.js';
 import FexUtils from '../../engine/utils/FexUtils.js';
 import Fexi from '../Fexi.js';
+import FexMath from '../../engine/utils/FexMath.js';
 
 const pressEnterText = 'PRESS ENTER TO START';
 const blinkTimeInMillis = 500;
@@ -66,11 +67,27 @@ class Menu extends Scene {
       }
       this.finish();
     };
+    const switchLanguageRight = () => {
+      this.language = FexMath.modulus(this.language + 1, this.languages.length);
+    };
+    const switchLanguageLeft = () => {
+      this.language = FexMath.modulus(this.language - 1, this.languages.length);
+    };
     this.createVirtualButton('startGame', {
       keys: ['Enter'],
       touchScreenAreas: ['playUIButton'],
     });
+    this.createVirtualButton('switchLanguageRight', {
+      keys: ['ArrowRight'],
+      touchScreenAreas: [],
+    });
+    this.createVirtualButton('switchLanguageLeft', {
+      keys: ['ArrowLeft'],
+      touchScreenAreas: [],
+    });
     this.onFired('startGame', finishScene);
+    this.onFired('switchLanguageRight', switchLanguageRight);
+    this.onFired('switchLanguageLeft', switchLanguageLeft);
     this.textLength = fonts.normal.measureText(pressEnterText);
     this.textHeight = fonts.normal.cellHeight;
   }
