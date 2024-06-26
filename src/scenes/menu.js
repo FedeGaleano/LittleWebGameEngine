@@ -8,8 +8,8 @@ import TouchScreenArea from '../../engine/TouchScreenArea.js';
 import FexUtils from '../../engine/utils/FexUtils.js';
 import Fexi from '../Fexi.js';
 import FexMath from '../../engine/utils/FexMath.js';
+import Localization from '../localization/localization.js';
 
-const pressEnterText = 'PRESS ENTER TO START';
 const blinkTimeInMillis = 500;
 
 class Menu extends Scene {
@@ -24,7 +24,16 @@ class Menu extends Scene {
     this.titleX = null;
     this.titleY = null;
     this.language = 1;
-    this.languages = ['English', 'Español'];
+    this.languages = [
+      {
+        text: 'English',
+        reference: FexUtils.availableLanguages.ENGLISH,
+      },
+      {
+        text: 'Español',
+        reference: FexUtils.availableLanguages.SPANISH,
+      },
+    ];
   }
 
   placePlayUIButton() {
@@ -88,7 +97,7 @@ class Menu extends Scene {
     this.onFired('startGame', finishScene);
     this.onFired('switchLanguageRight', switchLanguageRight);
     this.onFired('switchLanguageLeft', switchLanguageLeft);
-    this.textLength = fonts.normal.measureText(pressEnterText);
+    this.textLength = fonts.normal.measureText(Localization.PRESS_ENTER_TO_START);
     this.textHeight = fonts.normal.cellHeight;
   }
 
@@ -115,9 +124,9 @@ class Menu extends Scene {
       const y = screen.height * (2 / 3) - this.textHeight / 2;
       GameplayRenderer.fillStyle = 'black';
       GameplayRenderer.alpha = 0.5;
-      GameplayRenderer.renderFullRectangle(x - 1, y - 1, fonts.normal.measureText(pressEnterText) + 1, fonts.normal.cellHeight - 1);
+      GameplayRenderer.renderFullRectangle(x - 1, y - 1, fonts.normal.measureText(Localization.PRESS_ENTER_TO_START) + 1, fonts.normal.cellHeight - 1);
       GameplayRenderer.alpha = 1;
-      GameplayRenderer.renderStringColored(pressEnterText,
+      GameplayRenderer.renderStringColored(Localization.PRESS_ENTER_TO_START,
         x, y,
         fonts.normal, 'grey');
     }
@@ -157,7 +166,7 @@ class Menu extends Scene {
       this.renderPressStart();
     }
 
-    GameplayRenderer.renderStringColored(`<< ${this.languages[this.language]} >>`, 150, 150, fonts.normal, 'white');
+    GameplayRenderer.renderStringColored(`<< ${this.languages[this.language].text} >>`, 150, 150, fonts.normal, 'white');
   }
 
   onScreenResize() {

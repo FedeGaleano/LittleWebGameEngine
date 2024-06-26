@@ -1,5 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import FexDebug from '../debug.js';
+import FexUtils from './FexUtils.js';
 
 window._fex_ = {
   globals: {},
@@ -34,6 +35,7 @@ const FexGlobals = {
   mapRenderingOptimizationLevel: new GlobalVariable('mapRenderingOptimizationLevel', 0, { isPublic: true }),
   useRenderCache: new GlobalVariable('useRenderCache', true),
   useDebugCommands: new GlobalVariable('useDebugCommands', false, { isPublic: true }),
+  language: new GlobalVariable('language', FexUtils.availableLanguages.ENGLISH),
 };
 
 export default FexGlobals;
