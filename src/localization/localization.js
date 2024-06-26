@@ -12,7 +12,7 @@ const Localization = {
   get PRESS_ENTER_TO_START() {
     return localize({
       [lang.ENGLISH]: 'PRESS ENTER TO START',
-      [lang.SPANISH]: 'PRESIONE INTRO PARA EMPEZAR',
+      [lang.SPANISH]: 'PRESIONE ENTRAR PARA EMPEZAR',
     });
   },
   get PAUSE() {
@@ -35,23 +35,29 @@ const Localization = {
           'of the fex engine',
         ],
         [
-          'seguramente fex',
-          'ya te explico',
-          'que este no es',
-          'el videojuego',
+          'and this is not',
+          'actually a videogame',
         ],
         [
-          'pero aun asi',
-          'sigues esperando eso',
-          'porque el hype',
-          'no te deja escuchar',
+          'well... i mean',
+          "it's just an engine demo",
+          'to showcase what the',
+          'engine is able to do',
         ],
         [
-          'asi que mientras tanto...',
+          'i guess fex will',
+          'throw out a game',
+          'one of these days',
         ],
         [
-          'ayudame a salir de aqui',
-          'sin caer al agua',
+          'but in the meanwhile,',
+          'how about...',
+        ],
+        [
+          'you help me to',
+          'get out of here',
+          'without falling',
+          'into the water',
         ],
         [
           ':)',
