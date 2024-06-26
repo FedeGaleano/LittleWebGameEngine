@@ -9,6 +9,7 @@ import FexUtils from '../../engine/utils/FexUtils.js';
 import Fexi from '../Fexi.js';
 import FexMath from '../../engine/utils/FexMath.js';
 import Localization from '../localization/localization.js';
+import FexGlobals from '../../engine/utils/FexGlobals.js';
 
 const blinkTimeInMillis = 500;
 
@@ -78,9 +79,11 @@ class Menu extends Scene {
     };
     const switchLanguageRight = () => {
       this.language = FexMath.modulus(this.language + 1, this.languages.length);
+      FexGlobals.language.set(this.languages[this.language].reference);
     };
     const switchLanguageLeft = () => {
       this.language = FexMath.modulus(this.language - 1, this.languages.length);
+      FexGlobals.language.set(this.languages[this.language].reference);
     };
     this.createVirtualButton('startGame', {
       keys: ['Enter'],
