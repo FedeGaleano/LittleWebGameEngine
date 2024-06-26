@@ -24,7 +24,7 @@ class Menu extends Scene {
     this.fexi = null;
     this.titleX = null;
     this.titleY = null;
-    this.language = 1;
+    this.languageIndex = 1;
     this.languages = [
       {
         text: 'English',
@@ -35,6 +35,7 @@ class Menu extends Scene {
         reference: FexUtils.availableLanguages.SPANISH,
       },
     ];
+    this.setLanguage(this.languageIndex);
   }
 
   placePlayUIButton() {
@@ -53,6 +54,10 @@ class Menu extends Scene {
     this.back = GameplayGraphics.renderingContext2D.createLinearGradient(0, 0, 0, GameplayGraphics.screen.height * GameplayGraphics.scale);
     this.back.addColorStop(0, '#190a2c');
     this.back.addColorStop(1, '#4b2cb2');
+  }
+
+  setLanguage(index) {
+    FexGlobals.language.set(this.languages[index].reference);
   }
 
   init() {
@@ -78,12 +83,12 @@ class Menu extends Scene {
       this.finish();
     };
     const switchLanguageRight = () => {
-      this.language = FexMath.modulus(this.language + 1, this.languages.length);
-      FexGlobals.language.set(this.languages[this.language].reference);
+      this.languageIndex = FexMath.modulus(this.languageIndex + 1, this.languages.length);
+      this.setLanguage(this.languageIndex);
     };
     const switchLanguageLeft = () => {
-      this.language = FexMath.modulus(this.language - 1, this.languages.length);
-      FexGlobals.language.set(this.languages[this.language].reference);
+      this.languageIndex = FexMath.modulus(this.languageIndex - 1, this.languages.length);
+      this.setLanguage(this.languageIndex);
     };
     this.createVirtualButton('startGame', {
       keys: ['Enter'],
@@ -169,7 +174,7 @@ class Menu extends Scene {
       this.renderPressStart();
     }
 
-    GameplayRenderer.renderStringColored(`<< ${this.languages[this.language].text} >>`, 150, 150, fonts.normal, 'white');
+    GameplayRenderer.renderStringColored(`<< ${this.languages[this.languageIndex].text} >>`, 150, 150, fonts.normal, 'white');
   }
 
   onScreenResize() {

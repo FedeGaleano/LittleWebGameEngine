@@ -21,6 +21,7 @@ import CutScene from '../../engine/cutScene.js';
 import FexGlobals from '../../engine/utils/FexGlobals.js';
 import PlaneSurface from '../../engine/PlaneSurface.js';
 import Plant from '../entities/plant.js';
+import Localization from '../localization/localization.js';
 
 const ArrayNewFunctionalities = {
   removeIf(condition) {
@@ -197,10 +198,10 @@ class Game extends Scene {
     this.resetAlphaSpeed = 0.05;
 
     // strings
-    this.winString = 'GANASTE. GRACIAS POR JUGAR :3';
+    this.winString = Localization.YOU_WON_THANKS_FOR_PLAYING;
     this.winStringLength = null;
 
-    this.pauseString = 'PAUSE';
+    this.pauseString = Localization.PAUSE;
     this.pauseStringLength = null;
 
     this.unpauseHelpString = '[p/enter]';
@@ -454,37 +455,7 @@ class Game extends Scene {
     this.getFinalCameraY = () => cameraFollowBox.y - (screen.height - cameraFollowBox.height) / 2;
 
     const dialogPoint = { x: this.character.position.x + 14, y: this.character.position.y };
-    this.speech = new Speech(dialogPoint.x, dialogPoint.y, [
-      [
-        'hola, soy fexi, la mascota',
-        'del motor fex engine',
-      ],
-      [
-        'seguramente fex',
-        'ya te explico',
-        'que este no es',
-        'el videojuego',
-      ],
-      [
-        'pero aun asi',
-        'sigues esperando eso',
-        'porque el hype',
-        'no te deja escuchar',
-      ],
-      [
-        'asi que mientras tanto...',
-      ],
-      [
-        'ayudame a salir de aqui',
-        'sin caer al agua',
-      ],
-      [
-        ':)',
-      ],
-      [
-        '<3',
-      ],
-    ], dialogSpeed, fonts.normal2);
+    this.speech = new Speech(dialogPoint.x, dialogPoint.y, Localization.FEXI_INTRODUCTION_SPEECH, dialogSpeed, fonts.normal2);
 
     // to start idle
     // this.updateLogic = this.update_idle;
@@ -748,11 +719,11 @@ class Game extends Scene {
     }
 
     FexDebug.logOnScreen('velocity fixed', `<${Number.parseFloat(FexMath.precision(this.character.velocity.x)).toFixed(2)
-      }, ${Number.parseFloat(FexMath.precision(this.character.velocity.y)).toFixed(2)
-      }>`);
+    }, ${Number.parseFloat(FexMath.precision(this.character.velocity.y)).toFixed(2)
+    }>`);
     FexDebug.logOnScreen('position fixed', `<${Number.parseFloat(FexMath.precision(this.character.position.x)).toFixed(2)
-      }, ${Number.parseFloat(FexMath.precision(this.character.position.y)).toFixed(2)
-      }>`);
+    }, ${Number.parseFloat(FexMath.precision(this.character.position.y)).toFixed(2)
+    }>`);
     FexDebug.logOnScreen('isInAir', this.demoWorld.collisionInfo.isInAir);
   }
 
