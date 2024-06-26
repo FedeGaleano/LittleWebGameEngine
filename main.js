@@ -223,7 +223,6 @@ export default function startEngine() {
   const info = { fps };
 
   function clearInput() {
-    FexDebug.logOnConsole('clearInput called!');
     isFired.clear();
     isPressed.clear();
     isReleased.clear();

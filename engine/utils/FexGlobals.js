@@ -35,7 +35,7 @@ const FexGlobals = {
   mapRenderingOptimizationLevel: new GlobalVariable('mapRenderingOptimizationLevel', 0, { isPublic: true }),
   useRenderCache: new GlobalVariable('useRenderCache', true),
   useDebugCommands: new GlobalVariable('useDebugCommands', false, { isPublic: true }),
-  language: new GlobalVariable('language', FexUtils.availableLanguages.ENGLISH),
+  language: new GlobalVariable('language', FexUtils.availableLanguages.ENGLISH, { isPublic: true }),
 };
 
 export default FexGlobals;

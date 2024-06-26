@@ -198,14 +198,20 @@ class Game extends Scene {
     this.resetAlphaSpeed = 0.05;
 
     // strings
-    this.winString = Localization.YOU_WON_THANKS_FOR_PLAYING;
     this.winStringLength = null;
 
-    this.pauseString = Localization.PAUSE;
     this.pauseStringLength = null;
 
     this.unpauseHelpString = '[p/enter]';
     this.unpauseHelpStringLength = null;
+  }
+
+  static get pauseString() {
+    return Localization.PAUSE;
+  }
+
+  static get winString() {
+    return Localization.YOU_WON_THANKS_FOR_PLAYING;
   }
 
   onScreenResize() {
@@ -493,8 +499,8 @@ class Game extends Scene {
     camera.y = -GameplayGraphics.tileSize.h * 10; // 10 tiles above the surface
 
     // init strings lengths
-    this.winStringLength = fonts.normal.measureText(this.winString);
-    this.pauseStringLength = fonts.normal.measureText(this.pauseString);
+    this.winStringLength = fonts.normal.measureText(Game.winString);
+    this.pauseStringLength = fonts.normal.measureText(Game.pauseString);
     this.unpauseHelpStringLength = fonts.normal.measureText(this.unpauseHelpString);
 
     // Init Cutscenes
@@ -591,7 +597,7 @@ class Game extends Scene {
         GameplayRenderer.alpha = 0.75;
         GameplayRenderer.renderFullRectangle(x - 1, y - 1, this.winStringLength + 1, fonts.normal.cellHeight - 1, '#07030d');
         GameplayRenderer.alpha = 1;
-        GameplayRenderer.renderStringColored(this.winString, x, y, fonts.normal, /* '#55FF00' */ '#c2c2d5');
+        GameplayRenderer.renderStringColored(Game.winString, x, y, fonts.normal, /* '#55FF00' */ '#c2c2d5');
       },
     };
     this.winCutScene = new CutScene();
@@ -701,7 +707,7 @@ class Game extends Scene {
       const pauseX = (screen.width - this.pauseStringLength) / 2;
       const pauseY = screen.height / 2 - 2.5;
       GameplayRenderer.renderFullRectangle(pauseX - 1, pauseY - 1, this.pauseStringLength + 1, 8, 'rgba(0, 0, 0, 0.75)');
-      GameplayRenderer.renderString(this.pauseString, pauseX, pauseY, fonts.normal);
+      GameplayRenderer.renderString(Game.pauseString, pauseX, pauseY, fonts.normal);
 
       if (!FexUtils.deviceHasTouch()) {
         const x = (screen.width - this.unpauseHelpStringLength) / 2;
@@ -719,11 +725,11 @@ class Game extends Scene {
     }
 
     FexDebug.logOnScreen('velocity fixed', `<${Number.parseFloat(FexMath.precision(this.character.velocity.x)).toFixed(2)
-    }, ${Number.parseFloat(FexMath.precision(this.character.velocity.y)).toFixed(2)
-    }>`);
+      }, ${Number.parseFloat(FexMath.precision(this.character.velocity.y)).toFixed(2)
+      }>`);
     FexDebug.logOnScreen('position fixed', `<${Number.parseFloat(FexMath.precision(this.character.position.x)).toFixed(2)
-    }, ${Number.parseFloat(FexMath.precision(this.character.position.y)).toFixed(2)
-    }>`);
+      }, ${Number.parseFloat(FexMath.precision(this.character.position.y)).toFixed(2)
+      }>`);
     FexDebug.logOnScreen('isInAir', this.demoWorld.collisionInfo.isInAir);
   }
 
