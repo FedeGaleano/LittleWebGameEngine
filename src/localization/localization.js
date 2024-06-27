@@ -72,22 +72,27 @@ const Localization = {
           'del motor fex engine',
         ],
         [
-          'seguramente fex',
-          'ya te explico',
-          'que este no es',
-          'el videojuego',
+          'y esto no es realmente',
+          'un videojuego',
         ],
         [
-          'pero aun asi',
-          'sigues esperando eso',
-          'porque el hype',
-          'no te deja escuchar',
+          'bueno... quiero decir',
+          'sólo es una demo de motor',
+          'para mostrar lo que',
+          'el motor puede hacer',
         ],
         [
-          'asi que mientras tanto...',
+          'supongo que fex',
+          'va a lanzar un juego',
+          'uno de estos días',
         ],
         [
-          'ayudame a salir de aqui',
+          'pero mientras tanto,',
+          'qué tal si...',
+        ],
+        [
+          'me ayudas a',
+          'salir de aquí',
           'sin caer al agua',
         ],
         [
