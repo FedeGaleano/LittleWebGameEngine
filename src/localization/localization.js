@@ -31,7 +31,7 @@ const Localization = {
     return localize({
       [lang.ENGLISH]: [
         [
-          "hi, i'm fexi, the mascot",
+          "hi! i'm fexi, the mascot",
           'of the fex engine',
         ],
         [
@@ -68,7 +68,7 @@ const Localization = {
       ],
       [lang.SPANISH]: [
         [
-          'hola, soy fexi, la mascota',
+          'hola!  soy fexi, la mascota',
           'del motor fex engine',
         ],
         [

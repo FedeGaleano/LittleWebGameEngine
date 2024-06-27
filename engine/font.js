@@ -1,5 +1,5 @@
 const context2D = document.createElement('canvas').getContext('2d');
-const letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890:,()<.!¡[]/>ñÑ';
+const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890:,()<.!¡[]/>ñÑ'áéíóúÁÉÍÓÚ";
 const spaceWidth = 2;
 
 class Font {
