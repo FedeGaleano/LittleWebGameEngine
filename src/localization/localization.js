@@ -104,6 +104,7 @@ const Localization = {
       ],
     });
   },
+
 };
 
 export default Localization;
