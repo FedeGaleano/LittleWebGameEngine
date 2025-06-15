@@ -24,6 +24,7 @@ class Menu extends Scene {
     this.fexi = null;
     this.titleX = null;
     this.titleY = null;
+    this.languageTitleX = null;
     this.languageIndex = 1;
     this.languages = [
       {
@@ -128,7 +129,7 @@ class Menu extends Scene {
   renderPressStart() {
     const { screen } = GameplayGraphics;
     if (!this.blink) {
-      const x = (screen.width - this.textLength) / 2;
+      const x = (screen.width - fonts.normal.measureText(Localization.PRESS_ENTER_TO_START)) / 2;
       const y = screen.height * (2 / 3) - this.textHeight / 2;
       GameplayRenderer.fillStyle = 'black';
       GameplayRenderer.alpha = 0.5;
@@ -174,7 +175,7 @@ class Menu extends Scene {
       this.renderPressStart();
     }
 
-    GameplayRenderer.renderStringColored(`<< ${this.languages[this.languageIndex].text} >>`, 150, 150, fonts.normal, 'white');
+    GameplayRenderer.renderStringColored(`<< ${this.languages[this.languageIndex].text} >>`, this.languageTitleX, 150, fonts.normal, 'white');
   }
 
   onScreenResize() {
@@ -182,6 +183,7 @@ class Menu extends Scene {
     this.placePlayUIButton();
     this.titleX = GameplayGraphics.screen.width / 2 - resources.title.width / 2;
     this.titleY = GameplayGraphics.screen.height * 0.25 - resources.title.height / 2;
+    this.languageTitleX = GameplayGraphics.screen.width / 2 - fonts.normal.measureText(`<< ${this.languages[this.languageIndex].text} >>`) / 2;
     this.fexi.position.x = this.titleX + 92;
     this.fexi.position.y = this.titleY - this.fexi.height;
   }
