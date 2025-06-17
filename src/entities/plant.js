@@ -15,17 +15,24 @@ class Plant extends Entity {
       40,
       r, g, b, 1,
     );
+    this.lit = false;
   }
 
   render(camera) {
     this.renderSprite(camera);
-    this.light.render(camera);
+    if (this.lit) {
+      this.light.render(camera);
+    }
   }
 
   update(elapsedTime) {
     this.updateInternalStructure(elapsedTime);
     this.light.x = this.position.x + 3.5;
     this.light.y = this.position.y + 4;
+  }
+
+  lightUp() {
+    this.lit = true;
   }
 }
 

@@ -106,6 +106,15 @@ const triggerZoneCoords = {
   x: null,
   y: null,
 };
+const checkPoint1TriggerZoneCoords = {
+  // less than
+  xTile: 33,
+  yTile: 62,
+
+  // these two are set in Game.init after world creation using the tile coords above
+  x: null,
+  y: null,
+};
 const checkpoint = { xTile: characterTilePositionX, yTile: characterTilePositionY };
 const entranceTilePositionX = 28;
 const entranceTileWidthX = 2;
@@ -380,6 +389,7 @@ class Game extends Scene {
 
     // init triggerZoneCoords
     this.demoWorld.copyTileCoordsInBound(0, triggerZoneCoords.xTile, triggerZoneCoords.yTile, triggerZoneCoords);
+    this.demoWorld.copyTileCoordsInBound(0, checkPoint1TriggerZoneCoords.xTile, checkPoint1TriggerZoneCoords.yTile, checkPoint1TriggerZoneCoords);
 
     // Init Entities
 
@@ -408,7 +418,7 @@ class Game extends Scene {
         b: 255,
       },
     });
-    this.placeEntityOverTile(this.plant, 33, 62);
+    this.placeEntityOverTile(this.plant, checkPoint1TriggerZoneCoords.xTile, checkPoint1TriggerZoneCoords.yTile);
 
     this.flagSprite = new Sprite(resources.flag, 13, 50, GameplayGraphics);
     this.flag = new Entity(
@@ -725,11 +735,11 @@ class Game extends Scene {
     }
 
     FexDebug.logOnScreen('velocity fixed', `<${Number.parseFloat(FexMath.precision(this.character.velocity.x)).toFixed(2)
-      }, ${Number.parseFloat(FexMath.precision(this.character.velocity.y)).toFixed(2)
-      }>`);
+    }, ${Number.parseFloat(FexMath.precision(this.character.velocity.y)).toFixed(2)
+    }>`);
     FexDebug.logOnScreen('position fixed', `<${Number.parseFloat(FexMath.precision(this.character.position.x)).toFixed(2)
-      }, ${Number.parseFloat(FexMath.precision(this.character.position.y)).toFixed(2)
-      }>`);
+    }, ${Number.parseFloat(FexMath.precision(this.character.position.y)).toFixed(2)
+    }>`);
     FexDebug.logOnScreen('isInAir', this.demoWorld.collisionInfo.isInAir);
   }
 
@@ -830,6 +840,12 @@ class Game extends Scene {
 
       this.arrow.update(elapsedTime);
       this.flag.update(elapsedTime);
+
+      if (this.character.position.x + this.character.hitbox.xOffset > checkPoint1TriggerZoneCoords.x) {
+        checkpoint.xTile = checkPoint1TriggerZoneCoords.xTile;
+        checkpoint.yTile = checkPoint1TriggerZoneCoords.yTile;
+        this.plant.lightUp();
+      }
 
       // start moving water (trigger)
       if (!this.waterSceneTriggered && this.cameraYPivot == null
