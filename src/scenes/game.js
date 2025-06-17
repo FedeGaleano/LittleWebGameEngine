@@ -97,15 +97,6 @@ const flagTilePositionX = 27;
 const flagTilePositionY = 0;
 const waterTilePositionX = 0;
 const waterTilePositionY = 64;
-const triggerZoneCoords = {
-  // less than
-  xTile: 18,
-  yTile: 57,
-
-  // these two are set in Game.init after world creation using the tile coords above
-  x: null,
-  y: null,
-};
 const checkPoint1TriggerZoneCoords = {
   // less than
   xTile: 33,
@@ -115,7 +106,16 @@ const checkPoint1TriggerZoneCoords = {
   x: null,
   y: null,
 };
-const checkpoint = { xTile: characterTilePositionX, yTile: characterTilePositionY };
+const checkPoint2TriggerZoneCoords = {
+  // less than
+  xTile: 18,
+  yTile: 57,
+
+  // these two are set in Game.init after world creation using the tile coords above
+  x: null,
+  y: null,
+};
+const currentCheckpoint = { xTile: characterTilePositionX, yTile: characterTilePositionY };
 const entranceTilePositionX = 28;
 const entranceTileWidthX = 2;
 
@@ -388,7 +388,7 @@ class Game extends Scene {
     this.demoWorld.preRender();
 
     // init triggerZoneCoords
-    this.demoWorld.copyTileCoordsInBound(0, triggerZoneCoords.xTile, triggerZoneCoords.yTile, triggerZoneCoords);
+    this.demoWorld.copyTileCoordsInBound(0, checkPoint2TriggerZoneCoords.xTile, checkPoint2TriggerZoneCoords.yTile, checkPoint2TriggerZoneCoords);
     this.demoWorld.copyTileCoordsInBound(0, checkPoint1TriggerZoneCoords.xTile, checkPoint1TriggerZoneCoords.yTile, checkPoint1TriggerZoneCoords);
 
     // Init Entities
@@ -399,7 +399,7 @@ class Game extends Scene {
 
     this.character.die = () => {
       // this.placeEntityOverTile(this.character, characterTilePositionX, characterTilePositionY);
-      this.placeEntityOverTile(this.character, checkpoint.xTile, checkpoint.yTile);
+      this.placeEntityOverTile(this.character, currentCheckpoint.xTile, currentCheckpoint.yTile);
       this.character.velocity.x = this.character.velocity.y = 0;
       this.resetAlpha = 1;
     };
@@ -411,14 +411,24 @@ class Game extends Scene {
       0, 255, 255, 1,
     );
 
-    this.plant = new Plant({
-      lightColor: {
-        r: 255,
-        g: 0,
-        b: 255,
-      },
-    });
-    this.placeEntityOverTile(this.plant, checkPoint1TriggerZoneCoords.xTile, checkPoint1TriggerZoneCoords.yTile);
+    this.plants = [
+      new Plant({
+        lightColor: {
+          r: 255,
+          g: 0,
+          b: 255,
+        },
+      }),
+      new Plant({
+        lightColor: {
+          r: 255,
+          g: 0,
+          b: 255,
+        },
+      }),
+    ];
+    this.placeEntityOverTile(this.plants[0], checkPoint1TriggerZoneCoords.xTile, checkPoint1TriggerZoneCoords.yTile);
+    this.placeEntityOverTile(this.plants[1], checkPoint2TriggerZoneCoords.xTile - 1, checkPoint2TriggerZoneCoords.yTile);
 
     this.flagSprite = new Sprite(resources.flag, 13, 50, GameplayGraphics);
     this.flag = new Entity(
@@ -455,7 +465,7 @@ class Game extends Scene {
       // this.water.velocity.y = 0;
       // this.cameraYPivot = null;
       // this.waterSceneTriggered = false;
-      this.water.velocity.y = checkpoint.yTile === triggerZoneCoords.yTile ? waterVelocity : 0;
+      this.water.velocity.y = currentCheckpoint.yTile === checkPoint2TriggerZoneCoords.yTile ? waterVelocity : 0;
     };
     this.resetWater();
     this.water.velocity.y = 0;
@@ -566,8 +576,8 @@ class Game extends Scene {
     this.waterCutScene = new CutScene();
     this.waterCutScene.onStart(() => {
       this.gameHasCameraControlY = false;
-      checkpoint.xTile = triggerZoneCoords.xTile - 1;
-      checkpoint.yTile = triggerZoneCoords.yTile;
+      currentCheckpoint.xTile = checkPoint2TriggerZoneCoords.xTile - 1;
+      currentCheckpoint.yTile = checkPoint2TriggerZoneCoords.yTile;
       this.leftButton.changeSpriteTo('normal');
       this.rightButton.changeSpriteTo('normal');
       this.jumpButton.changeSpriteTo('normal');
@@ -663,7 +673,7 @@ class Game extends Scene {
 
     this.demoWorld.render(camera);
 
-    this.plant.render(camera);
+    this.plants.forEach(plant => plant.render(camera));
 
     this.arrow.render(camera);
 
@@ -830,7 +840,7 @@ class Game extends Scene {
         this.water.position.y -= this.water.velocity.y * elapsedTime;
       }
 
-      this.plant.update(elapsedTime);
+      this.plants.forEach(plant => plant.update(elapsedTime));
 
       this.character.velocity.y += this.modifyGravity(gravity) * elapsedTime;
       this.character.update(elapsedTime);
@@ -841,17 +851,18 @@ class Game extends Scene {
       this.arrow.update(elapsedTime);
       this.flag.update(elapsedTime);
 
-      if (this.character.position.x + this.character.hitbox.xOffset > checkPoint1TriggerZoneCoords.x) {
-        checkpoint.xTile = checkPoint1TriggerZoneCoords.xTile;
-        checkpoint.yTile = checkPoint1TriggerZoneCoords.yTile;
-        this.plant.lightUp();
+      if (!this.plants[0].lit && this.character.position.x + this.character.hitbox.xOffset > checkPoint1TriggerZoneCoords.x) {
+        currentCheckpoint.xTile = checkPoint1TriggerZoneCoords.xTile;
+        currentCheckpoint.yTile = checkPoint1TriggerZoneCoords.yTile;
+        this.plants[0].lightUp();
       }
 
       // start moving water (trigger)
       if (!this.waterSceneTriggered && this.cameraYPivot == null
-        && this.character.position.x + this.character.hitbox.xOffset < triggerZoneCoords.x
-        && this.character.position.y + this.character.height < triggerZoneCoords.y
+        && this.character.position.x + this.character.hitbox.xOffset < checkPoint2TriggerZoneCoords.x
+        && this.character.position.y + this.character.height < checkPoint2TriggerZoneCoords.y
       ) {
+        this.plants[1].lightUp();
         this.waterCutScene.start();
 
         const prevInput = this.blockGameplayInteraction();
