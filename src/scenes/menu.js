@@ -25,7 +25,7 @@ class Menu extends Scene {
     this.titleX = null;
     this.titleY = null;
     this.languageTitleX = null;
-    this.languageIndex = 1;
+    this.languageIndex = 0;
     this.languages = [
       {
         text: 'English',
