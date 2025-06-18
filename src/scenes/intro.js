@@ -47,12 +47,9 @@ class Intro extends Scene {
       touchScreenAreas: ['any'],
     });
 
-
-    // REVIEWME: Both should work well
     this.onFired('skip', () => {
       this.finish();
     });
-    // this.onFired('skip', this.finish); // this one works buggy if you spam the button
   }
 
   onScreenResize() {

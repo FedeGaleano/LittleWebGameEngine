@@ -149,10 +149,6 @@ class Game extends Scene {
     this.update_waterScene = this.update_waterScene.bind(this);
 
     this.cameraYPivot = null;
-    this.waterSceneTriggerMoment = null;
-    this.waterSceneTriggered = false;
-    this.gameHasCameraControlX = true;
-    this.gameHasCameraControlY = true;
 
     this.moveRight = this.moveRight.bind(this);
     this.moveLeft = this.moveLeft.bind(this);
@@ -296,6 +292,11 @@ class Game extends Scene {
   }
 
   init() {
+    this.waterSceneTriggerMoment = null;
+    this.waterSceneTriggered = false;
+    this.gameHasCameraControlX = true;
+    this.gameHasCameraControlY = true;
+
     renderer.fillStyle = 'green';
     renderer.strokeStyle = '#00FFFF';
 
@@ -479,6 +480,7 @@ class Game extends Scene {
 
     this.getFinalCameraX = () => cameraFollowBox.x - (screen.width - cameraFollowBox.width) / 2;
     this.getFinalCameraY = () => cameraFollowBox.y - (screen.height - cameraFollowBox.height) / 2;
+    this.gameHasCameraControlY = true;
 
     const dialogPoint = { x: this.character.position.x + 14, y: this.character.position.y };
     this.speech = new Speech(dialogPoint.x, dialogPoint.y, Localization.FEXI_INTRODUCTION_SPEECH, dialogSpeed, fonts.normal2);
@@ -606,6 +608,7 @@ class Game extends Scene {
         this.leftButton.changeSpriteTo('normal');
         this.rightButton.changeSpriteTo('normal');
         this.jumpButton.changeSpriteTo('normal');
+        this.onFired('pause', this.finish);
       },
       update: (elapsedTime) => {
         this.fireworks.update(elapsedTime);

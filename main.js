@@ -124,7 +124,7 @@ const Effects = {
 let nextScene = null;
 
 function changeScene(newScene, effect) {
-  scene.onFinish(() => { });
+  scene.clearInputState();
   scene.volatileTouchScreenAreas.forEach((areaName) => {
     InputBuffer.deleteTouchScreenArea(areaName);
   });
@@ -159,6 +159,9 @@ intro.onFinish(() => {
 });
 menu.onFinish(() => {
   changeScene(game, Effects.blend);
+});
+game.onFinish(() => {
+  changeScene(menu, Effects.blend);
 });
 
 function tryToExecute(func, ...args) {

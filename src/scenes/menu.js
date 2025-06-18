@@ -76,6 +76,7 @@ class Menu extends Scene {
     this.onScreenResize();
 
     const finishScene = () => {
+      FexDebug.logOnConsole('Menu::finishScene() triggered');
       try {
         this.audio.play();
       } catch (error) {
