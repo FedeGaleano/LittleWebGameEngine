@@ -148,8 +148,6 @@ class Game extends Scene {
     this.update_normal = this.update_normal.bind(this);
     this.update_waterScene = this.update_waterScene.bind(this);
 
-    this.cameraYPivot = null;
-
     this.moveRight = this.moveRight.bind(this);
     this.moveLeft = this.moveLeft.bind(this);
     this.tryToJump = this.tryToJump.bind(this);
@@ -292,6 +290,8 @@ class Game extends Scene {
   }
 
   init() {
+    won = false;
+    this.cameraYPivot = null;
     this.waterSceneTriggerMoment = null;
     this.waterSceneTriggered = false;
     this.gameHasCameraControlX = true;
