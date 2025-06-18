@@ -357,6 +357,10 @@ class Game extends Scene {
     this.registerVolatileTouchScreenArea(this.anyTouchScreenArea);
 
     // virtual buttons
+    this.createVirtualButton('goToMenu', {
+      keys: ['Escape', 'Enter'],
+      touchScreenAreas: ['pause'],
+    });
     this.createVirtualButton('pause', {
       keys: ['KeyP', 'Enter'],
       touchScreenAreas: ['pause'],
@@ -608,7 +612,7 @@ class Game extends Scene {
         this.leftButton.changeSpriteTo('normal');
         this.rightButton.changeSpriteTo('normal');
         this.jumpButton.changeSpriteTo('normal');
-        this.onFired('pause', this.finish);
+        this.onFired('goToMenu', this.finish);
       },
       update: (elapsedTime) => {
         this.fireworks.update(elapsedTime);
