@@ -23,6 +23,7 @@ class Intro extends Scene {
 
   init() {
     FexDebug.logOnConsole('intro init');
+    this.finished = false;
     const { screen } = GameplayGraphics;
 
     const logoSprite = new Sprite(
@@ -47,9 +48,7 @@ class Intro extends Scene {
       touchScreenAreas: ['any'],
     });
 
-    this.onFired('skip', () => {
-      this.finish();
-    });
+    this.onFired('skip', this.finish);
   }
 
   onScreenResize() {
@@ -71,7 +70,8 @@ class Intro extends Scene {
     if (this.fade >= 1.75) {
       this.fadeSpeed = -0.001;
     }
-    if (this.fade < 0) {
+    if (!this.finished && this.fade < 0) {
+      this.finished = true;
       this.finish();
     }
     this.logo.update(elapsedTime);
