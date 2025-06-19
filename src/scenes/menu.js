@@ -12,6 +12,7 @@ import Localization from '../localization/localization.js';
 import FexGlobals from '../../engine/utils/FexGlobals.js';
 
 const blinkTimeInMillis = 500;
+const switchLanguageButtonSize = 6;
 
 class Menu extends Scene {
   constructor() {
@@ -25,6 +26,7 @@ class Menu extends Scene {
     this.titleX = null;
     this.titleY = null;
     this.languageTitleX = null;
+    this.languageTitleY = 150;
     this.languageIndex = 0;
     this.languages = [
       {
@@ -98,11 +100,11 @@ class Menu extends Scene {
     });
     this.createVirtualButton('switchLanguageRight', {
       keys: ['ArrowRight'],
-      touchScreenAreas: [],
+      touchScreenAreas: ['switchLanguageRight'],
     });
     this.createVirtualButton('switchLanguageLeft', {
       keys: ['ArrowLeft'],
-      touchScreenAreas: [],
+      touchScreenAreas: ['switchLanguageLeft'],
     });
     this.onFired('startGame', finishScene);
     this.onFired('switchLanguageRight', switchLanguageRight);
@@ -176,7 +178,7 @@ class Menu extends Scene {
       this.renderPressStart();
     }
 
-    GameplayRenderer.renderStringColored(`<< ${this.languages[this.languageIndex].text} >>`, this.languageTitleX, 150, fonts.normal, 'white');
+    GameplayRenderer.renderStringColored(`<< ${this.languages[this.languageIndex].text} >>`, this.languageTitleX, this.languageTitleY, fonts.normal, 'white');
   }
 
   onScreenResize() {
@@ -185,6 +187,19 @@ class Menu extends Scene {
     this.titleX = GameplayGraphics.screen.width / 2 - resources.title.width / 2;
     this.titleY = GameplayGraphics.screen.height * 0.25 - resources.title.height / 2;
     this.languageTitleX = GameplayGraphics.screen.width / 2 - fonts.normal.measureText(`<< ${this.languages[this.languageIndex].text} >>`) / 2;
+
+    this.registerVolatileTouchScreenArea(
+      new TouchScreenArea(
+        this.languageTitleX, this.languageTitleY, switchLanguageButtonSize, switchLanguageButtonSize, GameplayGraphics,
+        'switchLanguageLeft',
+      ),
+    );
+    this.registerVolatileTouchScreenArea(
+      new TouchScreenArea(
+        this.languageTitleX + fonts.normal.measureText(`<< ${this.languages[this.languageIndex].text} >>`) - switchLanguageButtonSize, this.languageTitleY, switchLanguageButtonSize, switchLanguageButtonSize, GameplayGraphics,
+        'switchLanguageRight',
+      ),
+    );
     this.fexi.position.x = this.titleX + 92;
     this.fexi.position.y = this.titleY - this.fexi.height;
   }
