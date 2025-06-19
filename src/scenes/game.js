@@ -347,6 +347,11 @@ class Game extends Scene {
       this.pauseButton.position.x - 5, this.pauseButton.position.y - 5, this.pauseButton.width + 25, this.pauseButton.height + 20, GameplayGraphics, 'pause',
     );
 
+    this.gotoMenuTouchScreenArea = new TouchScreenArea(
+      GameplayGraphics.screen.width / 3, GameplayGraphics.screen.height / 2,
+      GameplayGraphics.screen.width / 3, GameplayGraphics.screen.height / 2,
+      GameplayGraphics, 'gotoMenu',
+    );
     this.anyTouchScreenArea = new TouchScreenArea(
       touchMargin, touchMargin,
       GameplayGraphics.screen.width - touchMargin * 2, GameplayGraphics.screen.height - touchMargin * 2,
@@ -359,7 +364,7 @@ class Game extends Scene {
     // virtual buttons
     this.createVirtualButton('goToMenu', {
       keys: ['Escape', 'Enter'],
-      touchScreenAreas: ['pause'],
+      touchScreenAreas: ['gotoMenu'],
     });
     this.createVirtualButton('pause', {
       keys: ['KeyP', 'Enter'],
@@ -893,6 +898,8 @@ class Game extends Scene {
         const time = this.character.velocity.x <= 0 ? 400 : 1000;
         this.winCutScene.on(0, this.fexiRunsToWinPoint, time);
         this.winCutScene.on(time, this.launchFireworks, Infinity);
+        this.deleteAllVolatileTouchScreenAreas();
+        this.registerVolatileTouchScreenArea(this.gotoMenuTouchScreenArea);
         this.winCutScene.start();
       }
 
