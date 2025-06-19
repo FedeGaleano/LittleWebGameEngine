@@ -252,6 +252,7 @@ export default function startEngine() {
   function handleOrientationChange() {
     scene.onFocusLost();
     chooseLoopManager();
+    scene.onScreenResize();
   }
 
   // MAIN LOOP
