@@ -13,6 +13,7 @@ import FexGlobals from '../../engine/utils/FexGlobals.js';
 
 const blinkTimeInMillis = 500;
 const switchLanguageButtonSize = 6;
+const starPanelSurpassesScreen = x => x > GameplayGraphics.screen.width + 10;
 
 class Menu extends Scene {
   constructor() {
@@ -114,12 +115,11 @@ class Menu extends Scene {
   }
 
   update(elapsedTime, now) {
-    const { screen } = GameplayGraphics;
     for (let index = 0; index < this.starPanels.length; ++index) {
       this.starPanels[index] += this.starsVelocity * elapsedTime;
     }
 
-    this.starPanels.removeIf(x => x > screen.width + 10);
+    this.starPanels.removeIf(starPanelSurpassesScreen);
 
     if (this.starPanels[this.starPanels.length - 1] > -10) {
       this.starPanels.push(this.starPanels[this.starPanels.length - 1] - resources.stars.width);
