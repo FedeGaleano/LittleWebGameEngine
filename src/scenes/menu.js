@@ -12,7 +12,8 @@ import Localization from '../localization/localization.js';
 import FexGlobals from '../../engine/utils/FexGlobals.js';
 
 const blinkTimeInMillis = 500;
-const switchLanguageButtonSize = 6;
+const languageFontHeight = 5;
+const switchLanguageButtonSize = { w: 24, h: 18 };
 const starPanelSurpassesScreen = x => x > GameplayGraphics.screen.width + 10;
 
 class Menu extends Scene {
@@ -27,7 +28,7 @@ class Menu extends Scene {
     this.titleX = null;
     this.titleY = null;
     this.languageTitleX = null;
-    this.languageTitleY = 150;
+    this.languageTitleY = 160;
     this.languageIndex = 0;
     this.languages = [
       {
@@ -190,13 +191,21 @@ class Menu extends Scene {
 
     this.registerVolatileTouchScreenArea(
       new TouchScreenArea(
-        this.languageTitleX, this.languageTitleY, switchLanguageButtonSize, switchLanguageButtonSize, GameplayGraphics,
+        this.languageTitleX - switchLanguageButtonSize.w / 2,
+        this.languageTitleY + languageFontHeight / 2 - switchLanguageButtonSize.h / 2,
+        switchLanguageButtonSize.w,
+        switchLanguageButtonSize.h,
+        GameplayGraphics,
         'switchLanguageLeft',
       ),
     );
     this.registerVolatileTouchScreenArea(
       new TouchScreenArea(
-        this.languageTitleX + fonts.normal.measureText(`<< ${this.languages[this.languageIndex].text} >>`) - switchLanguageButtonSize, this.languageTitleY, switchLanguageButtonSize, switchLanguageButtonSize, GameplayGraphics,
+        this.languageTitleX + fonts.normal.measureText(`<< ${this.languages[this.languageIndex].text} >>`) - switchLanguageButtonSize.w / 2,
+        this.languageTitleY + languageFontHeight / 2 - switchLanguageButtonSize.h / 2,
+        switchLanguageButtonSize.w,
+        switchLanguageButtonSize.h,
+        GameplayGraphics,
         'switchLanguageRight',
       ),
     );
