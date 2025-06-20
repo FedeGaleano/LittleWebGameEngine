@@ -32,38 +32,27 @@ const Localization = {
       [lang.ENGLISH]: [
         [
           "hi! i'm fexi, the mascot",
-          'of the fex engine',
+          'of the fex engine,',
+          'a little javascript game engine',
+          'with no 3rd party libraries.',
         ],
         [
-          'and this is not',
-          'actually a videogame',
+          'and this is a demo',
+          'to showcase what this',
+          'little engine is capable of',
         ],
         [
-          'well... i mean',
-          "it's just an engine demo",
-          'to showcase what the',
-          'engine is able to do',
-        ],
-        [
-          'i guess fex will',
-          'throw out a game',
-          'one of these days',
-        ],
-        [
-          'but in the meanwhile,',
+          'so, to see it,',
           'how about...',
         ],
         [
-          'you help me to',
-          'get out of here',
+          'you help me get',
+          'out of here',
           'without falling',
           'into the water',
         ],
         [
           ':)',
-        ],
-        [
-          '<3',
         ],
       ],
       [lang.SPANISH]: [
@@ -72,34 +61,27 @@ const Localization = {
           'del motor fex engine',
         ],
         [
-          'y esto no es realmente',
-          'un videojuego',
+          'hola!  soy fexi, la mascota',
+          'del motor fex engine',
+          'un motor de juegos en javascript',
+          'sin bibliotecas de 3ros.',
         ],
         [
-          'bueno... quiero decir',
-          'sólo es una demo de motor',
-          'para mostrar lo que',
-          'el motor puede hacer',
+          'y esta es una demo',
+          'para mostrar de lo que este',
+          'pequeño motor es capaz',
         ],
         [
-          'supongo que fex',
-          'va a lanzar un juego',
-          'uno de estos días',
+          'así que, para verlo,',
+          'que tal sí...',
         ],
         [
-          'pero mientras tanto,',
-          'qué tal si...',
-        ],
-        [
-          'me ayudas a',
+          'me ayudas a ',
           'salir de aquí',
           'sin caer al agua',
         ],
         [
           ':)',
-        ],
-        [
-          '<3',
         ],
       ],
     });

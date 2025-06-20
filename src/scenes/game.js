@@ -554,7 +554,7 @@ class Game extends Scene {
         this.character.secondSpeech = new Speech(
           this.character.position.x + this.character.width, this.character.position.y,
           [
-            ['OMG'],
+            ['OMG...'],
           ],
           dialogSpeed, fonts.normal,
         );
