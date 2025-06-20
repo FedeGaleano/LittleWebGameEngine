@@ -348,8 +348,8 @@ class Game extends Scene {
     );
 
     this.gotoMenuTouchScreenArea = new TouchScreenArea(
-      GameplayGraphics.screen.width / 3, GameplayGraphics.screen.height / 2,
-      GameplayGraphics.screen.width / 3, GameplayGraphics.screen.height / 2,
+      GameplayGraphics.screen.width / 4, GameplayGraphics.screen.height / 3,
+      GameplayGraphics.screen.width * (1 / 2), GameplayGraphics.screen.height * (2 / 3),
       GameplayGraphics, 'gotoMenu',
     );
     this.anyTouchScreenArea = new TouchScreenArea(
@@ -496,12 +496,12 @@ class Game extends Scene {
 
     // to start idle
     // this.updateLogic = this.update_idle;
-    // this.renderLogic = () => {};
+    // this.renderUILogic = () => {};
     // this.input_idle();
 
     // to start with cutScene
     this.updateLogic = this.update_intro;
-    this.renderLogic = () => { };
+    this.renderUILogic = () => { };
     this.input_intro();
     curtain = -500;
     curtainSpeed = maxCurtainSpeed;
@@ -617,7 +617,6 @@ class Game extends Scene {
         this.leftButton.changeSpriteTo('normal');
         this.rightButton.changeSpriteTo('normal');
         this.jumpButton.changeSpriteTo('normal');
-        this.onFired('goToMenu', this.finish);
       },
       update: (elapsedTime) => {
         this.fireworks.update(elapsedTime);
@@ -718,7 +717,7 @@ class Game extends Scene {
     GameplayRenderer.renderFullRectangle(0, 0, screen.width, curtainHeight);
     GameplayRenderer.renderFullRectangle(0, screen.height - curtainHeight, screen.width, curtainHeight);
 
-    this.renderLogic();
+    this.renderUILogic();
 
     if (this.resetAlpha > 0) {
       GameplayRenderer.fillStyle = 'black';
@@ -811,10 +810,14 @@ class Game extends Scene {
     this.jumpButton.changeSpriteTo('normal');
   }
 
-  renderUI() {
+  renderGameplayUI() {
     this.leftButton.render();
     this.rightButton.render();
     this.jumpButton.render();
+  }
+
+  renderFinalScreenUI() {
+    // maybe render a "go to main menu" button in the future
   }
 
   updateCameraFollowBox() {
@@ -899,8 +902,13 @@ class Game extends Scene {
         this.winCutScene.on(0, this.fexiRunsToWinPoint, time);
         this.winCutScene.on(time, this.launchFireworks, Infinity);
         this.deleteAllVolatileTouchScreenAreas();
-        this.registerVolatileTouchScreenArea(this.gotoMenuTouchScreenArea);
+        this.registerVolatileTouchScreenArea(this.pauseButtonTouchScreenArea);
+        setTimeout(() => {
+          this.registerVolatileTouchScreenArea(this.gotoMenuTouchScreenArea);
+          this.onFired('goToMenu', this.finish);
+        }, 2000);
         this.winCutScene.start();
+        this.renderUILogic = this.renderFinalScreenUI;
       }
 
       this.zoneIndex = this.demoWorld.getZoneIndex(this.character.hitbox);
@@ -989,7 +997,7 @@ class Game extends Scene {
         this.updateLogic = this.update_normal;
         this.input_normal();
         if (FexUtils.deviceHasTouch()) {
-          this.renderLogic = this.renderUI;
+          this.renderUILogic = this.renderGameplayUI;
         }
       }
     }
