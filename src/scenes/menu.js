@@ -209,7 +209,7 @@ class Menu extends Scene {
         'switchLanguageRight',
       ),
     );
-    this.fexi.position.x = this.titleX + 92;
+    this.fexi.position.x = this.titleX + 101;
     this.fexi.position.y = this.titleY - this.fexi.height;
   }
 }
