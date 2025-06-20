@@ -36,12 +36,7 @@ class Intro extends Scene {
 
     this.fade = 0;
 
-    this.registerVolatileTouchScreenArea(
-      new TouchScreenArea(
-        20, 20, screen.width - 40, screen.height - 40, GameplayGraphics,
-        'any',
-      ),
-    );
+    this.registerVolatileTouchScreenArea(Intro.createTouchScreenAreaAny());
 
     this.createVirtualButton('skip', {
       keys: ['Enter'],
@@ -53,9 +48,18 @@ class Intro extends Scene {
 
   onScreenResize() {
     FexDebug.logOnConsole('Intro::onScreenResize() called');
+    InputBuffer.replaceRegisteredTouchScreenAreaByName('any', Intro.createTouchScreenAreaAny());
     const { screen } = GameplayGraphics;
     this.logo.position.x = (screen.width - this.logo.width) / 2;
     this.logo.position.y = (screen.height - this.logo.height) / 2;
+  }
+
+  static createTouchScreenAreaAny() {
+    const { screen } = GameplayGraphics;
+    return new TouchScreenArea(
+      20, 20, screen.width - 40, screen.height - 40, GameplayGraphics,
+      'any',
+    );
   }
 
   update(elapsedTime) {

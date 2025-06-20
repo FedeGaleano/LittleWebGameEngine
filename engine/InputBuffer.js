@@ -12,6 +12,10 @@ class InputBuffer {
     return registeredTouchScreenAreas;
   }
 
+  static replaceRegisteredTouchScreenAreaByName(name, newTouchScreenArea) {
+    registeredTouchScreenAreas[name] = newTouchScreenArea;
+  }
+
   constructor() {
     this.keyboard = {};
     this.touchScreen = {};
